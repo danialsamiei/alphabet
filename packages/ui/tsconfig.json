@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "paths": {
+      "@awaf/core": ["../core/src/index.ts"],
+      "@awaf/core/*": ["../core/src/*"],
+      "@awaf/api": ["../api/src/index.ts"],
+      "@awaf/api/*": ["../api/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"]
+}

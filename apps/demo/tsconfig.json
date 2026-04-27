@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@awaf/core": ["../../packages/core/src/index.ts"],
+      "@awaf/core/*": ["../../packages/core/src/*"],
+      "@awaf/api": ["../../packages/api/src/index.ts"],
+      "@awaf/api/*": ["../../packages/api/src/*"],
+      "@awaf/ui": ["../../packages/ui/src/index.ts"],
+      "@awaf/ui/*": ["../../packages/ui/src/*"],
+      "@awaf/protocols": ["../../packages/protocols/src/index.ts"],
+      "@awaf/protocols/*": ["../../packages/protocols/src/*"],
+      "@awaf/security": ["../../packages/security/src/index.ts"],
+      "@awaf/security/*": ["../../packages/security/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
+}
