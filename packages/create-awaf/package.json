@@ -1,0 +1,21 @@
+{
+  "name": "create-awaf",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Scaffolder for new AWAF apps. Currently supports a Vite + React starter; Next.js and Astro starters are planned.",
+  "bin": {
+    "create-awaf": "./dist/cli.js"
+  },
+  "files": ["dist", "templates", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.0.0"
+  }
+}

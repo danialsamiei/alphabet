@@ -1,0 +1,43 @@
+[
+  {
+    "name": "@awaf/core (ESM, brotli)",
+    "path": "packages/core/dist/index.js",
+    "limit": "20 KB",
+    "brotli": true
+  },
+  {
+    "name": "@awaf/api (ESM, brotli, ignoring @awaf/core)",
+    "path": "packages/api/dist/index.js",
+    "limit": "8 KB",
+    "brotli": true,
+    "ignore": ["@awaf/core"]
+  },
+  {
+    "name": "@awaf/ui base entry (ESM, brotli, ignoring peers; MUST stay R3F-free)",
+    "path": "packages/ui/dist/index.js",
+    "limit": "12 KB",
+    "brotli": true,
+    "ignore": [
+      "@awaf/core",
+      "@awaf/api",
+      "react",
+      "react-dom",
+      "react/jsx-runtime"
+    ]
+  },
+  {
+    "name": "@awaf/ui R3F lazy entry (ESM, brotli, ignoring peers)",
+    "path": "packages/ui/dist/layers-r3f.js",
+    "limit": "2 KB",
+    "brotli": true,
+    "ignore": [
+      "@awaf/core",
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "@react-three/fiber",
+      "three"
+    ]
+  }
+]
+

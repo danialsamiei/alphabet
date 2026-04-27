@@ -1,0 +1,22 @@
+{
+  "name": "@awaf/benchmarks",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Microbenchmarks for AWAF core hot paths (signal collection, enrichment, decision engine, route normalization, consent policy, layer selection).",
+  "scripts": {
+    "benchmark": "node --import tsx/esm ./run-all.ts",
+    "benchmark:smoke": "node --import tsx/esm ./run-all.ts --smoke",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@awaf/core": "workspace:*",
+    "@awaf/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tinybench": "^2.9.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.4.0"
+  }
+}
