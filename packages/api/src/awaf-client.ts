@@ -16,7 +16,7 @@
  */
 
 import type { AWAFError, Result, HandshakeRequestPayload, HandshakeResult } from '@awaf/core';
-import { ok, err } from '@awaf/core';
+import { ok, err, AWAF_ROUTES, normalizeApiBaseUrl } from '@awaf/core';
 import type {
   ConsentRequest, ConsentResponse,
   PreferenceRequest, PreferenceResponse,
@@ -67,7 +67,7 @@ export class AwafClient {
   private readonly maxRetries: number;
 
   constructor(options: AwafClientOptions) {
-    this.base = options.apiBaseUrl.replace(/\/$/, '');
+    this.base = normalizeApiBaseUrl(options.apiBaseUrl);
     this.bearerToken = options.bearerToken;
     this.apiKey = options.apiKey;
     this.timeoutMs = options.timeoutMs ?? 10_000;
@@ -81,7 +81,7 @@ export class AwafClient {
    * Auth: None.
    */
   async postHandshake(payload: HandshakeRequestPayload): Promise<Result<HandshakeResult, AWAFError>> {
-    return this.post<HandshakeResult>('/context/handshake', payload, { noAuth: true });
+    return this.post<HandshakeResult>(AWAF_ROUTES.contextHandshake, payload, { noAuth: true });
   }
 
   /**
@@ -89,7 +89,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async postConsent(payload: ConsentRequest): Promise<Result<ConsentResponse, AWAFError>> {
-    return this.post<ConsentResponse>('/context/consent', payload);
+    return this.post<ConsentResponse>(AWAF_ROUTES.contextConsent, payload);
   }
 
   /**
@@ -97,7 +97,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async postPreference(payload: PreferenceRequest): Promise<Result<PreferenceResponse, AWAFError>> {
-    return this.post<PreferenceResponse>('/context/preference', payload);
+    return this.post<PreferenceResponse>(AWAF_ROUTES.contextPreference, payload);
   }
 
   // ── Group 2: Visitor Interaction ──────────────────────────────────────────
@@ -107,7 +107,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async postInteract(payload: InteractRequest): Promise<Result<InteractResponse, AWAFError>> {
-    return this.post<InteractResponse>('/interact', { ...payload, streaming: false });
+    return this.post<InteractResponse>(AWAF_ROUTES.interact, { ...payload, streaming: false });
   }
 
   /**
@@ -121,7 +121,7 @@ export class AwafClient {
    * }
    */
   async *streamInteract(payload: InteractRequest): AsyncGenerator<InteractStreamEvent, void, undefined> {
-    yield *this.sseStream<InteractStreamEvent>('/interact', { ...payload, streaming: true });
+    yield *this.sseStream<InteractStreamEvent>(AWAF_ROUTES.interact, { ...payload, streaming: true });
   }
 
   /**
@@ -147,7 +147,7 @@ export class AwafClient {
     form.append('audio', audioFile);
     if (language !== undefined) form.append('language', language);
     if (model !== undefined) form.append('model', model);
-    return this.postForm<VoiceTranscribeResponse>('/voice/transcribe', form);
+    return this.postForm<VoiceTranscribeResponse>(AWAF_ROUTES.voiceTranscribe, form);
   }
 
   /**
@@ -155,7 +155,7 @@ export class AwafClient {
    * Auth: None.
    */
   async getSuggestions(query: SuggestionsQuery): Promise<Result<SuggestionsResponse, AWAFError>> {
-    return this.get<SuggestionsResponse>('/suggestions', query as unknown as Record<string, unknown>, { noAuth: true });
+    return this.get<SuggestionsResponse>(AWAF_ROUTES.suggestions, query as unknown as Record<string, unknown>, { noAuth: true });
   }
 
   // ── Group 3: Technology Pulse ─────────────────────────────────────────────
@@ -165,7 +165,7 @@ export class AwafClient {
    * Auth: None.
    */
   async getTechnologyPulse(query: TechnologyPulseQuery): Promise<Result<TechnologyPulseResponse, AWAFError>> {
-    return this.get<TechnologyPulseResponse>('/technology-pulse', query as unknown as Record<string, unknown>, { noAuth: true });
+    return this.get<TechnologyPulseResponse>(AWAF_ROUTES.technologyPulse, query as unknown as Record<string, unknown>, { noAuth: true });
   }
 
   /**
@@ -173,7 +173,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async postTechnologyPulseBrief(payload: TechnologyPulseBriefRequest): Promise<Result<TechnologyPulseBriefResponse, AWAFError>> {
-    return this.post<TechnologyPulseBriefResponse>('/technology-pulse/brief', payload);
+    return this.post<TechnologyPulseBriefResponse>(AWAF_ROUTES.technologyPulseBrief, payload);
   }
 
   // ── Group 4: Memory ──────────────────────────────────────────────────────
@@ -183,7 +183,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async postVisitorMemory(payload: StoreMemoryRequest): Promise<Result<StoreMemoryResponse, AWAFError>> {
-    return this.post<StoreMemoryResponse>('/visitor/memory', payload);
+    return this.post<StoreMemoryResponse>(AWAF_ROUTES.visitorMemoryStore, payload);
   }
 
   /**
@@ -191,7 +191,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async getVisitorMemory(query: GetMemoryQuery): Promise<Result<GetMemoryResponse, AWAFError>> {
-    return this.get<GetMemoryResponse>('/visitor/memory', query as unknown as Record<string, unknown>);
+    return this.get<GetMemoryResponse>(AWAF_ROUTES.visitorMemoryRead, query as unknown as Record<string, unknown>);
   }
 
   /**
@@ -199,7 +199,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async deleteVisitorMemory(payload: EraseMemoryRequest): Promise<Result<EraseMemoryResponse, AWAFError>> {
-    return this.delete<EraseMemoryResponse>('/visitor/memory', payload);
+    return this.delete<EraseMemoryResponse>(AWAF_ROUTES.visitorMemoryDelete, payload);
   }
 
   // ── Group 5: OpenClaw Mesh ────────────────────────────────────────────────
@@ -209,7 +209,7 @@ export class AwafClient {
    * Auth: Bearer.
    */
   async postClawQuery(payload: ClawQueryRequest): Promise<Result<ClawQueryResponse, AWAFError>> {
-    return this.post<ClawQueryResponse>('/claw/query', payload);
+    return this.post<ClawQueryResponse>(AWAF_ROUTES.clawQuery, payload);
   }
 
   /**
@@ -217,7 +217,7 @@ export class AwafClient {
    * Auth: API Key.
    */
   async postClawIngest(payload: ClawIngestRequest): Promise<Result<ClawIngestResponse, AWAFError>> {
-    return this.post<ClawIngestResponse>('/claw/ingest', payload, { apiKey: true });
+    return this.post<ClawIngestResponse>(AWAF_ROUTES.clawIngest, payload, { apiKey: true });
   }
 
   /**
@@ -225,7 +225,7 @@ export class AwafClient {
    * Auth: API Key (Admin).
    */
   async postClawAdminAudit(payload: ClawAdminAuditRequest): Promise<Result<ClawAdminAuditResponse, AWAFError>> {
-    return this.post<ClawAdminAuditResponse>('/claw/admin/audit', payload, { apiKey: true });
+    return this.post<ClawAdminAuditResponse>(AWAF_ROUTES.clawAdminAudit, payload, { apiKey: true });
   }
 
   // ── Group 6: Admin ────────────────────────────────────────────────────────
@@ -235,7 +235,7 @@ export class AwafClient {
    * Auth: API Key (Admin).
    */
   async getAdminVisitorInsights(query: VisitorInsightsQuery): Promise<Result<VisitorInsightsResponse, AWAFError>> {
-    return this.get<VisitorInsightsResponse>('/admin/visitor-insights', query as unknown as Record<string, unknown>, { apiKey: true });
+    return this.get<VisitorInsightsResponse>(AWAF_ROUTES.adminVisitorInsights, query as unknown as Record<string, unknown>, { apiKey: true });
   }
 
   /**
@@ -243,7 +243,7 @@ export class AwafClient {
    * Auth: API Key (Admin).
    */
   async getAdminPulseSources(query: PulseSourcesQuery): Promise<Result<PulseSourcesResponse, AWAFError>> {
-    return this.get<PulseSourcesResponse>('/admin/technology-pulse/sources', query as unknown as Record<string, unknown>, { apiKey: true });
+    return this.get<PulseSourcesResponse>(AWAF_ROUTES.adminPulseSources, query as unknown as Record<string, unknown>, { apiKey: true });
   }
 
   // ── Private: Auth Headers ─────────────────────────────────────────────────

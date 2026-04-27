@@ -18,6 +18,9 @@ import {
   err,
   createRequestId,
   createSessionId,
+  AWAF_ROUTES,
+  fullRoute,
+  normalizeApiBaseUrl,
 } from '@awaf/core';
 import type { VisitorId } from '@awaf/core';
 
@@ -64,7 +67,7 @@ export class HandshakeClient {
   private readonly visitorId: VisitorId;
 
   constructor(options: HandshakeClientOptions) {
-    this.apiBaseUrl = options.apiBaseUrl.replace(/\/$/, '');
+    this.apiBaseUrl = normalizeApiBaseUrl(options.apiBaseUrl);
     this.timeoutMs = options.timeoutMs ?? 5000;
     this.maxRetries = options.maxRetries ?? 2;
     this.visitorId = options.visitorId;
@@ -88,7 +91,7 @@ export class HandshakeClient {
   ): Promise<Result<HandshakeResult, AWAFError>> {
     const sessionId = createSessionId();
     const request = this.buildRequest(payload, sessionId);
-    const url = `${this.apiBaseUrl}/context/handshake`;
+    const url = `${this.apiBaseUrl}${AWAF_ROUTES.contextHandshake}`;
 
     return this.sendWithRetry(url, JSON.stringify(request), 0);
   }
@@ -101,7 +104,7 @@ export class HandshakeClient {
   ): AWAFRequest<HandshakeRequestPayload> {
     return {
       protocol: 'API',
-      endpoint: '/api/context/handshake',
+      endpoint: fullRoute('contextHandshake'),
       visitorId: this.visitorId,
       sessionId,
       consentTier: 'NO_MEMORY',

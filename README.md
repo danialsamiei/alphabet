@@ -103,9 +103,10 @@ evidence.
 
 ### `@awaf/api`
 
-- **`AwafClient`** — HTTP client with one method per documented endpoint (16 in total). Returns `Promise<Result<T, AWAFError>>`. Uses `fetch` with `AbortController`-based timeouts.
-- **`HandshakeClient`** — legacy client for the `POST /api/context/handshake` endpoint, posts an `AWAFRequest<HandshakeRequestPayload>` envelope and unwraps the `AWAFResponse<HandshakeResult>` envelope.
+- **`AwafClient`** — HTTP client with one method per documented endpoint (16 in total). Returns `Promise<Result<T, AWAFError>>`. Uses `fetch` with `AbortController`-based timeouts. All routes are sourced from the shared route contract in `@awaf/core` (`AWAF_ROUTES`); `apiBaseUrl` is normalized via `normalizeApiBaseUrl()` so callers may pass a bare origin (`https://x.com`), the canonical prefix (`https://x.com/api/awaf/v1`), or the legacy `/api` segment for backwards compatibility.
+- **`HandshakeClient`** — legacy client for the `POST /api/awaf/v1/context/handshake` endpoint, posts an `AWAFRequest<HandshakeRequestPayload>` envelope and unwraps the `AWAFResponse<HandshakeResult>` envelope.
 - **Request / response types** for all 16 endpoints in `packages/api/src/types.ts`.
+- **Canonical API prefix:** `/api/awaf/v1`. The full OpenAPI 3.1 contract is at [`openapi/awaf.v1.yaml`](openapi/awaf.v1.yaml). Endpoints not yet wired end-to-end are tagged with `x-awaf-status: planned`.
 
 ### Repository tooling
 
@@ -290,6 +291,20 @@ awaf/
 ```
 
 Status legend: ✅ implemented · 🟡 partial · 🟠 stub.
+
+---
+
+## Naming and concept aliases
+
+The product surface uses a few new names. Old names remain as aliases in the docs and TypeScript types so existing integrations are not broken.
+
+| Old name | New name | Notes |
+|---|---|---|
+| UI Degradation | **Adaptive Render Layers** | Same five-layer model (R3F → CSS 3D → Canvas 2D → Static HTML → Text-Only); only the marketing/concept name changed. |
+| Memory Mesh | **Consent-Aware Memory** (a.k.a. Consent Memory Graph) | Same six-domain graph + four-tier consent ladder. Type names like `MemoryDomain`, `VisitorMemory`, and the `tech_pulse` domain are unchanged. |
+| Technology Pulse | **AWAF Pulse** (plugin module) | Same RAG/trust-tiered ingestion. The HTTP routes (`/technology-pulse`, `/technology-pulse/brief`) are unchanged for backwards compatibility; only the product framing shifted to "plugin module" so consumers can opt out cleanly. |
+
+The `IntentType` alias in `@awaf/core` is now a deprecated structural alias of the new `DomainIntent` (visitor purpose). UI suggestion chips use the separate `SuggestionActionIntent` vocabulary (`learn` / `compare` / `contact` / `personalize` / `language` / `voice` / `explore`). See `packages/core/src/contracts/intents.ts`.
 
 ---
 

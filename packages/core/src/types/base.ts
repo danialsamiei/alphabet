@@ -68,6 +68,13 @@ export type MemoryDomain =
  * - philosophy: کاوش فلسفی و فکری
  * - personal: ارتباط شخصی با صاحب سایت
  * - explore: کاوش بی‌هدف
+ *
+ * @deprecated Use `DomainIntent` from `@awaf/core` (re-exported from
+ * `./contracts/intents.js`) for high-level visitor purpose and
+ * `SuggestionActionIntent` for UI/action chip intents. `IntentType`
+ * historically conflated the two; it is kept as a structural alias for
+ * `DomainIntent` to avoid breaking existing imports and will be removed
+ * in a future major release.
  */
 export type IntentType =
   | 'technology'

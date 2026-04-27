@@ -207,4 +207,34 @@ describe('HandshakeClient.execute()', () => {
     const [url] = fetchMock.mock.calls[0] as [string];
     expect(url).toBe('http://localhost:3000/api/context/handshake');
   });
+
+  it('appends /api/awaf/v1 when apiBaseUrl has no prefix', async () => {
+    mockFetchSuccess(MOCK_RESULT);
+    const client = new HandshakeClient({ ...BASE_OPTIONS, apiBaseUrl: 'http://localhost:3000' });
+    await client.execute(MOCK_PAYLOAD);
+
+    const fetchMock = vi.mocked(fetch);
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toBe('http://localhost:3000/api/awaf/v1/context/handshake');
+  });
+
+  it('appends /api/awaf/v1 when apiBaseUrl is bare with trailing slash', async () => {
+    mockFetchSuccess(MOCK_RESULT);
+    const client = new HandshakeClient({ ...BASE_OPTIONS, apiBaseUrl: 'http://localhost:3000/' });
+    await client.execute(MOCK_PAYLOAD);
+
+    const fetchMock = vi.mocked(fetch);
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toBe('http://localhost:3000/api/awaf/v1/context/handshake');
+  });
+
+  it('leaves a fully-qualified /api/awaf/v1 base alone', async () => {
+    mockFetchSuccess(MOCK_RESULT);
+    const client = new HandshakeClient({ ...BASE_OPTIONS, apiBaseUrl: 'http://localhost:3000/api/awaf/v1' });
+    await client.execute(MOCK_PAYLOAD);
+
+    const fetchMock = vi.mocked(fetch);
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toBe('http://localhost:3000/api/awaf/v1/context/handshake');
+  });
 });

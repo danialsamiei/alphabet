@@ -7,6 +7,25 @@
 
 export type { AWAFRequest, AWAFResponse } from '@awaf/core';
 
+// ─── Route Contracts (re-exported from @awaf/core) ───────────────────────────
+export {
+  API_VERSION_PREFIX,
+  LEGACY_API_PREFIX,
+  AWAF_ROUTES,
+  AWAF_ROUTE_STATUS,
+  fullRoute,
+  joinRoute,
+  normalizeApiBaseUrl,
+} from '@awaf/core';
+export type { AwafRouteKey, AwafRoutePath, AwafRouteStatus } from '@awaf/core';
+
+// ─── Intent Vocabularies (re-exported from @awaf/core) ───────────────────────
+export {
+  DOMAIN_INTENTS,
+  SUGGESTION_ACTION_INTENTS,
+} from '@awaf/core';
+export type { DomainIntent, SuggestionActionIntent } from '@awaf/core';
+
 // ─── Legacy HandshakeClient ───────────────────────────────────────────────────
 export { HandshakeClient } from './handshake-client.js';
 export type { HandshakeClientOptions } from './handshake-client.js';

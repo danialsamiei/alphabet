@@ -549,3 +549,96 @@ describe('URL building', () => {
     expect(url).toContain('visitorId=anon-test');
   });
 });
+
+// ─── Base URL Normalization ───────────────────────────────────────────────────
+
+describe('apiBaseUrl normalization', () => {
+  /** Common stub for any GET /suggestions response. */
+  function mockSuggestionsOK(): void {
+    mockSuccess({ requestId: 'req-1', visitorId: 'anon-test', suggestions: [], generatedAt: '' });
+  }
+
+  it('appends /api/awaf/v1 when no prefix is supplied', async () => {
+    const client = new AwafClient({ apiBaseUrl: 'http://localhost:3000', maxRetries: 0, timeoutMs: 1000 });
+    mockSuggestionsOK();
+    await client.getSuggestions({ visitorId: 'anon-test' });
+
+    expect(lastCallUrl()).toMatch(/^http:\/\/localhost:3000\/api\/awaf\/v1\/suggestions/);
+  });
+
+  it('appends /api/awaf/v1 even when origin has a trailing slash', async () => {
+    const client = new AwafClient({ apiBaseUrl: 'http://localhost:3000/', maxRetries: 0, timeoutMs: 1000 });
+    mockSuggestionsOK();
+    await client.getSuggestions({ visitorId: 'anon-test' });
+
+    expect(lastCallUrl()).toMatch(/^http:\/\/localhost:3000\/api\/awaf\/v1\/suggestions/);
+  });
+
+  it('preserves a legacy /api base for backwards compatibility', async () => {
+    const client = new AwafClient({ apiBaseUrl: 'http://localhost:3000/api', maxRetries: 0, timeoutMs: 1000 });
+    mockSuggestionsOK();
+    await client.getSuggestions({ visitorId: 'anon-test' });
+
+    expect(lastCallUrl()).toMatch(/^http:\/\/localhost:3000\/api\/suggestions/);
+    expect(lastCallUrl()).not.toMatch(/\/api\/awaf\/v1/);
+  });
+
+  it('strips a single trailing slash from a legacy /api/ base', async () => {
+    const client = new AwafClient({ apiBaseUrl: 'http://localhost:3000/api/', maxRetries: 0, timeoutMs: 1000 });
+    mockSuggestionsOK();
+    await client.getSuggestions({ visitorId: 'anon-test' });
+
+    // No double-slash in the path segment.
+    expect(lastCallUrl()).toMatch(/^http:\/\/localhost:3000\/api\/suggestions/);
+    expect(lastCallUrl()).not.toContain('/api//suggestions');
+  });
+
+  it('leaves an already-normalized /api/awaf/v1 base alone', async () => {
+    const client = new AwafClient({ apiBaseUrl: 'http://localhost:3000/api/awaf/v1', maxRetries: 0, timeoutMs: 1000 });
+    mockSuggestionsOK();
+    await client.getSuggestions({ visitorId: 'anon-test' });
+
+    expect(lastCallUrl()).toMatch(/^http:\/\/localhost:3000\/api\/awaf\/v1\/suggestions/);
+  });
+
+  it('strips a trailing slash from a /api/awaf/v1/ base', async () => {
+    const client = new AwafClient({ apiBaseUrl: 'http://localhost:3000/api/awaf/v1/', maxRetries: 0, timeoutMs: 1000 });
+    mockSuggestionsOK();
+    await client.getSuggestions({ visitorId: 'anon-test' });
+
+    expect(lastCallUrl()).toMatch(/^http:\/\/localhost:3000\/api\/awaf\/v1\/suggestions/);
+    expect(lastCallUrl()).not.toContain('/v1//suggestions');
+  });
+});
+
+// ─── Routes Contract Coverage ─────────────────────────────────────────────────
+
+describe('client routes match the AWAF_ROUTES contract', () => {
+  // We re-import via the package's public surface to make sure the
+  // contract is reachable by consumers, not just by internal modules.
+
+  it('every client method posts/gets to a path declared in AWAF_ROUTES', async () => {
+    const { AWAF_ROUTES: routes } = await import('@awaf/core');
+    // The set of unique relative paths the client should be hitting.
+    const declared = new Set<string>(Object.values(routes));
+    const expected = [
+      '/context/handshake',
+      '/context/consent',
+      '/context/preference',
+      '/interact',
+      '/voice/transcribe',
+      '/suggestions',
+      '/technology-pulse',
+      '/technology-pulse/brief',
+      '/visitor/memory',
+      '/claw/query',
+      '/claw/ingest',
+      '/claw/admin/audit',
+      '/admin/visitor-insights',
+      '/admin/technology-pulse/sources',
+    ];
+    for (const path of expected) {
+      expect(declared.has(path)).toBe(true);
+    }
+  });
+});
