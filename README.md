@@ -52,8 +52,8 @@ remembers what you let it remember — and nothing else."
 Concretely, AWAF is built around four ideas:
 
 - **Context Handshake** — a small, fast, fully-typed pipeline that turns passive signals into a UI configuration.
-- **Consent ladder** — four tiers (`NO_MEMORY` → `ANONYMOUS` → `CONSENTED` → `ENRICHED`) with explicit upgrades only and DNT/GPC auto-downgrade.
-- **Capability-adaptive rendering** — five UI layers, from immersive 3D down to pure text, chosen from real device capabilities rather than user-agent guesses.
+- **Consent ladder** — four tiers (`NO_MEMORY` → `ANONYMOUS` → `CONSENTED` → `ENRICHED`) with explicit, monotonic upgrades, code-enforced permission helpers, and DNT/GPC auto-downgrade for storage and personalization (rendering is unaffected).
+- **Capability-adaptive rendering** — five UI layers, from immersive 3D down to pure text, chosen from real device capabilities and accessibility preferences rather than user-agent guesses or privacy signals.
 - **AI-ready protocols** — a normalized request/response envelope that adapter packages can expose over MCP, A2A, QR handoff, and direct REST.
 
 Today, the type system, configuration, logger, event hub, and the three core
@@ -82,6 +82,20 @@ you already use.
 
 ---
 
+## Privacy
+
+AWAF's privacy behaviour is **enforced by code**, not just documented.
+The full model lives in [`docs/PRIVACY_MODEL.md`](docs/PRIVACY_MODEL.md);
+the short version is:
+
+- **Tier 0 by default.** Until the visitor explicitly grants consent, AWAF stores nothing, profiles nothing, tracks nothing, and personalizes nothing.
+- **DNT and GPC restrict storage, profiling, tracking, analytics, and personalization.** They **do not** force the visual layer down to STATIC_HTML — render layer is selected from device capability and accessibility preferences (e.g. `prefers-reduced-motion`) only. A visitor with GPC enabled and a capable device still sees an immersive UI; they just don't get tracked.
+- **Geo is country/region/timezone only by default.** `EnrichmentPipeline.enrich(signals)` returns `{ country, timezone, region }`. The `city`, `coarseLatitude`, and `coarseLongitude` fields exist on the type but are only populated when the caller explicitly passes `{ allowPreciseGeo: true }` and `canUsePreciseGeo(tier, signals)` returns true.
+- **No fingerprinting. No cookies. No PII.** AWAF reads passive signals (Accept-Language, IANA timezone, viewport, WebGL support, DNT, GPC, `prefers-reduced-motion`). It does **not** hash navigator properties into a fingerprint, set cookies, or store IP addresses, emails, names, or phone numbers.
+- **Code-enforced consent ladder.** `ConsentTierManager` (in `@awaf/security`) is a state machine with monotonic upgrades, explicit revoke, DNT/GPC auto-downgrade, and policy-version invalidation. Permissions are checked through the pure helpers `canStoreMemory`, `canPersonalize`, `canUseAnalytics`, and `canUsePreciseGeo` (in `@awaf/core/privacy`).
+
+---
+
 ## What is implemented today
 
 The following is shipped as real code, exported from a package, and covered by
@@ -97,9 +111,10 @@ evidence.
 - **`AWAFLogger`** — structured logger with conditional optional-property spreads (compatible with `exactOptionalPropertyTypes: true`).
 - **`AWAFEventEmitter`** — typed event hub with a typed event map.
 - **Handshake primitives:**
-  - `SignalCollector` — reads passive browser signals (`navigator.language`, `Intl.DateTimeFormat`, `navigator.connection`, `navigator.doNotTrack`, viewport, DPR, WebGL).
-  - `EnrichmentPipeline` — pure transformation that adds RTL detection, capability inference, and accepts an externally-supplied `GeoContext`.
-  - `HandshakeDecisionEngine` — derives locale, direction, theme, capability layer, and hero copy. Ships locale and hero-copy maps for 25+ locales.
+  - `SignalCollector` — reads passive browser signals (`navigator.language`, `Intl.DateTimeFormat`, `navigator.connection`, `navigator.doNotTrack`, `navigator.globalPrivacyControl`, viewport, DPR, WebGL, `prefers-reduced-motion`). No fingerprinting, no cookies, no PII.
+  - `EnrichmentPipeline` — derives a coarse `GeoContext` from the IANA timezone. **By default emits only `country`, `timezone`, and a broad `region` group**; `city`, `coarseLatitude`, and `coarseLongitude` are gated behind an explicit `allowPreciseGeo: true` option.
+  - `HandshakeDecisionEngine` — derives locale, direction, theme, capability layer, and hero copy. Ships locale and hero-copy maps for 25+ locales. Returns a `privacyMode` object that reports whether memory, personalization, analytics, and precise geo are allowed in the current request. **DNT/GPC do not change `selectedLayer`** — render is capability- and a11y-driven only.
+- **Privacy policy helpers** — `canStoreMemory`, `canPersonalize`, `canUseAnalytics`, `canUsePreciseGeo`. Pure functions in `@awaf/core/privacy` and the only authoritative source of permission checks across the codebase.
 
 ### `@awaf/api`
 
@@ -107,6 +122,10 @@ evidence.
 - **`HandshakeClient`** — legacy client for the `POST /api/awaf/v1/context/handshake` endpoint, posts an `AWAFRequest<HandshakeRequestPayload>` envelope and unwraps the `AWAFResponse<HandshakeResult>` envelope.
 - **Request / response types** for all 16 endpoints in `packages/api/src/types.ts`.
 - **Canonical API prefix:** `/api/awaf/v1`. The full OpenAPI 3.1 contract is at [`openapi/awaf.v1.yaml`](openapi/awaf.v1.yaml). Endpoints not yet wired end-to-end are tagged with `x-awaf-status: planned`.
+
+### `@awaf/security`
+
+- **`ConsentTierManager`** — code-enforced consent state machine. States: `pending` → `granted` → `revoked` (plus `reset`). Tiers: `NO_MEMORY` < `ANONYMOUS` < `CONSENTED` < `ENRICHED`. Operations: `grant`, `revoke`, `reset`, `downgradeOnPrivacySignal` (DNT/GPC), `invalidateOnPolicyChange`. Enforces the monotonic-upgrade rule via `Result<T, AWAFError>` and exposes a transparent `ConsentTierExplanation` for direct rendering in a consent UI.
 
 ### Repository tooling
 
@@ -134,8 +153,8 @@ These are described in [`AGENTS.md`](AGENTS.md) and [`docs/ROADMAP.md`](docs/ROA
 
 - **`@awaf/ui`** — `LayerSelector`, the five UI degradation layers (`Layer1R3F` through `Layer5TextOnly`), the `useContextHandshake` and `useConsent` React hooks, and the `<ConsentBanner />` component. Currently a stub package.
 - **`@awaf/protocols`** — MCP server, A2A adapter, QR handoff, and a normalized REST adapter. Currently a stub package.
-- **`@awaf/security`** — prompt-injection defense (OWASP LLM01), audit logger, NIST AI RMF 1.0 mapping, cost guardian (circuit breaker + token budget), memory integrity guard, differential privacy helpers, k-anonymity gate. Currently a stub package.
-- **Memory Mesh runtime** — `ConsentTierManager` state machine, `DomainFirewall`, browser storage adapters, and (Phase 4) vector-database storage for Tier 3.
+- **`@awaf/security`** — `ConsentTierManager` (state machine + monotonic upgrade + DNT/GPC downgrade + policy invalidation + transparent explanation) is shipped. Prompt-injection defense (OWASP LLM01), audit logger, NIST AI RMF 1.0 mapping, cost guardian (circuit breaker + token budget), memory integrity guard, and differential privacy helpers are still planned.
+- **Memory Mesh runtime** — `DomainFirewall`, browser storage adapters, and (Phase 4) vector-database storage for Tier 3.
 - **Technology Pulse pipeline** — five-stage ingestion (ingest → extract → trust-score → verify → embed), C2PA-style provenance, hallucination firewall, RAG brief generation.
 - **Adapters** — `@awaf/react`, `@awaf/next`, `@awaf/vite`, `@awaf/astro`.
 - **CLI** — `@awaf/cli` with `awaf init`, `awaf doctor`, `awaf bench`.

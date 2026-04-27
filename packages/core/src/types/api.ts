@@ -181,14 +181,44 @@ export interface HandshakeResult {
 // ─── Handshake Decision ───────────────────────────────────────────────────────
 
 /**
+ * حالت حریم خصوصی استنباط‌شده از سیگنال‌های مرورگر و رضایت.
+ * Privacy mode derived from browser signals and consent state.
+ *
+ * - `restricted`: DNT/GPC active → forced Tier 0 / no memory / no profiling.
+ *   Render layer is **not** affected by this flag.
+ * - `standard`: no privacy signal active; consent decisions follow the
+ *   normal jurisdiction-aware ladder.
+ */
+export interface PrivacyMode {
+  /** آیا حالت محدودیت حریم خصوصی فعال است (DNT یا GPC) */
+  readonly restricted: boolean;
+  /** آیا DNT (Do Not Track) فعال است */
+  readonly dntEnabled: boolean;
+  /** آیا GPC (Global Privacy Control) فعال است */
+  readonly gpcEnabled: boolean;
+  /** Tier حافظه مجاز در این حالت */
+  readonly enforcedConsentTier: ConsentTier;
+  /** آیا profiling/personalization مجاز است */
+  readonly personalizationAllowed: boolean;
+  /** آیا storage/memory مجاز است */
+  readonly memoryAllowed: boolean;
+  /** آیا analytics مجاز است */
+  readonly analyticsAllowed: boolean;
+  /** آیا precise geo مجاز است */
+  readonly preciseGeoAllowed: boolean;
+}
+
+/**
  * نتیجه تصمیم HandshakeDecisionEngine — خروجی فاز decide.
  * Result of HandshakeDecisionEngine.decide() — output of the decide phase.
  */
 export interface HandshakeDecision {
-  /** لایه UI انتخاب‌شده بر اساس قابلیت‌های مرورگر */
+  /** لایه UI انتخاب‌شده بر اساس قابلیت‌های مرورگر و دسترسی‌پذیری */
   readonly selectedLayer: CapabilityLayer;
   /** پیکربندی UI نهایی */
   readonly uiConfig: UIConfig;
+  /** حالت حریم خصوصی استنباط‌شده — جدا از انتخاب لایه render */
+  readonly privacyMode: PrivacyMode;
   /** زمان تصمیم (ISO 8601) */
   readonly decidedAt: string;
 }

@@ -4,13 +4,26 @@
  * HandshakeDecisionEngine — فاز تصمیم‌گیری handshake.
  * Determines the final UI configuration (locale, direction, theme, layer,
  * hero copy, and consent requirement) from enriched visitor context.
+ *
+ * **Privacy contract:** DNT/GPC restrict storage, profiling, tracking,
+ * analytics, and personalization (privacy mode → Tier 0). They do **not**
+ * force the visual layer down to STATIC_HTML — render layer is selected
+ * purely from device capability and accessibility preferences (e.g.
+ * `prefers-reduced-motion`).
  */
 
 import type { CapabilityLayer } from '../types/base.js';
 import type { EnrichedContext } from '../types/visitor.js';
-import type { HandshakeDecision, UIConfig } from '../types/api.js';
+import type { HandshakeDecision, PrivacyMode, UIConfig } from '../types/api.js';
 import { SignalCollector } from './signal-collector.js';
 import { EnrichmentPipeline } from './enrichment-pipeline.js';
+import {
+  canPersonalize,
+  canStoreMemory,
+  canUseAnalytics,
+  canUsePreciseGeo,
+  hasPrivacySignal,
+} from '../privacy/policy.js';
 
 // ─── RTL Languages ────────────────────────────────────────────────────────────
 
@@ -136,12 +149,12 @@ export class HandshakeDecisionEngine {
   decide(enriched: EnrichedContext): HandshakeDecision {
     const { signals, geo } = enriched.visitor;
 
-    // DNT/GPC فعال → حفاظت از حریم خصوصی + downgrade به STATIC_HTML
-    const privacyRestricted = signals.dntEnabled || signals.gpcEnabled;
+    // Render layer is selected purely from device capability and a11y
+    // preferences. DNT/GPC must NOT downgrade the visual layer — they
+    // only restrict storage, profiling, and personalization.
+    const selectedLayer: CapabilityLayer = SignalCollector.detectLayer(signals);
 
-    const selectedLayer: CapabilityLayer = privacyRestricted
-      ? 'STATIC_HTML'
-      : SignalCollector.detectLayer(signals);
+    const privacyMode = this.derivePrivacyMode(signals.dntEnabled, signals.gpcEnabled);
 
     const language = this.resolveLanguage(signals.language, geo.country);
     const locale = this.resolveLocale(language, geo.country);
@@ -162,11 +175,36 @@ export class HandshakeDecisionEngine {
     return {
       selectedLayer,
       uiConfig,
+      privacyMode,
       decidedAt: new Date().toISOString(),
     };
   }
 
   // ─── Private Resolvers ────────────────────────────────────────────────────
+
+  /**
+   * تولید PrivacyMode از سیگنال‌های DNT/GPC.
+   * Builds the PrivacyMode object using the canonical privacy policy helpers.
+   * When DNT or GPC is active, enforced consent tier drops to NO_MEMORY and
+   * memory/personalization/analytics/precise-geo are all denied.
+   */
+  private derivePrivacyMode(dntEnabled: boolean, gpcEnabled: boolean): PrivacyMode {
+    const privacySignals = { dntEnabled, gpcEnabled };
+    const restricted = hasPrivacySignal(privacySignals);
+    const enforcedConsentTier = restricted ? 'NO_MEMORY' : 'ANONYMOUS';
+    return {
+      restricted,
+      dntEnabled,
+      gpcEnabled,
+      enforcedConsentTier,
+      memoryAllowed: canStoreMemory(enforcedConsentTier),
+      personalizationAllowed: canPersonalize(enforcedConsentTier, privacySignals),
+      // Analytics gate uses k-anonymity at runtime; here we report the
+      // tier-level capability only (cohort size is per-query).
+      analyticsAllowed: !restricted && canUseAnalytics(enforcedConsentTier, Number.POSITIVE_INFINITY),
+      preciseGeoAllowed: canUsePreciseGeo(enforcedConsentTier, privacySignals),
+    };
+  }
 
   private resolveLanguage(signalLang: string, country: string): string {
     if (signalLang && signalLang !== 'unknown' && signalLang.length >= 2) {
