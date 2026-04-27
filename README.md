@@ -9,7 +9,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square&logo=githubactions&logoColor=white" alt="Build" />
-  <img src="https://img.shields.io/badge/version-0.1.0-blue?style=flat-square&logo=npm&logoColor=white" alt="Version" />
+  <img src="https://img.shields.io/badge/version-1.0.0-blue?style=flat-square&logo=npm&logoColor=white" alt="Version" />
   <img src="https://img.shields.io/badge/license-MIT-yellow?style=flat-square&logo=opensourceinitiative&logoColor=white" alt="License" />
   <img src="https://img.shields.io/badge/TypeScript-5.4+-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/React-18+-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React" />

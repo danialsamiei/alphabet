@@ -7,12 +7,14 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "paths": {
-      "@awaf/core": ["../core/src/index.ts"],
-      "@awaf/core/*": ["../core/src/*"],
-      "@awaf/api": ["../api/src/index.ts"],
-      "@awaf/api/*": ["../api/src/*"]
+      "@awaf/core": ["../core/dist/index.d.ts"],
+      "@awaf/api": ["../api/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../api" }
+  ]
 }
