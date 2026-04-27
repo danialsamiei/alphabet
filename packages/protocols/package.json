@@ -5,11 +5,47 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
+    },
+    "./direct-api": {
+      "types": "./dist/direct-api/index.d.ts",
+      "import": "./dist/direct-api.js",
+      "require": "./dist/direct-api.cjs"
+    },
+    "./mcp": {
+      "types": "./dist/mcp/index.d.ts",
+      "import": "./dist/mcp.js",
+      "require": "./dist/mcp.cjs"
+    },
+    "./a2a": {
+      "types": "./dist/a2a/index.d.ts",
+      "import": "./dist/a2a.js",
+      "require": "./dist/a2a.cjs"
+    },
+    "./qr-handoff": {
+      "types": "./dist/qr-handoff/index.d.ts",
+      "import": "./dist/qr-handoff.js",
+      "require": "./dist/qr-handoff.cjs"
+    },
+    "./normalizers": {
+      "types": "./dist/normalizers/index.d.ts",
+      "import": "./dist/normalizers.js",
+      "require": "./dist/normalizers.cjs"
+    },
+    "./errors": {
+      "types": "./dist/errors/index.d.ts",
+      "import": "./dist/errors.js",
+      "require": "./dist/errors.cjs"
+    },
+    "./ai-sdk": {
+      "types": "./dist/ai-sdk/index.d.ts",
+      "import": "./dist/ai-sdk.js",
+      "require": "./dist/ai-sdk.cjs"
     }
   },
   "scripts": {
