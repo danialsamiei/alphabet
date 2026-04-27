@@ -181,7 +181,7 @@ export class SignalCollector {
 
   private readGPC(): boolean {
     const nav = this.opts.navigator ?? (typeof navigator !== 'undefined' ? navigator : undefined);
-    // GPC는 표준 Navigator 타입에 없으므로 안전하게 접근
+    // GPC در تایپ Navigator استاندارد وجود ندارد — دسترسی ایمن
     const gpcVal = (nav as { globalPrivacyControl?: unknown } | undefined)?.['globalPrivacyControl'];
     return gpcVal === true;
   }

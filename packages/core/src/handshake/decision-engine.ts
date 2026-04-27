@@ -90,6 +90,20 @@ const COUNTRY_LANGUAGE_MAP: Readonly<Record<string, string>> = {
   GB: 'en', AU: 'en', SG: 'en', IN: 'en',
 } as const;
 
+// ─── Language → First Locale Index (pre-computed) ────────────────────────────
+
+/** index معکوس از زبان → اولین locale در LOCALE_MAP — برای fallback سریع */
+const LANGUAGE_FIRST_LOCALE: Readonly<Record<string, string>> = (() => {
+  const index: Record<string, string> = {};
+  for (const key of Object.keys(LOCALE_MAP)) {
+    const lang = key.split('-')[0];
+    if (lang !== undefined && !(lang in index)) {
+      index[lang] = key;
+    }
+  }
+  return index;
+})();
+
 // ─── HandshakeDecisionEngine Class ───────────────────────────────────────────
 
 /**
@@ -166,8 +180,8 @@ export class HandshakeDecisionEngine {
     const mapped = LOCALE_MAP[key];
     if (mapped !== undefined) return mapped;
 
-    // fallback: اگر زبان در locale map یافت نشد، اولین locale با همان زبان
-    const fallback = Object.keys(LOCALE_MAP).find((k) => k.startsWith(`${language}-`));
+    // fallback: اولین locale با همان زبان از index معکوس O(1)
+    const fallback = LANGUAGE_FIRST_LOCALE[language];
     if (fallback !== undefined) return fallback;
 
     return 'en-US';

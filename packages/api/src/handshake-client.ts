@@ -133,6 +133,14 @@ export class HandshakeClient {
 
       const json = await response.json() as AWAFResponse<HandshakeResult>;
 
+      // بررسی شکل پاسخ — محافظت در برابر malformed responses
+      if (typeof json !== 'object' || json === null || !('success' in json)) {
+        return err({
+          code: 'HANDSHAKE_INVALID_RESPONSE',
+          message: 'Server returned a malformed handshake response',
+        });
+      }
+
       if (!json.success || json.data === undefined) {
         return err(
           json.error ?? {

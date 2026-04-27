@@ -216,7 +216,20 @@ export class EnrichmentPipeline {
   }
 
   private generateAnonymousId(): VisitorId {
-    const id = `anon-${crypto.randomUUID()}`;
+    // crypto.randomUUID() ایمن است اما در non-HTTPS نیاز به fallback دارد
+    let uuid: string;
+    try {
+      uuid = crypto.randomUUID();
+    } catch {
+      // fallback برای non-secure contexts — با Uint8Array و hex encoding
+      const bytes = new Uint8Array(16);
+      const rng = typeof crypto !== 'undefined' && crypto.getRandomValues
+        ? (b: Uint8Array) => crypto.getRandomValues(b)
+        : (b: Uint8Array) => { for (let i = 0; i < b.length; i++) b[i] = Math.floor(Math.random() * 256); };
+      rng(bytes);
+      uuid = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    }
+    const id = `anon-${uuid}`;
     return id as VisitorId;
   }
 }
