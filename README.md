@@ -125,7 +125,17 @@ evidence.
 
 ### `@awaf/security`
 
+> **Scope.** `@awaf/security` is a **defence-in-depth supplement**, not a complete security solution. It ships conservative, lightweight guardrails with explicit limitations documented in [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md). It does not claim full OWASP-LLM or NIST AI RMF compliance.
+
 - **`ConsentTierManager`** — code-enforced consent state machine. States: `pending` → `granted` → `revoked` (plus `reset`). Tiers: `NO_MEMORY` < `ANONYMOUS` < `CONSENTED` < `ENRICHED`. Operations: `grant`, `revoke`, `reset`, `downgradeOnPrivacySignal` (DNT/GPC), `invalidateOnPolicyChange`. Enforces the monotonic-upgrade rule via `Result<T, AWAFError>` and exposes a transparent `ConsentTierExplanation` for direct rendering in a consent UI.
+- **PII redaction** — `redactPII`, `redactPIIDeep`, `detectPII` for emails, phone-like strings, JWTs, AWS / Google / GitHub / Slack tokens, PEM private-key blocks, IPv4 (strict), and Luhn-checked credit-card numbers. Three strictness levels (`lenient`, `standard`, `strict`). Designed to satisfy the AWAF "no PII in logs by default" rule; not a replacement for a server-side DLP.
+- **Prompt-injection heuristics** — `detectPromptRisk` returns `low` / `medium` / `high` plus a recommended action (`allow` / `flag` / `review` / `block`) and an explanation. Bundled patterns cover instruction override, system-prompt exfiltration, role override, safety-off, exfiltration via URL, and fake tool delimiters. Conservative scoring keeps normal user content from being blocked.
+- **Output validation** — `validateUrl` (allow-list of protocols and optional hosts; rejects `javascript:`, `data:`, `vbscript:`, `file:`), `sanitizeHtml` (small allow-list of tags, strips `script`/`style`/`iframe`/`object`/`embed`/`on*` handlers, blocks dangerous href / src protocols), and `markTextAsSafe` for plain-text rendering. Returns a branded `SafeRender` type so consumers can refuse to render anything that has not passed through the sanitizer.
+- **Memory integrity guard** — `MemoryIntegrityGuard` validates memory writes against consent tier and actor role, enforces admin-only domains (`class_notes`, `tech_pulse`), and applies a configurable cross-domain read ACL. `visitor` is strictly isolated by default.
+- **Audit logger** — `AWAFAuditLogger` with structured event categories (`consent_changed`, `privacy_signal_detected`, `memory_write_blocked`, `memory_read_blocked`, `prompt_risk_detected`, `output_rejected`, `policy_version_changed`), automatic PII redaction on every payload, pluggable sinks, and an `InMemoryAuditSink` for tests.
+- **Policy defaults** — `DEFAULT_POLICY_VERSION`, `DEFAULT_DOMAIN_READ_ACL`, `ADMIN_ONLY_WRITE_DOMAINS`, and `DEFAULT_PROMPT_INJECTION_PATTERNS` exposed for easy override.
+
+**Not yet shipped:** NIST AI RMF 1.0 mapping document, cost guardian (circuit breaker + token budget), differential privacy helpers, integration with a vector-DB storage layer.
 
 ### Repository tooling
 
@@ -153,7 +163,7 @@ These are described in [`AGENTS.md`](AGENTS.md) and [`docs/ROADMAP.md`](docs/ROA
 
 - **`@awaf/ui`** — `LayerSelector`, the five UI degradation layers (`Layer1R3F` through `Layer5TextOnly`), the `useContextHandshake` and `useConsent` React hooks, and the `<ConsentBanner />` component. Currently a stub package.
 - **`@awaf/protocols`** — MCP server, A2A adapter, QR handoff, and a normalized REST adapter. Currently a stub package.
-- **`@awaf/security`** — `ConsentTierManager` (state machine + monotonic upgrade + DNT/GPC downgrade + policy invalidation + transparent explanation) is shipped. Prompt-injection defense (OWASP LLM01), audit logger, NIST AI RMF 1.0 mapping, cost guardian (circuit breaker + token budget), memory integrity guard, and differential privacy helpers are still planned.
+- **`@awaf/security`** — `ConsentTierManager`, PII redaction, prompt-injection heuristics, URL / HTML output validation, `MemoryIntegrityGuard` (consent-tier + ACL enforcement), and `AWAFAuditLogger` (structured events with PII redaction by default) all ship today. NIST AI RMF 1.0 mapping document, cost guardian (circuit breaker + token budget), and differential-privacy helpers are still planned.
 - **Memory Mesh runtime** — `DomainFirewall`, browser storage adapters, and (Phase 4) vector-database storage for Tier 3.
 - **Technology Pulse pipeline** — five-stage ingestion (ingest → extract → trust-score → verify → embed), C2PA-style provenance, hallucination firewall, RAG brief generation.
 - **Adapters** — `@awaf/react`, `@awaf/next`, `@awaf/vite`, `@awaf/astro`.
@@ -182,7 +192,7 @@ pnpm test
 ```
 
 You should see all packages build and `@awaf/core` report 131 passing tests.
-Stub packages (`@awaf/ui`, `@awaf/protocols`, `@awaf/security`, `apps/demo`)
+Stub packages (`@awaf/ui`, `@awaf/protocols`, `apps/demo`)
 build and run `vitest run --passWithNoTests` cleanly.
 
 ### Use the parts that are real
@@ -291,7 +301,7 @@ awaf/
 │   ├── api/           # @awaf/api       — HTTP client (16 endpoints), envelope types 🟡
 │   ├── ui/            # @awaf/ui        — stub 🟠
 │   ├── protocols/     # @awaf/protocols — stub 🟠
-│   └── security/      # @awaf/security  — stub 🟠
+│   └── security/      # @awaf/security  — guardrails ✅
 ├── apps/
 │   └── demo/          # @awaf/demo      — stub 🟠
 ├── docs/

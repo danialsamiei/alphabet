@@ -333,7 +333,7 @@ function maskEmail(value: string): string {
   const local = value.slice(0, at);
   const domain = value.slice(at);
   const head = local.length > 0 ? local[0] : '';
-  return `${head ?? ''}***${domain}`;
+  return `${head}***${domain}`;
 }
 
 function countDigits(s: string): number {

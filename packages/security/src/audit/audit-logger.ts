@@ -257,6 +257,12 @@ export class AWAFAuditLogger {
     data: Extract<AuditEvent, { category: C }>['data'],
     correlationId: string | undefined
   ): void {
+    // `redactPIIDeep` works structurally (it walks any object graph and
+    // replaces string leaves) but cannot preserve TS's discriminated-union
+    // type parameter `C`. The double cast through `unknown` documents that
+    // we are widening then narrowing back to the same shape, with the
+    // string fields redacted in place. The runtime structure is identical
+    // — we are only restoring the static type.
     const cleaned = this.redact
       ? (redactPIIDeep(data as unknown as Record<string, unknown>).value as unknown as Extract<
           AuditEvent,

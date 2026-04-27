@@ -122,7 +122,16 @@ export class MemoryIntegrityGuard {
       });
     }
 
+    // `minTier` may be `undefined` if a caller passed a partial custom
+    // `minTierForWrite` mapping. Treat that as "fail closed": deny the write.
     const minTier = this.minTierForWrite[ctx.domain];
+    if (minTier === undefined) {
+      return err({
+        code: 'MEMORY_WRITE_BLOCKED_NO_POLICY',
+        message: `No write policy configured for domain ${ctx.domain}`,
+        details: { domain: ctx.domain },
+      });
+    }
     if (CONSENT_TIER_LEVEL[ctx.consentTier] < CONSENT_TIER_LEVEL[minTier]) {
       return err({
         code: 'MEMORY_WRITE_BLOCKED_TIER',
@@ -167,8 +176,10 @@ export class MemoryIntegrityGuard {
       return ok({ allowed: true });
     }
 
+    // `allowedReaders` may be `undefined` if a caller passed a partial
+    // custom ACL. Fail closed: deny the read.
     const allowedReaders = this.readAcl[ctx.ownerDomain];
-    if (!allowedReaders.includes(ctx.readerDomain)) {
+    if (allowedReaders === undefined || !allowedReaders.includes(ctx.readerDomain)) {
       return err({
         code: 'MEMORY_READ_BLOCKED_ACL',
         message: `Reader domain ${ctx.readerDomain} is not allowed to read ${ctx.ownerDomain}`,
