@@ -5,7 +5,7 @@
  * API data models: AWAFRequest, AWAFResponse, TokenBudget, ResponseMeta.
  */
 
-import type { ConsentTier, ProtocolType, TokenTier } from './base.js';
+import type { ConsentTier, ProtocolType, TokenTier, CapabilityLayer } from './base.js';
 import type { AWAFError } from './result.js';
 import type { VisitorId, SessionId, RequestId } from './brands.js';
 
@@ -176,6 +176,21 @@ export interface HandshakeResult {
   readonly consentGranted: boolean | null;
   /** خطا در صورت شکست */
   readonly error?: AWAFError;
+}
+
+// ─── Handshake Decision ───────────────────────────────────────────────────────
+
+/**
+ * نتیجه تصمیم HandshakeDecisionEngine — خروجی فاز decide.
+ * Result of HandshakeDecisionEngine.decide() — output of the decide phase.
+ */
+export interface HandshakeDecision {
+  /** لایه UI انتخاب‌شده بر اساس قابلیت‌های مرورگر */
+  readonly selectedLayer: CapabilityLayer;
+  /** پیکربندی UI نهایی */
+  readonly uiConfig: UIConfig;
+  /** زمان تصمیم (ISO 8601) */
+  readonly decidedAt: string;
 }
 
 // ─── Streaming Config ─────────────────────────────────────────────────────────

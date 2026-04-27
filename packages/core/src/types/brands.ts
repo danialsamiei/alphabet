@@ -73,7 +73,7 @@ export function createVisitorId(raw: string): Result<VisitorId, AWAFError> {
  * const sessionId = createSessionId();
  */
 export function createSessionId(): SessionId {
-  return `sess-${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as SessionId;
+  return `sess-${crypto.randomUUID()}` as SessionId;
 }
 
 /**
