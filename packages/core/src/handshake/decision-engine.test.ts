@@ -147,6 +147,18 @@ describe('HandshakeDecisionEngine.decide()', () => {
     expect(decision.privacyMode.memoryAllowed).toBe(true);
   });
 
+  it('reduced motion downgrades selectedLayer regardless of privacy signals', () => {
+    const a11y = engine.decide(makeEnriched({ prefersReducedMotion: true }));
+    expect(a11y.selectedLayer).toBe('STATIC_HTML');
+
+    // reduced motion + GPC → still STATIC_HTML, but privacy mode is restricted
+    const a11yPlusGpc = engine.decide(
+      makeEnriched({ prefersReducedMotion: true, gpcEnabled: true })
+    );
+    expect(a11yPlusGpc.selectedLayer).toBe('STATIC_HTML');
+    expect(a11yPlusGpc.privacyMode.restricted).toBe(true);
+  });
+
   it('should set selectedLayer=R3F_IMMERSIVE for webgl+wide screen+no restrictions', () => {
     const enriched = makeEnriched({
       webglSupported: true, screenWidth: 1440, prefersReducedMotion: false,
