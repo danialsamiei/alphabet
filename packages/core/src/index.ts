@@ -31,3 +31,6 @@ export type {
 // ─── Handshake ────────────────────────────────────────────────────────────────
 export { SignalCollector, EnrichmentPipeline, HandshakeDecisionEngine } from './handshake/index.js';
 export type { SignalCollectorOptions } from './handshake/index.js';
+
+// ─── Contracts (route constants, intent vocabularies) ────────────────────────
+export * from './contracts/index.js';

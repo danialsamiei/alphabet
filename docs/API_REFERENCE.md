@@ -2,7 +2,9 @@
 # AWAF SDK API Reference
 
 > **نسخه:** 1.0.0 | **تاریخ:** 2026-04-27
-> **Base URL:** `$AWAF_API_BASE_URL` (default: `http://localhost:3000/api`)
+> **Base URL:** `$AWAF_API_BASE_URL` (default: `http://localhost:3000`)
+> **Canonical version prefix:** `/api/awaf/v1` (single source of truth: `packages/core/src/contracts/routes.ts`, OpenAPI: [`openapi/awaf.v1.yaml`](../openapi/awaf.v1.yaml))
+> **Legacy `/api` mount:** still accepted by `@awaf/api` clients via `normalizeApiBaseUrl()`, but **deprecated** — migrate to `/api/awaf/v1`.
 > **پروتکل:** HTTPS در production، HTTP در development
 > **فرمت:** JSON با Content-Type: application/json
 > **زبان:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
@@ -11,24 +13,26 @@
 
 ## فهرست Endpointها
 
+> Naming note: "AWAF Pulse" is the new product name for what was historically called *Technology Pulse*; "Consent-Aware Memory" replaces *Memory Mesh*. URL paths are unchanged.
+
 | # | گروه | Endpoint | Method | مسیر |
 |---|------|----------|--------|------|
-| ۱ | **Context Handshake** | Handshake | `POST` | `/api/context/handshake` |
-| ۲ | **Context Handshake** | Consent | `POST` | `/api/context/consent` |
-| ۳ | **Context Handshake** | Preference | `POST` | `/api/context/preference` |
-| ۴ | **Visitor Interaction** | Interact | `POST` | `/api/interact` |
-| ۵ | **Visitor Interaction** | Voice Transcribe | `POST` | `/api/voice/transcribe` |
-| ۶ | **Visitor Interaction** | Suggestions | `GET` | `/api/suggestions` |
-| ۷ | **Technology Pulse** | Technology Pulse List | `GET` | `/api/technology-pulse` |
-| ۸ | **Technology Pulse** | Technology Pulse Brief | `POST` | `/api/technology-pulse/brief` |
-| ۹ | **Memory** | Store Memory | `POST` | `/api/visitor/memory` |
-| ۱۰ | **Memory** | Retrieve Memory | `GET` | `/api/visitor/memory` |
-| ۱۱ | **Memory** | Erase Memory | `DELETE` | `/api/visitor/memory` |
-| ۱۲ | **OpenClaw Mesh** | Query | `POST` | `/api/claw/query` |
-| ۱۳ | **OpenClaw Mesh** | Ingest | `POST` | `/api/claw/ingest` |
-| ۱۴ | **OpenClaw Mesh** | Admin Audit | `POST` | `/api/claw/admin/audit` |
-| ۱۵ | **Admin** | Visitor Insights | `GET` | `/api/admin/visitor-insights` |
-| ۱۶ | **Admin** | Pulse Sources | `GET` | `/api/admin/technology-pulse/sources` |
+| ۱ | **Context Handshake** | Handshake | `POST` | `/api/awaf/v1/context/handshake` |
+| ۲ | **Context Handshake** | Consent | `POST` | `/api/awaf/v1/context/consent` |
+| ۳ | **Context Handshake** | Preference | `POST` | `/api/awaf/v1/context/preference` |
+| ۴ | **Visitor Interaction** | Interact | `POST` | `/api/awaf/v1/interact` |
+| ۵ | **Visitor Interaction** | Voice Transcribe | `POST` | `/api/awaf/v1/voice/transcribe` |
+| ۶ | **Visitor Interaction** | Suggestions | `GET` | `/api/awaf/v1/suggestions` |
+| ۷ | **AWAF Pulse** | Pulse List | `GET` | `/api/awaf/v1/technology-pulse` |
+| ۸ | **AWAF Pulse** | Pulse Brief | `POST` | `/api/awaf/v1/technology-pulse/brief` |
+| ۹ | **Consent-Aware Memory** | Store Memory | `POST` | `/api/awaf/v1/visitor/memory` |
+| ۱۰ | **Consent-Aware Memory** | Retrieve Memory | `GET` | `/api/awaf/v1/visitor/memory` |
+| ۱۱ | **Consent-Aware Memory** | Erase Memory | `DELETE` | `/api/awaf/v1/visitor/memory` |
+| ۱۲ | **OpenClaw Mesh** | Query | `POST` | `/api/awaf/v1/claw/query` |
+| ۱۳ | **OpenClaw Mesh** | Ingest | `POST` | `/api/awaf/v1/claw/ingest` |
+| ۱۴ | **OpenClaw Mesh** | Admin Audit | `POST` | `/api/awaf/v1/claw/admin/audit` |
+| ۱۵ | **Admin** | Visitor Insights | `GET` | `/api/awaf/v1/admin/visitor-insights` |
+| ۱۶ | **Admin** | Pulse Sources | `GET` | `/api/awaf/v1/admin/technology-pulse/sources` |
 
 ---
 

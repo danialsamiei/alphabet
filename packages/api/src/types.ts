@@ -6,7 +6,7 @@
  */
 
 import type { AWAFError } from '@awaf/core';
-import type { ConsentTier, MemoryDomain, TrustTier } from '@awaf/core';
+import type { ConsentTier, MemoryDomain, TrustTier, SuggestionActionIntent } from '@awaf/core';
 
 // ─── Group 1: Context Handshake (Endpoints 2–3) ───────────────────────────────
 
@@ -92,11 +92,16 @@ export interface PreferenceResponse {
 
 /**
  * گزینه suggestion برای کاربر.
+ *
+ * The `intentType` describes the UI/action affordance of the suggestion
+ * (a {@link SuggestionActionIntent}), **not** the visitor's domain-level
+ * purpose. For high-level visitor intent classification use
+ * `DomainIntent` from `@awaf/core`.
  */
 export interface SuggestionOption {
   readonly id: string;
   readonly label: string;
-  readonly intentType: 'explore' | 'learn' | 'compare' | 'contact' | 'personalize' | 'language' | 'voice';
+  readonly intentType: SuggestionActionIntent;
   readonly confidence: number;
   readonly icon?: string;
   readonly action: 'navigate' | 'interact' | 'consent_prompt';

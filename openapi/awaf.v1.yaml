@@ -1,0 +1,887 @@
+openapi: 3.1.0
+info:
+  title: AWAF — Alefba Web-Aware Framework HTTP API
+  version: 1.0.0
+  summary: Canonical HTTP surface for AWAF context handshake, suggestions, AWAF Pulse, and consent-aware memory.
+  description: |
+    Single source of truth for AWAF API routes, request/response schemas,
+    and authentication conventions. The canonical version prefix for
+    every endpoint is `/api/awaf/v1`.
+
+    Endpoint implementation status is encoded with the `x-awaf-status`
+    extension:
+
+    - `implemented` — typed in `@awaf/api` and exercised by unit tests
+      (server backing is consumer-supplied).
+    - `planned` — typed contract exists but is not yet wired
+      end-to-end; safe to call only against a mock server.
+
+    Naming note: the historical concept "Memory Mesh" is now referred to
+    as "Consent-Aware Memory" / "Consent Memory Graph". "Technology
+    Pulse" is now packaged as the **AWAF Pulse** plugin module. Old
+    names remain as documentation aliases for backwards compatibility.
+  license:
+    name: MIT
+servers:
+  - url: '{origin}/api/awaf/v1'
+    description: Canonical AWAF v1 server. `origin` is the host root.
+    variables:
+      origin:
+        default: http://localhost:3000
+  - url: '{origin}/api'
+    description: |
+      Legacy unversioned mount point. Accepted by `@awaf/api` clients
+      via the `normalizeApiBaseUrl()` helper for backwards compatibility,
+      but **deprecated**. Migrate to `/api/awaf/v1`.
+    variables:
+      origin:
+        default: http://localhost:3000
+
+tags:
+  - name: Context Handshake
+    description: Six-phase context handshake, consent ladder, and explicit preferences.
+  - name: Visitor Interaction
+    description: Text/voice interaction and ranked suggestions.
+  - name: AWAF Pulse
+    description: AWAF Pulse (formerly "Technology Pulse") signal feed and RAG briefs.
+  - name: Consent-Aware Memory
+    description: Consent-Aware Memory (formerly "Memory Mesh") store/read/erase.
+  - name: OpenClaw Mesh
+    description: Cross-domain semantic query and ingestion.
+  - name: Admin
+    description: Administrative dashboards and source management.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque-session-token
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    AWAFError:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+    ConsentTier:
+      type: string
+      enum: [NO_MEMORY, ANONYMOUS, CONSENTED, ENRICHED]
+
+    TrustTier:
+      type: string
+      enum: [T1, T2, T3]
+
+    MemoryDomain:
+      type: string
+      enum: [general, site_specific, visitor, class_notes, ideas, social, tech_pulse]
+
+    DomainIntent:
+      type: string
+      enum: [technology, collaboration, class_notes, philosophy, personal, explore]
+      description: High-level visitor purpose. Distinct from `SuggestionActionIntent`.
+
+    SuggestionActionIntent:
+      type: string
+      enum: [explore, learn, compare, contact, personalize, language, voice]
+      description: UI/action intent attached to a suggestion chip.
+
+    HandshakeRequestPayload:
+      type: object
+      required:
+        [language, timezone, deviceClass, platform, screenWidth, screenHeight,
+         devicePixelRatio, webglSupported, dntEnabled, gpcEnabled, referrer]
+      properties:
+        language: { type: string }
+        timezone: { type: string }
+        deviceClass: { type: string }
+        platform: { type: string }
+        screenWidth: { type: integer }
+        screenHeight: { type: integer }
+        devicePixelRatio: { type: number }
+        webglSupported: { type: boolean }
+        dntEnabled: { type: boolean }
+        gpcEnabled: { type: boolean }
+        networkType: { type: string }
+        referrer: { type: string }
+
+    UIConfig:
+      type: object
+      required: [locale, direction, theme, heroCopy, consentRequired]
+      properties:
+        locale: { type: string }
+        direction:
+          type: string
+          enum: [ltr, rtl]
+        theme:
+          type: string
+          enum: [light, dark, auto]
+        heroCopy: { type: string }
+        consentRequired: { type: boolean }
+        cssVariables:
+          type: object
+          additionalProperties: { type: string }
+
+    HandshakeResult:
+      type: object
+      required: [success, sessionId, uiConfig, consentGranted]
+      properties:
+        success: { type: boolean }
+        sessionId: { type: string }
+        uiConfig:
+          oneOf:
+            - $ref: '#/components/schemas/UIConfig'
+            - type: 'null'
+        consentGranted:
+          oneOf:
+            - type: boolean
+            - type: 'null'
+        error:
+          $ref: '#/components/schemas/AWAFError'
+
+    ConsentPurpose:
+      type: object
+      required: [id, name, description, granted]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        granted: { type: boolean }
+
+    ConsentRequest:
+      type: object
+      required: [visitorId, sessionId, action, tier]
+      properties:
+        visitorId: { type: string }
+        sessionId: { type: string }
+        action:
+          type: string
+          enum: [grant, revoke, upgrade, downgrade]
+        tier:
+          $ref: '#/components/schemas/ConsentTier'
+        purposes:
+          type: array
+          items: { $ref: '#/components/schemas/ConsentPurpose' }
+        duration:
+          type: string
+          enum: [session, 30d, 90d, 1y]
+
+    ConsentResponse:
+      type: object
+      required:
+        [requestId, visitorId, success, action, previousTier, currentTier, state]
+      properties:
+        requestId: { type: string }
+        visitorId: { type: string }
+        success: { type: boolean }
+        action: { type: string }
+        previousTier: { $ref: '#/components/schemas/ConsentTier' }
+        currentTier: { $ref: '#/components/schemas/ConsentTier' }
+        state:
+          type: string
+          enum: [pending, granted, revoked]
+        grantedAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+    PreferenceRequest:
+      type: object
+      required: [visitorId, sessionId]
+      properties:
+        visitorId: { type: string }
+        sessionId: { type: string }
+        language: { type: string }
+        topics:
+          type: array
+          items: { type: string }
+        contentDepth:
+          type: string
+          enum: [overview, deep, expert]
+        notificationPrefs:
+          type: string
+          enum: [none, session, persistent]
+        theme:
+          type: string
+          enum: [auto, light, dark]
+        overrideHandshake: { type: boolean }
+
+    PreferenceResponse:
+      type: object
+      required:
+        [requestId, visitorId, success, preferences, updatedAt, effectiveTier]
+      properties:
+        requestId: { type: string }
+        visitorId: { type: string }
+        success: { type: boolean }
+        preferences:
+          type: object
+          required: [language, topics, contentDepth, notificationPrefs, theme]
+          properties:
+            language: { type: string }
+            topics:
+              type: array
+              items: { type: string }
+            contentDepth: { type: string }
+            notificationPrefs: { type: string }
+            theme: { type: string }
+        updatedAt: { type: string, format: date-time }
+        effectiveTier: { $ref: '#/components/schemas/ConsentTier' }
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+    SuggestionOption:
+      type: object
+      required: [id, label, intentType, confidence, action, requiresConsent]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        intentType: { $ref: '#/components/schemas/SuggestionActionIntent' }
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        icon: { type: string }
+        action:
+          type: string
+          enum: [navigate, interact, consent_prompt]
+        requiresConsent: { type: boolean }
+        targetUrl: { type: string, format: uri }
+
+    InteractRequest:
+      type: object
+      required: [visitorId, sessionId, message, inputMode]
+      properties:
+        visitorId: { type: string }
+        sessionId: { type: string }
+        message: { type: string }
+        inputMode:
+          type: string
+          enum: [text, voice]
+        streaming: { type: boolean }
+        suggestFollowUps: { type: boolean }
+
+    InteractResponse:
+      type: object
+      required: [requestId, visitorId, success, response, tokenUsage, streaming]
+      properties:
+        requestId: { type: string }
+        visitorId: { type: string }
+        success: { type: boolean }
+        response:
+          type: object
+          required: [text]
+          properties:
+            text: { type: string }
+            suggestions:
+              type: array
+              items: { $ref: '#/components/schemas/SuggestionOption' }
+        tokenUsage:
+          type: object
+          required: [prompt, completion, total]
+          properties:
+            prompt: { type: integer }
+            completion: { type: integer }
+            total: { type: integer }
+        streaming:
+          type: boolean
+          enum: [false]
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+    SuggestionsResponse:
+      type: object
+      required: [requestId, visitorId, success, suggestions, generatedAt]
+      properties:
+        requestId: { type: string }
+        visitorId: { type: string }
+        success: { type: boolean }
+        suggestions:
+          type: array
+          items: { $ref: '#/components/schemas/SuggestionOption' }
+        generatedAt: { type: string, format: date-time }
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+    VoiceTranscribeResponse:
+      type: object
+      required: [requestId, visitorId, success, transcription]
+      properties:
+        requestId: { type: string }
+        visitorId: { type: string }
+        success: { type: boolean }
+        transcription:
+          type: object
+          required: [text, confidence, language, durationMs]
+          properties:
+            text: { type: string }
+            confidence: { type: number }
+            language: { type: string }
+            durationMs: { type: integer }
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+    TechnologySignal:
+      type: object
+      required:
+        [id, source, title, category, trustTier, provenanceChain, rawText, url,
+         publishedAt, ingestedAt]
+      properties:
+        id: { type: string }
+        source: { type: string }
+        title: { type: string }
+        category: { type: string }
+        trustTier: { $ref: '#/components/schemas/TrustTier' }
+        provenanceChain:
+          type: array
+          items:
+            type: object
+            required: [source, url, accessedAt]
+            properties:
+              source: { type: string }
+              url: { type: string }
+              accessedAt: { type: string, format: date-time }
+        rawText: { type: string }
+        url: { type: string, format: uri }
+        publishedAt: { type: string, format: date-time }
+        ingestedAt: { type: string, format: date-time }
+
+    TechnologyPulseResponse:
+      type: object
+      required: [requestId, success, signals, pagination, facets]
+      properties:
+        requestId: { type: string }
+        success: { type: boolean }
+        signals:
+          type: array
+          items: { $ref: '#/components/schemas/TechnologySignal' }
+        pagination:
+          type: object
+          required: [page, limit, total, totalPages]
+          properties:
+            page: { type: integer }
+            limit: { type: integer }
+            total: { type: integer }
+            totalPages: { type: integer }
+        facets:
+          type: object
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+    StoreMemoryRequest:
+      type: object
+      required: [visitorId, sessionId, domain, content, privacyLabel]
+      properties:
+        visitorId: { type: string }
+        sessionId: { type: string }
+        domain: { $ref: '#/components/schemas/MemoryDomain' }
+        content: { type: string }
+        vectorEmbedding:
+          type: array
+          items: { type: number }
+        privacyLabel:
+          type: string
+          enum: [correlation_allowed, isolated, governance_required]
+        ttlDays: { type: integer }
+
+    StoreMemoryResponse:
+      type: object
+      required: [requestId, visitorId, success, memory, consentTier, tokensUsed]
+      properties:
+        requestId: { type: string }
+        visitorId: { type: string }
+        success: { type: boolean }
+        memory:
+          type: object
+          required: [memoryId, domain, content, privacyLabel, createdAt]
+          properties:
+            memoryId: { type: string }
+            domain: { $ref: '#/components/schemas/MemoryDomain' }
+            content: { type: string }
+            privacyLabel: { type: string }
+            createdAt: { type: string, format: date-time }
+            expiresAt: { type: string, format: date-time }
+        consentTier: { $ref: '#/components/schemas/ConsentTier' }
+        tokensUsed: { type: integer }
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+    EraseMemoryRequest:
+      type: object
+      required: [visitorId, sessionId, scope, reason, confirmationToken]
+      properties:
+        visitorId: { type: string }
+        sessionId: { type: string }
+        scope:
+          type: string
+          enum: [all, domain, specific]
+        domain: { $ref: '#/components/schemas/MemoryDomain' }
+        memoryIds:
+          type: array
+          items: { type: string }
+        reason:
+          type: string
+          enum: [user_request, expired, gdpr_article_17, ccpa_deletion]
+        confirmationToken: { type: string }
+
+    EraseMemoryResponse:
+      type: object
+      required:
+        [requestId, visitorId, success, scope, deletedCount, deletedIds, confirmationId]
+      properties:
+        requestId: { type: string }
+        visitorId: { type: string }
+        success: { type: boolean }
+        scope: { type: string }
+        deletedCount: { type: integer }
+        deletedIds:
+          type: array
+          items: { type: string }
+        confirmationId: { type: string }
+        error: { $ref: '#/components/schemas/AWAFError' }
+
+paths:
+  /context/handshake:
+    post:
+      tags: [Context Handshake]
+      summary: Six-phase context handshake.
+      operationId: contextHandshake
+      x-awaf-status: implemented
+      x-awaf-route-key: contextHandshake
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HandshakeRequestPayload' }
+      responses:
+        '200':
+          description: Handshake result with UIConfig and sessionId.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HandshakeResult' }
+
+  /context/consent:
+    post:
+      tags: [Context Handshake]
+      summary: Grant, revoke, upgrade, or downgrade a consent record.
+      operationId: contextConsent
+      x-awaf-status: implemented
+      x-awaf-route-key: contextConsent
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConsentRequest' }
+      responses:
+        '200':
+          description: Consent record after the action was applied.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConsentResponse' }
+
+  /context/preference:
+    post:
+      tags: [Context Handshake]
+      summary: Persist explicit visitor preferences.
+      operationId: contextPreference
+      x-awaf-status: implemented
+      x-awaf-route-key: contextPreference
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PreferenceRequest' }
+      responses:
+        '200':
+          description: Updated preference snapshot.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PreferenceResponse' }
+
+  /interact:
+    post:
+      tags: [Visitor Interaction]
+      summary: Text/voice interaction with the AWAF agent.
+      description: |
+        When `streaming` is `false` (default), returns an
+        `InteractResponse`. When `streaming` is `true`, returns an
+        `text/event-stream` of `InteractStreamEvent` messages.
+      operationId: interact
+      x-awaf-status: implemented
+      x-awaf-route-key: interact
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/InteractRequest' }
+      responses:
+        '200':
+          description: Either a JSON `InteractResponse` or an SSE stream.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InteractResponse' }
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE stream of `InteractStreamEvent` JSON messages.
+
+  /voice/transcribe:
+    post:
+      tags: [Visitor Interaction]
+      summary: Transcribe an uploaded audio file.
+      operationId: voiceTranscribe
+      x-awaf-status: implemented
+      x-awaf-route-key: voiceTranscribe
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [visitorId, sessionId, audio]
+              properties:
+                visitorId: { type: string }
+                sessionId: { type: string }
+                audio:
+                  type: string
+                  format: binary
+                language: { type: string }
+                model:
+                  type: string
+                  enum: [whisper-1]
+      responses:
+        '200':
+          description: Transcribed text.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoiceTranscribeResponse' }
+
+  /suggestions:
+    get:
+      tags: [Visitor Interaction]
+      summary: Ranked context-aware suggestion chips.
+      operationId: getSuggestions
+      x-awaf-status: implemented
+      x-awaf-route-key: suggestions
+      security: []
+      parameters:
+        - name: visitorId
+          in: query
+          required: true
+          schema: { type: string }
+        - name: sessionId
+          in: query
+          schema: { type: string }
+        - name: pageUrl
+          in: query
+          schema: { type: string }
+        - name: intentHint
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: includeRequiresConsent
+          in: query
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: Ranked suggestions.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SuggestionsResponse' }
+
+  /technology-pulse:
+    get:
+      tags: [AWAF Pulse]
+      summary: List AWAF Pulse signals (formerly "Technology Pulse").
+      operationId: getTechnologyPulse
+      x-awaf-status: implemented
+      x-awaf-route-key: technologyPulse
+      security: []
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: trustTier
+          in: query
+          schema: { $ref: '#/components/schemas/TrustTier' }
+        - name: source
+          in: query
+          schema: { type: string }
+        - name: dateFrom
+          in: query
+          schema: { type: string, format: date }
+        - name: dateTo
+          in: query
+          schema: { type: string, format: date }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [publishedAt, ingestedAt, trustScore]
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Page of AWAF Pulse signals.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TechnologyPulseResponse' }
+
+  /technology-pulse/brief:
+    post:
+      tags: [AWAF Pulse]
+      summary: Generate an AWAF Pulse RAG brief.
+      operationId: postTechnologyPulseBrief
+      x-awaf-status: implemented
+      x-awaf-route-key: technologyPulseBrief
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [visitorId, sessionId, period]
+              properties:
+                visitorId: { type: string }
+                sessionId: { type: string }
+                period:
+                  type: string
+                  enum: [daily, weekly]
+                categories:
+                  type: array
+                  items: { type: string }
+                maxLength:
+                  type: string
+                  enum: [short, medium, long]
+                focusTopics:
+                  type: array
+                  items: { type: string }
+      responses:
+        '200':
+          description: Generated brief.
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /visitor/memory:
+    post:
+      tags: [Consent-Aware Memory]
+      summary: Store a memory entry.
+      operationId: postVisitorMemory
+      x-awaf-status: implemented
+      x-awaf-route-key: visitorMemoryStore
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StoreMemoryRequest' }
+      responses:
+        '200':
+          description: Stored memory record.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StoreMemoryResponse' }
+    get:
+      tags: [Consent-Aware Memory]
+      summary: Read memory entries.
+      operationId: getVisitorMemory
+      x-awaf-status: implemented
+      x-awaf-route-key: visitorMemoryRead
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: visitorId
+          in: query
+          required: true
+          schema: { type: string }
+        - name: sessionId
+          in: query
+          required: true
+          schema: { type: string }
+        - name: domain
+          in: query
+          schema: { $ref: '#/components/schemas/MemoryDomain' }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: includeExpired
+          in: query
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: Memory page.
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      tags: [Consent-Aware Memory]
+      summary: Erase memory (GDPR Art. 17 / CCPA).
+      operationId: deleteVisitorMemory
+      x-awaf-status: implemented
+      x-awaf-route-key: visitorMemoryDelete
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EraseMemoryRequest' }
+      responses:
+        '200':
+          description: Erasure receipt.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EraseMemoryResponse' }
+
+  /claw/query:
+    post:
+      tags: [OpenClaw Mesh]
+      summary: Cross-domain semantic query against consent-aware memory.
+      operationId: postClawQuery
+      x-awaf-status: planned
+      x-awaf-route-key: clawQuery
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Ranked results.
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /claw/ingest:
+    post:
+      tags: [OpenClaw Mesh]
+      summary: Ingest content into consent-aware memory.
+      operationId: postClawIngest
+      x-awaf-status: planned
+      x-awaf-route-key: clawIngest
+      security: [{ apiKey: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Ingest receipt.
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /claw/admin/audit:
+    post:
+      tags: [OpenClaw Mesh]
+      summary: Admin audit of memory entries.
+      operationId: postClawAdminAudit
+      x-awaf-status: planned
+      x-awaf-route-key: clawAdminAudit
+      security: [{ apiKey: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Audit results.
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /admin/visitor-insights:
+    get:
+      tags: [Admin]
+      summary: k-anonymous aggregate visitor insights.
+      operationId: getAdminVisitorInsights
+      x-awaf-status: planned
+      x-awaf-route-key: adminVisitorInsights
+      security: [{ apiKey: [] }]
+      parameters:
+        - name: dateFrom
+          in: query
+          schema: { type: string, format: date }
+        - name: dateTo
+          in: query
+          schema: { type: string, format: date }
+        - name: country
+          in: query
+          schema: { type: string }
+        - name: granularity
+          in: query
+          schema:
+            type: string
+            enum: [hourly, daily, weekly]
+      responses:
+        '200':
+          description: Aggregate insight payload.
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /admin/technology-pulse/sources:
+    get:
+      tags: [Admin]
+      summary: AWAF Pulse source catalog management.
+      operationId: getAdminPulseSources
+      x-awaf-status: planned
+      x-awaf-route-key: adminPulseSources
+      security: [{ apiKey: [] }]
+      parameters:
+        - name: trustTier
+          in: query
+          schema: { $ref: '#/components/schemas/TrustTier' }
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, paused, deprecated]
+        - name: category
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Source catalog page.
+          content:
+            application/json:
+              schema:
+                type: object
