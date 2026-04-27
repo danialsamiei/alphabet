@@ -1,0 +1,160 @@
+# AWAF — Roadmap
+
+> AWAF aims to be **the default privacy-first adaptive web SDK**: a lightweight
+> TypeScript toolkit that turns any website into a context-aware, multilingual,
+> capability-adaptive, AI-ready experience without invasive tracking.
+>
+> This roadmap is a sequenced, **actionable** plan to get from today's state
+> (see [`IMPLEMENTATION_STATUS.md`](./IMPLEMENTATION_STATUS.md)) to a 1.0 release.
+> It is intentionally honest: each phase ends with concrete, demonstrable artifacts.
+>
+> No fixed dates are committed. Phases are scoped, not timeboxed.
+
+---
+
+## Guiding principles
+
+1. **Truth over hype.** Every shipped feature must be backed by code, tests, and a working example. The README never claims more than the code does.
+2. **Privacy-first by default.** Tier 0 (`NO_MEMORY`) must be the safe path; consent must be explicit; DNT/GPC always wins.
+3. **Integrate, don't replace.** AWAF is an adaptive context layer on top of existing tools (Next.js, Astro, i18next, Vercel AI SDK, GrowthBook, LaunchDarkly), not a substitute for any of them.
+4. **Smallest useful surface.** Ship the smallest thing that works end-to-end before building the next layer. Layers 4 + 5 of UI degradation are first-class; Layer 1 (R3F) is last.
+5. **Strict types, no `any`.** Maintain `strict` + `exactOptionalPropertyTypes`. No new runtime dependencies unless they pull their weight.
+
+---
+
+## Phase 1 — Truth alignment and API contract
+
+**Goal.** Make the repository's public surface match what is actually shipped, and freeze a stable v0 API contract that later phases can build on without breaking changes.
+
+**Scope.**
+- Audit and document current implementation status — see `docs/IMPLEMENTATION_STATUS.md`.
+- Rewrite `README.md` to clearly separate Implemented / Partial / Planned, remove overclaiming language, and add a Project Positioning section.
+- Add ESLint + Prettier configuration so `pnpm lint` actually runs.
+- Freeze the `AWAFRequest` / `AWAFResponse` envelope and `Result<T, E>` shapes as the v0 contract.
+- Add a CHANGELOG entry and a Changeset for the documentation realignment.
+- Add a CONTRIBUTING note: PRs may not introduce new "complete X" / "guarantees Y" language unless backed by code + tests.
+
+**Exit criteria.**
+- `docs/IMPLEMENTATION_STATUS.md` exists and is specific (Implemented / Partial / Stub / Planned, with file-level evidence).
+- `docs/ROADMAP.md` exists (this file).
+- `README.md` no longer references symbols that don't exist in source.
+- `pnpm typecheck` and `pnpm test` are green.
+- `pnpm lint` runs ESLint and reports zero errors on the existing code.
+
+---
+
+## Phase 2 — Core privacy, consent, and adaptive rendering
+
+**Goal.** Deliver the smallest working AWAF: a website can install `@awaf/core` + `@awaf/api` + `@awaf/ui`, run a context handshake, render Layer 4 (semantic HTML) or Layer 5 (text-only), and persist tier-aware consent.
+
+**Scope.**
+- `@awaf/core`
+  - `HandshakeOrchestrator` that wires `SignalCollector → EnrichmentPipeline → HandshakeDecisionEngine` and emits the six lifecycle states (`detect → enrich → decide → display → consent → morph`).
+  - `ConsentTierManager` state machine (`pending → granted → revoked`) with `grant(tier)`, `revoke()`, `reset()`, and `handlePrivacySignal(DNT|GPC)` (auto-downgrade to Tier 0).
+  - Browser storage adapters (`sessionStorage` for Tier 1, `localStorage` for Tier 2) behind a `MemoryAdapter` interface; Tier 3 (vector DB) deferred to Phase 4.
+  - Pluggable `GeoProvider` interface so consumers can inject coarse geo without the SDK doing IP lookups itself.
+- `@awaf/api`
+  - Retry with exponential backoff and jitter (no new runtime dependency).
+  - SSE handler for `postInteract` streaming.
+  - Parsed rate-limit headers exposed on the `Result` value.
+  - A small in-process mock server (under `packages/api/src/__mocks__/`) used in tests and in the demo.
+- `@awaf/ui`
+  - `LayerSelector` — pure capability detection (WebGL, Canvas, `prefers-reduced-motion`, `prefers-contrast`, `hardwareConcurrency`, viewport) with cached result in `sessionStorage`.
+  - `Layer4StaticHTML` and `Layer5TextOnly` React components (no runtime 3D dep).
+  - `useContextHandshake` and `useConsent` hooks.
+  - `<ConsentBanner />` baseline component (RTL-aware, keyboard accessible, AA contrast).
+- `apps/demo`
+  - A minimal Vite + React app that exercises Layers 4 + 5, the consent banner, and a stub mock server.
+- Tests
+  - Unit tests for `HandshakeOrchestrator`, `ConsentTierManager`, `LayerSelector`.
+  - One end-to-end test in the demo (Vitest in jsdom + Playwright optional).
+
+**Exit criteria.**
+- A developer can `pnpm add @awaf/core @awaf/api @awaf/ui`, drop `<AWAFProvider />` + `<ConsentBanner />` into a React app, and get correct RTL/LTR + locale + Tier 0 fallback under DNT.
+- Demo app runs `pnpm dev` and shows Layer 4 by default, Layer 5 when reduced motion is set.
+- `IMPLEMENTATION_STATUS.md` updated; ✅ row count goes up, 🟠 rows for `@awaf/ui` shrink.
+
+---
+
+## Phase 3 — React / Next.js / Vite / Astro adapters
+
+**Goal.** Ship integration packages so AWAF "just works" in the four most common modern web stacks, and add Layers 1–3 of UI degradation.
+
+**Scope.**
+- `@awaf/react` — peer-dep on React 18+, exports `<AWAFProvider />`, hooks, and the components from `@awaf/ui`.
+- `@awaf/next` — App Router and Pages Router integrations, server-side handshake on the edge, RSC-safe hooks, integration with `next-intl` (recommended) without replacing it.
+- `@awaf/vite` — Vite plugin for build-time locale extraction and capability hints.
+- `@awaf/astro` — Astro integration with islands; works with `@astrojs/react`.
+- UI Layers 1–3:
+  - `Layer3Canvas2D` (no GPU dependency beyond Canvas2D).
+  - `Layer2CSS3D` (CSS transforms only; no new dep).
+  - `Layer1R3F` shipped as an **optional** subpath import (`@awaf/ui/r3f`) so projects that don't want React Three Fiber don't pay the bundle cost.
+- Bundle-size budgets in CI for each adapter.
+- Documentation: one quick-start page per stack under `docs/integrations/`.
+
+**Exit criteria.**
+- Four working starter examples (one per stack) under `examples/` that pass `pnpm typecheck`.
+- A `pnpm test` run includes adapter unit tests.
+- Bundle for the React adapter (Layers 4+5 only) is under a documented budget.
+
+---
+
+## Phase 4 — Protocols, AI integration, and security
+
+**Goal.** Make AWAF AI-ready and credibly secure: ship the protocol adapters, the Technology Pulse pipeline, and the defense-in-depth that the README has long described as a vision.
+
+**Scope.**
+- `@awaf/protocols`
+  - REST adapter first (formalize the existing 16-endpoint contract).
+  - MCP server with at minimum `context_handshake`, `memory_query`, and `technology_pulse` tools.
+  - A2A adapter (Task / Artifact lifecycle) — `submitted → working → input-required → completed | cancelled | failed`.
+  - QR Handoff with AES-GCM encrypted payload and a short-TTL channel server.
+- `@awaf/security`
+  - Input sanitizer (OWASP LLM01 patterns), output filter, prompt sandbox.
+  - `SecurityAuditLogger` writing append-only entries with hashed `visitor_id`.
+  - Cost Guardian: circuit breaker + per-session and per-day token budgets.
+  - Memory Integrity Guard: drift / outlier / cross-domain leak checks.
+  - NIST AI RMF 1.0 mapping document and runtime hooks (`GOVERN / MAP / MEASURE / MANAGE`).
+  - Differential privacy helper (ε-DP) for analytics aggregation.
+  - k-anonymity (k≥5) gate for admin dashboards.
+- Technology Pulse
+  - Five-stage ingestion pipeline (ingest → extract → trust-score → verify → embed).
+  - Trust scorer using the existing `TRUST_TIER_COEFFICIENT` map.
+  - Hallucination firewall with five claim states.
+  - C2PA-style provenance chain stored in append-only storage.
+  - RAG brief generator that grounds claims with citations.
+- AI integration
+  - Optional `@awaf/ai` package that provides Vercel AI SDK and OpenAI/Claude/Kimi adapters as **integrations** (not replacements).
+
+**Exit criteria.**
+- `@awaf/security` and `@awaf/protocols` are no longer stubs in `IMPLEMENTATION_STATUS.md`.
+- A reference MCP host (e.g., Claude Desktop) can call `context_handshake`, `memory_query`, `technology_pulse`.
+- A documented threat-model audit walks through each of the 8 threat categories with code links.
+
+---
+
+## Phase 5 — Developer experience, benchmarks, and release readiness
+
+**Goal.** Polish AWAF into a 1.0 release: fast onboarding, measurable performance, and a credible public launch.
+
+**Scope.**
+- `@awaf/cli` with `awaf init`, `awaf doctor` (capability + consent + privacy diagnostics), and `awaf bench`.
+- Benchmark suite:
+  - Handshake p95 < 100 ms on a reference machine.
+  - Bundle-size dashboard per adapter (gzipped + brotli).
+  - Lighthouse + axe-core checks for the demo and each integration example.
+- Documentation site (`docs/` + a published site) with quick-starts, conceptual guides, and the API reference auto-generated from TSDoc.
+- Migration guides:
+  - From hand-rolled `next-intl` setups.
+  - From cookie-banner-only consent solutions.
+  - For projects already using GrowthBook / LaunchDarkly (AWAF feeds context, the flag platform decides the variant).
+- Release engineering:
+  - Stable Changesets workflow.
+  - Semantic-release notes for v1.0.
+  - A public security disclosure policy in `SECURITY.md`.
+  - SBOM + provenance attestation for published packages.
+
+**Exit criteria.**
+- v1.0.0 published to npm under `@awaf/*`.
+- Public docs site live.
+- `IMPLEMENTATION_STATUS.md` shows ✅ for every feature listed in `README.md`'s "What is implemented" section, and any remaining ⚪ rows are explicitly described as post-1.0 enhancements.
