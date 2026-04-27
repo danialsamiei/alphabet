@@ -27,3 +27,7 @@ export type {
   AWAFEventName,
   AWAFEventListener,
 } from './events/awaf-events.js';
+
+// ─── Handshake ────────────────────────────────────────────────────────────────
+export { SignalCollector, EnrichmentPipeline, HandshakeDecisionEngine } from './handshake/index.js';
+export type { SignalCollectorOptions } from './handshake/index.js';
