@@ -39,23 +39,29 @@ describe('EnrichmentPipeline.enrich()', () => {
     expect(result.enrichedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
 
-  it('should derive IR geo from Asia/Tehran timezone', () => {
+  it('should derive IR geo from Asia/Tehran timezone (country/timezone/region only by default)', () => {
     const result = pipeline.enrich(makeSignals({ timezone: 'Asia/Tehran' }));
     expect(result.visitor.geo.country).toBe('IR');
-    expect(result.visitor.geo.city).toBe('Tehran');
     expect(result.visitor.geo.timezone).toBe('Asia/Tehran');
+    expect(result.visitor.geo.region).toBe('Asia');
+    // privacy default — no city / lat / lon in Tier 0 / anonymous mode
+    expect(result.visitor.geo.city).toBeUndefined();
+    expect(result.visitor.geo.coarseLatitude).toBeUndefined();
+    expect(result.visitor.geo.coarseLongitude).toBeUndefined();
   });
 
-  it('should derive BG geo from Europe/Sofia timezone', () => {
+  it('should derive BG geo from Europe/Sofia timezone (no city by default)', () => {
     const result = pipeline.enrich(makeSignals({ timezone: 'Europe/Sofia' }));
     expect(result.visitor.geo.country).toBe('BG');
-    expect(result.visitor.geo.city).toBe('Sofia');
+    expect(result.visitor.geo.region).toBe('Europe');
+    expect(result.visitor.geo.city).toBeUndefined();
   });
 
-  it('should derive US geo from America/New_York timezone', () => {
+  it('should derive US geo from America/New_York timezone (no city by default)', () => {
     const result = pipeline.enrich(makeSignals({ timezone: 'America/New_York' }));
     expect(result.visitor.geo.country).toBe('US');
-    expect(result.visitor.geo.city).toBe('New York');
+    expect(result.visitor.geo.region).toBe('Americas');
+    expect(result.visitor.geo.city).toBeUndefined();
   });
 
   it('should produce fallback geo for unknown timezone', () => {
@@ -124,10 +130,33 @@ describe('EnrichmentPipeline.enrich()', () => {
     expect(result.visitor.layer).toBe('R3F_IMMERSIVE');
   });
 
-  it('should include coarse latitude and longitude', () => {
+  it('should NOT include coarse latitude/longitude or city by default (Tier 0 anonymous)', () => {
     const result = pipeline.enrich(makeSignals({ timezone: 'Asia/Tehran' }));
+    expect(result.visitor.geo.city).toBeUndefined();
+    expect(result.visitor.geo.coarseLatitude).toBeUndefined();
+    expect(result.visitor.geo.coarseLongitude).toBeUndefined();
+  });
+
+  it('should include city + coarse lat/lon ONLY when allowPreciseGeo is explicitly true', () => {
+    const result = pipeline.enrich(makeSignals({ timezone: 'Asia/Tehran' }), {
+      allowPreciseGeo: true,
+    });
+    expect(result.visitor.geo.city).toBe('Tehran');
     expect(typeof result.visitor.geo.coarseLatitude).toBe('number');
     expect(typeof result.visitor.geo.coarseLongitude).toBe('number');
+  });
+
+  it('default geo for every mapped timezone strips city/lat/lon', () => {
+    const timezones = [
+      'Asia/Tehran', 'Europe/Sofia', 'America/New_York', 'Europe/Berlin',
+      'Asia/Tokyo', 'America/Los_Angeles',
+    ];
+    for (const tz of timezones) {
+      const r = pipeline.enrich(makeSignals({ timezone: tz }));
+      expect(r.visitor.geo.city, `tz=${tz}`).toBeUndefined();
+      expect(r.visitor.geo.coarseLatitude, `tz=${tz}`).toBeUndefined();
+      expect(r.visitor.geo.coarseLongitude, `tz=${tz}`).toBeUndefined();
+    }
   });
 });
 

@@ -115,16 +115,36 @@ describe('HandshakeDecisionEngine.decide()', () => {
     expect(decision.uiConfig.consentRequired).toBe(false);
   });
 
-  it('should set selectedLayer=STATIC_HTML when DNT is enabled', () => {
+  // Privacy contract: DNT/GPC restrict storage/profiling but must NOT
+  // downgrade the visual layer. Layer is selected from device capability
+  // and accessibility preferences only.
+  it('should NOT downgrade selectedLayer when DNT is enabled (capability-driven)', () => {
     const enriched = makeEnriched({ dntEnabled: true });
     const decision = engine.decide(enriched);
-    expect(decision.selectedLayer).toBe('STATIC_HTML');
+    expect(decision.selectedLayer).toBe('R3F_IMMERSIVE');
+    expect(decision.privacyMode.restricted).toBe(true);
+    expect(decision.privacyMode.dntEnabled).toBe(true);
+    expect(decision.privacyMode.memoryAllowed).toBe(false);
+    expect(decision.privacyMode.personalizationAllowed).toBe(false);
+    expect(decision.privacyMode.preciseGeoAllowed).toBe(false);
+    expect(decision.privacyMode.enforcedConsentTier).toBe('NO_MEMORY');
   });
 
-  it('should set selectedLayer=STATIC_HTML when GPC is enabled', () => {
+  it('should NOT downgrade selectedLayer when GPC is enabled (capability-driven)', () => {
     const enriched = makeEnriched({ gpcEnabled: true });
     const decision = engine.decide(enriched);
-    expect(decision.selectedLayer).toBe('STATIC_HTML');
+    expect(decision.selectedLayer).toBe('R3F_IMMERSIVE');
+    expect(decision.privacyMode.restricted).toBe(true);
+    expect(decision.privacyMode.gpcEnabled).toBe(true);
+    expect(decision.privacyMode.memoryAllowed).toBe(false);
+  });
+
+  it('should expose a non-restricted privacyMode when neither DNT nor GPC is set', () => {
+    const enriched = makeEnriched();
+    const decision = engine.decide(enriched);
+    expect(decision.privacyMode.restricted).toBe(false);
+    expect(decision.privacyMode.enforcedConsentTier).toBe('ANONYMOUS');
+    expect(decision.privacyMode.memoryAllowed).toBe(true);
   });
 
   it('should set selectedLayer=R3F_IMMERSIVE for webgl+wide screen+no restrictions', () => {

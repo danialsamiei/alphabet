@@ -52,20 +52,39 @@ export interface DetectedSignals {
 // ─── Geo Context ──────────────────────────────────────────────────────────────
 
 /**
- * موقعیت جغرافیایی coarse — فقط سطح کشور/شهر، بدون IP.
- * Coarse geographic context — country/city level only, no IP stored.
+ * موقعیت جغرافیایی coarse — به‌صورت پیش‌فرض فقط سطح کشور/منطقه/timezone.
+ * Coarse geographic context — country/region/timezone level by default.
+ *
+ * **Privacy contract:** by default AWAF derives only `country`, `timezone`,
+ * and an optional broad `region` group from the IANA timezone. The `city`,
+ * `coarseLatitude`, and `coarseLongitude` fields are reserved for future use
+ * and are **only populated when the visitor has granted explicit consent for
+ * precise geo enrichment** (see `EnrichmentPipeline` + `canUsePreciseGeo`).
+ * Consumers must treat these fields as optional and never rely on them in
+ * Tier 0 / anonymous mode.
  */
 export interface GeoContext {
   /** کد ISO 3166-1 alpha-2 کشور — مثال: "IR", "BG", "US" */
   readonly country: string;
-  /** نام شهر (coarse) */
-  readonly city: string;
   /** منطقه زمانی IANA */
   readonly timezone: string;
-  /** عرض جغرافیایی coarse (rounded to 2 decimals) */
-  readonly coarseLatitude: number;
-  /** طول جغرافیایی coarse (rounded to 2 decimals) */
-  readonly coarseLongitude: number;
+  /** گروه منطقه‌ای broad — مثال: "Europe", "Americas", "Asia" */
+  readonly region?: string;
+  /**
+   * نام شهر (coarse) — فقط با رضایت صریح precise-geo پر می‌شود.
+   * City name. Only populated with explicit precise-geo consent.
+   */
+  readonly city?: string;
+  /**
+   * عرض جغرافیایی coarse — فقط با رضایت صریح precise-geo پر می‌شود.
+   * Coarse latitude. Only populated with explicit precise-geo consent.
+   */
+  readonly coarseLatitude?: number;
+  /**
+   * طول جغرافیایی coarse — فقط با رضایت صریح precise-geo پر می‌شود.
+   * Coarse longitude. Only populated with explicit precise-geo consent.
+   */
+  readonly coarseLongitude?: number;
 }
 
 // ─── Visitor Context ──────────────────────────────────────────────────────────

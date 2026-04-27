@@ -32,5 +32,16 @@ export type {
 export { SignalCollector, EnrichmentPipeline, HandshakeDecisionEngine } from './handshake/index.js';
 export type { SignalCollectorOptions } from './handshake/index.js';
 
+// ─── Privacy ──────────────────────────────────────────────────────────────────
+export {
+  canStoreMemory,
+  canPersonalize,
+  canUseAnalytics,
+  canUsePreciseGeo,
+  hasPrivacySignal,
+  DEFAULT_K_ANONYMITY_THRESHOLD,
+} from './privacy/index.js';
+export type { PrivacySignals } from './privacy/index.js';
+
 // ─── Contracts (route constants, intent vocabularies) ────────────────────────
 export * from './contracts/index.js';
