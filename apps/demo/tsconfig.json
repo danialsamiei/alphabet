@@ -7,18 +7,20 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@awaf/core": ["../../packages/core/src/index.ts"],
-      "@awaf/core/*": ["../../packages/core/src/*"],
-      "@awaf/api": ["../../packages/api/src/index.ts"],
-      "@awaf/api/*": ["../../packages/api/src/*"],
-      "@awaf/ui": ["../../packages/ui/src/index.ts"],
-      "@awaf/ui/*": ["../../packages/ui/src/*"],
-      "@awaf/protocols": ["../../packages/protocols/src/index.ts"],
-      "@awaf/protocols/*": ["../../packages/protocols/src/*"],
-      "@awaf/security": ["../../packages/security/src/index.ts"],
-      "@awaf/security/*": ["../../packages/security/src/*"]
+      "@awaf/core": ["../../packages/core/dist/index.d.ts"],
+      "@awaf/api": ["../../packages/api/dist/index.d.ts"],
+      "@awaf/ui": ["../../packages/ui/dist/index.d.ts"],
+      "@awaf/protocols": ["../../packages/protocols/dist/index.d.ts"],
+      "@awaf/security": ["../../packages/security/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/api" },
+    { "path": "../../packages/ui" },
+    { "path": "../../packages/protocols" },
+    { "path": "../../packages/security" }
+  ]
 }
