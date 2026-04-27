@@ -6,8 +6,7 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@awaf/core": ["../core/src/index.ts"],
-      "@awaf/core/*": ["../core/src/*"]
+      "@awaf/core": ["../core/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

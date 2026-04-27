@@ -306,11 +306,13 @@ pnpm dev
 
 ### 4.1 Turborepo Pipeline
 
+> **Note (Turborepo 2.x):** The top-level key in `turbo.json` is `tasks` (not `pipeline`, which was the 1.x name). The example below uses the current schema.
+
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local", "**/tsconfig.json"],
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"]
@@ -322,6 +324,8 @@ pnpm dev
   }
 }
 ```
+
+> **Required build order:** Every workspace package's tsconfig maps `@awaf/core` and `@awaf/api` to their built `dist/index.d.ts`. As a result, `tsc` (and `tsc --emitDeclarationOnly`) only succeeds after the dependency packages have been built. The `dependsOn: ["^build"]` rule on the `build` and `typecheck` tasks above is what guarantees this order — always run `pnpm build` (or `pnpm typecheck`) at the workspace root rather than calling `tsc` directly inside a package whose dependencies are not yet built.
 
 ### 4.2 شرح pipeline
 
