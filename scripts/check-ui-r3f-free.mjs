@@ -35,6 +35,7 @@ const FORBIDDEN_PATTERNS = [
 ];
 
 let failed = false;
+let checked = 0;
 for (const rel of BASE_BUNDLES) {
   const abs = resolve(ROOT, rel);
   let content;
@@ -53,10 +54,11 @@ for (const rel of BASE_BUNDLES) {
       failed = true;
     }
   }
-  if (!failed) console.log(`[check-ui-r3f-free] ✅ ${rel} is R3F-free`);
+  checked += 1;
 }
 
 if (failed) {
   console.error('\n[check-ui-r3f-free] base @awaf/ui bundles must NOT import @react-three/fiber or three.');
   process.exit(1);
 }
+console.log(`[check-ui-r3f-free] ✅ ${checked} base @awaf/ui bundle(s) verified R3F-free.`);

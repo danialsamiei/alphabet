@@ -22,8 +22,9 @@ Every public package (`@awaf/core`, `@awaf/api`, `@awaf/ui`, `@awaf/security`,
 - [x] **`./package.json` re-export** — required by some bundlers.
 - [x] **`sideEffects: false`** — declares the package safe to tree-shake.
       AWAF code is purely declarative; no module-load side effects.
-- [x] **`files` allow-list** — only `dist/` and `README.md` ship to the
-      registry tarball, never source or test files.
+- [x] **`files` allow-list** — only `dist/` ships to the registry tarball,
+      never source or test files. (Per-package READMEs are tracked but not
+      yet present; the root `README.md` documents the SDK.)
 - [x] **Generated `.d.ts`** — `tsc --emitDeclarationOnly --outDir dist`
       runs as part of `build`. Subpath types resolve to
       `dist/<subpath>/index.d.ts` per the project's tsconfig layout.
@@ -87,7 +88,7 @@ private set, base branch, and access policy.
 Before flipping the publish switch:
 
 1. `pnpm pack` each package; inspect the tarball with `tar -tvf …` to
-   confirm only `dist/` and `README.md` are included.
+   confirm only `dist/` is included.
 2. Install one of the `examples/` apps against the freshly packed tarballs
    (`pnpm install ./awaf-core-1.0.0.tgz …`) to verify resolution end-to-end.
 3. Confirm `docs/PERFORMANCE.md` budgets still match

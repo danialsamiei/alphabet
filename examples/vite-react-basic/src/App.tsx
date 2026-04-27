@@ -21,6 +21,17 @@ export function App(): JSX.Element {
         </p>
 
         <AdaptiveSlot
+          r3f={({ direction, locale }) => (
+            <section dir={direction} lang={locale ?? undefined}>
+              <h2>R3F immersive layer</h2>
+              <p>
+                On a capable device this is where you'd render a{' '}
+                <code>@react-three/fiber</code> <code>&lt;Canvas&gt;</code>.
+                The R3F renderer is loaded lazily by AWAF, so the base
+                bundle stays R3F-free.
+              </p>
+            </section>
+          )}
           css3d={({ direction, locale }) => (
             <section dir={direction} lang={locale ?? undefined}>
               <h2>CSS 3D layer</h2>

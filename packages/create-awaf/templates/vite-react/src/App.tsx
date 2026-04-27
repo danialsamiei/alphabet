@@ -11,6 +11,13 @@ export function App(): JSX.Element {
         </p>
 
         <AdaptiveSlot
+          r3f={() => (
+            <p>
+              Immersive R3F layer rendered. (Pass a `<Canvas>` from{' '}
+              <code>@react-three/fiber</code> here in a real app — it's
+              loaded lazily so the base bundle stays small.)
+            </p>
+          )}
           css3d={() => <p>CSS 3D layer rendered.</p>}
           canvas2d={() => <p>Canvas 2D layer rendered.</p>}
           staticHtml={() => <p>Static HTML layer rendered.</p>}
