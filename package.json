@@ -9,13 +9,23 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
     "typecheck": "turbo run typecheck",
+    "benchmark": "pnpm --filter @awaf/benchmarks benchmark",
+    "benchmark:smoke": "pnpm --filter @awaf/benchmarks benchmark:smoke",
+    "size": "size-limit",
+    "size:check-r3f-free": "node scripts/check-ui-r3f-free.mjs",
+    "openapi:lint": "redocly lint openapi/awaf.v1.yaml",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",
+    "@redocly/cli": "^1.25.0",
+    "@size-limit/preset-small-lib": "^11.1.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "size-limit": "^11.1.0",
     "turbo": "^2.0.0",
     "typescript": "^5.4.0"
   },
