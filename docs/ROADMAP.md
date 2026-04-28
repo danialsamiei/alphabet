@@ -74,6 +74,24 @@
 - Demo app runs `pnpm dev` and shows Layer 4 by default, Layer 5 when reduced motion is set.
 - `IMPLEMENTATION_STATUS.md` updated; ✅ row count goes up, 🟠 rows for `@awaf/ui` shrink.
 
+### Phase 2 acceleration plan (4-week roadmap)
+
+The Phase-2 work above is sequenced into a four-week acceleration plan with explicit deliverable IDs. PR-1 implements the W1.1 + W1.2 + W1.3 + W1.6 slice:
+
+| ID | Deliverable | Status (post-PR-1) |
+|---|---|---|
+| **W1.1** | `Validator<T>` runtime validator + envelope schemas (`@awaf/core/contracts/runtime`) | ✅ Shipped |
+| **W1.2** | In-process mock server, all 16 endpoints, deterministic seeded RNG (`@awaf/api/mock`) | ✅ Shipped |
+| **W1.3** | Resilient transport: retry + decorrelated jitter, rate-limit parsing, idempotency keys (`@awaf/api/transport`) | ✅ Shipped |
+| W1.4 | Internal `Task<R, E, A>` effect helper | ⚪ Planned (W1 follow-up) |
+| W1.5 | CI matrix hardening (Node 20/22 × ubuntu/macos, codecov, release flow) | 🟡 Partial (audit step added) |
+| **W1.6** | Reconcile `IMPLEMENTATION_STATUS.md` against actual source tree | ✅ Shipped |
+| W2.1–W2.7 | `LayerSelector` cache, Layer 4/5, Suspense hooks, `<ConsentBanner />`, SSE for `postInteract`, demo wired to mock server, signed consent receipts | ⚪ Planned |
+| W3.1–W3.7 | `@awaf/next`, `@awaf/astro`, `@awaf/vite`, Storybook + Chromatic, Pulse forecaster (Bayesian), Protocols v0 (REST + MCP), benchmarks | ⚪ Planned |
+| W4.1–W4.8 | Differential Privacy, prompt-injection defense (3 layers), cost guardian, NIST AI RMF mapping, A2A + QR, WASM signal acceleration, `@awaf/cli`, 1.0-RC | ⚪ Planned |
+
+The full plan with hard backward-compat invariants is in this PR's description.
+
 ---
 
 ## Phase 3 — React / Next.js / Vite / Astro adapters

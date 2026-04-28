@@ -4,9 +4,16 @@ import { resolve } from 'path';
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        'contracts/runtime/index': resolve(
+          __dirname,
+          'src/contracts/runtime/index.ts',
+        ),
+      },
       formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
+      fileName: (format, entryName) =>
+        `${entryName}.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
       external: [],

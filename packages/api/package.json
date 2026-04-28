@@ -13,6 +13,16 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./transport": {
+      "types": "./dist/transport/index.d.ts",
+      "import": "./dist/transport/index.js",
+      "require": "./dist/transport/index.cjs"
+    },
+    "./mock": {
+      "types": "./dist/mock/index.d.ts",
+      "import": "./dist/mock/index.js",
+      "require": "./dist/mock/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "files": ["dist"],
