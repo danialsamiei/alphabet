@@ -32,7 +32,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "bench": "vitest bench --run"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.1",

@@ -192,9 +192,9 @@ export class CapabilityPredictor {
       .filter((s): s is PredictorSnapshot & { batteryLevel: number } => typeof s.batteryLevel === 'number')
       .filter((s) => s.batteryCharging !== true);
     if (battSeq.length < 2) return undefined;
-    const first = battSeq[0];
-    const last = battSeq[battSeq.length - 1];
-    if (first === undefined || last === undefined) return undefined;
+    // length >= 2 — non-null asserted via local type-narrowed const.
+    const first = battSeq[0] as PredictorSnapshot & { batteryLevel: number };
+    const last = battSeq[battSeq.length - 1] as PredictorSnapshot & { batteryLevel: number };
     const dtMs = last.at - first.at;
     if (dtMs <= 0) return undefined;
     const dropPerMinute = ((first.batteryLevel - last.batteryLevel) / dtMs) * 60_000;
@@ -223,9 +223,13 @@ function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
 }
 
+/** Precomputed reverse of `CAPABILITY_LAYER_LEVEL` for O(1) lookup. */
+const LEVEL_TO_LAYER: ReadonlyMap<number, CapabilityLayer> = new Map(
+  (Object.entries(CAPABILITY_LAYER_LEVEL) as Array<[CapabilityLayer, number]>).map(
+    ([layer, level]) => [level, layer],
+  ),
+);
+
 function levelToLayer(level: number): CapabilityLayer {
-  // معکوس CAPABILITY_LAYER_LEVEL — جستجو در زمان ثابت کوچک (۵ عضو)
-  const entries = Object.entries(CAPABILITY_LAYER_LEVEL) as Array<[CapabilityLayer, number]>;
-  for (const [k, v] of entries) if (v === level) return k;
-  return 'STATIC_HTML';
+  return LEVEL_TO_LAYER.get(level) ?? 'STATIC_HTML';
 }

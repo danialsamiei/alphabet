@@ -92,6 +92,16 @@ function defaultSleep(ms: number, signal?: AbortSignal): Promise<void> {
  *
  *   next = min(cap, randomInRange(base, prev * 3))
  *
+ * Reference: AWS Architecture Blog — "Exponential Backoff And Jitter".
+ *
+ * @param previousMs - delay محاسبه‌شده در attempt قبلی (ms). برای attempt
+ *   اول مقدار `baseMs` به‌عنوان seed مناسب است.
+ * @param baseMs - حداقل delay و کف random span (ms). معمولاً ≥ 50ms.
+ * @param capMs - سقف delay (ms) — هیچ‌گاه بیش از این برنمی‌گردد.
+ * @param random - مولد عدد تصادفی در `[0, 1)` (مثلاً `Math.random`). در
+ *   تست‌ها قابل تزریق است تا خروجی deterministic شود.
+ * @returns delay پیشنهادی برای attempt بعدی، در `[baseMs, capMs]`.
+ *
  * @internal exported for tests.
  */
 export function decorrelatedJitter(

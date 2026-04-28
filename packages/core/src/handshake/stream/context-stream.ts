@@ -72,6 +72,12 @@ export interface SignalSnapshot {
 // ─── Stream factory ───────────────────────────────────────────────────────────
 
 /**
+ * Default `highWaterMark` for the context stream. Mirrors the value
+ * documented on `ContextStreamOptions.highWaterMark`.
+ */
+export const DEFAULT_CONTEXT_STREAM_HIGH_WATER_MARK = 16;
+
+/**
  * گزینه‌های `createContextStream`.
  */
 export interface ContextStreamOptions {
@@ -79,7 +85,7 @@ export interface ContextStreamOptions {
   readonly signal?: AbortSignal;
   /**
    * highWaterMark — حداکثر رویدادهای buffer شده قبل از back-pressure.
-   * پیش‌فرض `16`.
+   * پیش‌فرض `DEFAULT_CONTEXT_STREAM_HIGH_WATER_MARK` (`16`).
    */
   readonly highWaterMark?: number;
   /** ساعت قابل تعویض — پیش‌فرض `Date.now`. */
@@ -124,7 +130,10 @@ export function createContextStream(
   options: ContextStreamOptions = {},
 ): ContextStreamHandle {
   const now = options.now ?? ((): number => Date.now());
-  const highWaterMark = Math.max(1, options.highWaterMark ?? 16);
+  const highWaterMark = Math.max(
+    1,
+    options.highWaterMark ?? DEFAULT_CONTEXT_STREAM_HIGH_WATER_MARK,
+  );
 
   let internalController: ReadableStreamDefaultController<ContextStreamEvent> | undefined;
   let closed = false;
