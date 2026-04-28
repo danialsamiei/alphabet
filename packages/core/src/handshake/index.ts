@@ -11,3 +11,11 @@ export type { SignalCollectorOptions } from './signal-collector.js';
 export { EnrichmentPipeline } from './enrichment-pipeline.js';
 
 export { HandshakeDecisionEngine } from './decision-engine.js';
+
+export { HandshakeOrchestrator } from './orchestrator.js';
+export type {
+  HandshakeOrchestratorOptions,
+  HandshakeRunOptions,
+  HandshakeOutcome,
+  HandshakePhase,
+} from './orchestrator.js';
