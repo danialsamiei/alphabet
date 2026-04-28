@@ -34,6 +34,10 @@ export {
   EnrichmentPipeline,
   HandshakeDecisionEngine,
   HandshakeOrchestrator,
+  pipeline,
+  stream,
+  predictor,
+  stateMachine,
 } from './handshake/index.js';
 export type {
   SignalCollectorOptions,
