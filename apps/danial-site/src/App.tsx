@@ -25,14 +25,19 @@ import { Hero } from './components/Hero.js';
 import { About, Contact, Publications, Research, Teaching } from './components/Sections.js';
 import { AssistantChat, type AssistantChatHandle } from './components/AssistantChat.js';
 
+/**
+ * Delay before stealing focus after a smooth-scroll. Most browsers
+ * cancel an in-flight smooth-scroll if focus moves immediately, so
+ * we wait roughly one scroll-animation frame.
+ */
+const SCROLL_FOCUS_DELAY_MS = 350;
+
 export function App(): JSX.Element {
   const assistantRef = useRef<AssistantChatHandle>(null);
 
   const focusAssistant = (): void => {
     document.getElementById('ds-assistant')?.scrollIntoView({ behavior: 'smooth' });
-    // Give scrolling a beat before stealing focus, otherwise some
-    // browsers cancel the smooth-scroll animation.
-    window.setTimeout(() => assistantRef.current?.focus(), 350);
+    window.setTimeout(() => assistantRef.current?.focus(), SCROLL_FOCUS_DELAY_MS);
   };
 
   return (

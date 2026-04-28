@@ -60,14 +60,17 @@ export const AssistantChat = forwardRef<AssistantChatHandle>(function AssistantC
     setPending(true);
 
     // Build the chat history we send to the model. We only include
-    // user/assistant turns — never the local "error" UI rows.
+    // user/assistant turns — system grounding is added separately, and
+    // local "error" rows must never be replayed back to the model.
+    const turns: ChatMessage[] = [];
+    for (const m of messages) {
+      if (m.role === 'user' || m.role === 'assistant') {
+        turns.push({ role: m.role, content: m.content });
+      }
+    }
     const history: ChatMessage[] = [
       { role: 'system', content: buildSystemPrompt(profile) },
-      ...messages
-        .filter((m): m is UiMessage & { role: 'user' | 'assistant' } =>
-          m.role === 'user' || m.role === 'assistant'
-        )
-        .map((m) => ({ role: m.role, content: m.content })),
+      ...turns,
       { role: 'user', content: trimmed },
     ];
 

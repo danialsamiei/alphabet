@@ -23,7 +23,7 @@ export default defineConfig({
     port: 5174,
     proxy: {
       '/api/assistant': {
-        target: process.env['ASSISTANT_PROXY_URL'] ?? 'http://localhost:8787',
+        target: process.env.ASSISTANT_PROXY_URL ?? 'http://localhost:8787',
         changeOrigin: true,
       },
     },
