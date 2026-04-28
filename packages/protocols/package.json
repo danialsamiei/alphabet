@@ -1,6 +1,7 @@
 {
   "name": "@awaf/protocols",
   "version": "1.0.0",
+  "description": "Protocol adapters for the AWAF SDK. Normalizes context, consent, memory permissions, and UI adaptation signals across Direct REST, Model Context Protocol (MCP), Agent-to-Agent (A2A), and AES-GCM-encrypted QR handoff — without bundling any LLM provider SDK. Provider-neutral by design.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

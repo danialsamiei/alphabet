@@ -1,6 +1,7 @@
 {
   "name": "@awaf/security",
   "version": "1.0.0",
+  "description": "Defence-in-depth supplement for the AWAF SDK: the ConsentTierManager state machine (NO_MEMORY → ANONYMOUS → CONSENTED → ENRICHED with DNT/GPC auto-downgrade), PII redaction, prompt-injection heuristics, URL/HTML output validation, MemoryIntegrityGuard, and AWAFAuditLogger. Not a complete security solution; see docs/SECURITY_MODEL.md.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
