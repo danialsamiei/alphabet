@@ -84,9 +84,13 @@ export function parseRateLimit(headers: Headers): RateLimitInfo {
   if (reset !== null) {
     const n = Number(reset);
     if (Number.isFinite(n) && n >= 0) {
-      // Heuristic: large numbers are epoch-seconds (post-2001), small ones
-      // are delta-seconds from now (Cloudflare/Vercel style).
-      if (n >= 1_000_000_000) {
+      // Heuristic threshold: any value below this is treated as
+      // delta-seconds from now (Cloudflare/Vercel style); anything
+      // above is treated as an absolute Unix epoch in seconds. The
+      // chosen value (~2001-09-09) is far below any plausible
+      // rate-limit window but far above any plausible delta.
+      const EPOCH_SECONDS_THRESHOLD = 1_000_000_000;
+      if (n >= EPOCH_SECONDS_THRESHOLD) {
         out.resetEpochSec = n;
       } else {
         out.resetEpochSec = Math.floor(Date.now() / 1000) + n;
