@@ -1,0 +1,120 @@
+/*
+ * @awaf/ui/styles/tokens.css
+ * ---------------------------------------------------------------
+ * Optional, opt-in design-token stylesheet for AWAF components.
+ *
+ * Importing this file is *side-effecting* (it sets CSS custom
+ * properties on `:root` and `[data-awaf-theme="dark"]`). The base
+ * `@awaf/ui` package is `"sideEffects": false` and never imports
+ * this stylesheet implicitly — consumers opt in:
+ *
+ *     import '@awaf/ui/styles/tokens.css';
+ *
+ * Tokens cover surfaces, borders, accents, and motion. Components
+ * fall back to sensible defaults when these variables are absent.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces */
+  --awaf-bg: #f8fafc;
+  --awaf-fg: #0f172a;
+  --awaf-muted: #475569;
+  --awaf-surface: rgba(15, 23, 42, 0.03);
+  --awaf-surface-elevated: rgba(255, 255, 255, 0.92);
+  --awaf-border: rgba(15, 23, 42, 0.12);
+  --awaf-border-strong: rgba(15, 23, 42, 0.24);
+
+  /* Accent */
+  --awaf-accent: #4f46e5;
+  --awaf-accent-fg: #ffffff;
+  --awaf-success: #10b981;
+  --awaf-warning: #f59e0b;
+  --awaf-danger: #ef4444;
+
+  /* Glass surface */
+  --awaf-glass-bg: rgba(255, 255, 255, 0.55);
+  --awaf-glass-border: rgba(255, 255, 255, 0.8);
+  --awaf-glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  --awaf-glass-blur: 18px;
+
+  /* Motion */
+  --awaf-duration-fast: 150ms;
+  --awaf-duration-base: 240ms;
+  --awaf-duration-slow: 420ms;
+  --awaf-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Radii */
+  --awaf-radius-sm: 0.4rem;
+  --awaf-radius-md: 0.6rem;
+  --awaf-radius-lg: 0.85rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --awaf-bg: #020617;
+    --awaf-fg: #f8fafc;
+    --awaf-muted: #94a3b8;
+    --awaf-surface: rgba(248, 250, 252, 0.04);
+    --awaf-surface-elevated: rgba(15, 23, 42, 0.7);
+    --awaf-border: rgba(248, 250, 252, 0.18);
+    --awaf-border-strong: rgba(248, 250, 252, 0.32);
+
+    --awaf-accent: #818cf8;
+    --awaf-accent-fg: #0f172a;
+
+    --awaf-glass-bg: rgba(15, 23, 42, 0.55);
+    --awaf-glass-border: rgba(148, 163, 184, 0.2);
+    --awaf-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  }
+}
+
+[data-awaf-theme='dark'] {
+  --awaf-bg: #020617;
+  --awaf-fg: #f8fafc;
+  --awaf-muted: #94a3b8;
+  --awaf-surface: rgba(248, 250, 252, 0.04);
+  --awaf-surface-elevated: rgba(15, 23, 42, 0.7);
+  --awaf-border: rgba(248, 250, 252, 0.18);
+  --awaf-border-strong: rgba(248, 250, 252, 0.32);
+  --awaf-accent: #818cf8;
+  --awaf-accent-fg: #0f172a;
+  --awaf-glass-bg: rgba(15, 23, 42, 0.55);
+  --awaf-glass-border: rgba(148, 163, 184, 0.2);
+  --awaf-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+[data-awaf-theme='light'] {
+  --awaf-bg: #f8fafc;
+  --awaf-fg: #0f172a;
+  --awaf-muted: #475569;
+  --awaf-surface: rgba(15, 23, 42, 0.03);
+  --awaf-surface-elevated: rgba(255, 255, 255, 0.92);
+  --awaf-border: rgba(15, 23, 42, 0.12);
+  --awaf-border-strong: rgba(15, 23, 42, 0.24);
+  --awaf-accent: #4f46e5;
+  --awaf-accent-fg: #ffffff;
+  --awaf-glass-bg: rgba(255, 255, 255, 0.55);
+  --awaf-glass-border: rgba(255, 255, 255, 0.8);
+  --awaf-glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-awaf-theme='dark'],
+  [data-awaf-theme='light'] {
+    --awaf-duration-fast: 0ms;
+    --awaf-duration-base: 0ms;
+    --awaf-duration-slow: 0ms;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root,
+  [data-awaf-theme='dark'],
+  [data-awaf-theme='light'] {
+    --awaf-border: rgba(15, 23, 42, 0.45);
+    --awaf-border-strong: rgba(15, 23, 42, 0.7);
+  }
+}

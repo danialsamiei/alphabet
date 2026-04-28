@@ -33,9 +33,10 @@
       "import": "./dist/runtime.js",
       "require": "./dist/runtime.cjs"
     },
+    "./styles/tokens.css": "./styles/tokens.css",
     "./package.json": "./package.json"
   },
-  "files": ["dist"],
+  "files": ["dist", "styles"],
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "dev": "vite build --watch",
