@@ -35,6 +35,7 @@ import {
   canUseAnalytics,
   canUsePreciseGeo,
 } from '@awaf/core';
+import type { SyncConsentStorageAdapter } from './storage/types.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -82,6 +83,24 @@ export interface ConsentTierManagerOptions {
   readonly policyVersion: string;
   /** Tier اولیه — پیش‌فرض NO_MEMORY */
   readonly initialTier?: ConsentTier;
+  /**
+   * adapter ذخیره‌سازی برای rehydrate وضعیت بین sessionها.
+   * Optional storage adapter to rehydrate state across sessions/pages.
+   *
+   * On construction the manager loads the persisted snapshot (if any).
+   * If its `policyVersion` matches `options.policyVersion`, the state
+   * is adopted as-is. If it differs, the manager invalidates the
+   * persisted consent (state→`pending`, tier→`NO_MEMORY`,
+   * `lastReason='policy_change:<old>-><new>'`) and writes the
+   * invalidated snapshot back to storage so that all subsequent loads
+   * also see the invalidation.
+   *
+   * Every state-changing method (`grant`, `revoke`,
+   * `downgradeOnPrivacySignal`, `invalidateOnPolicyChange`) persists
+   * the new snapshot. `reset()` clears storage entirely — it is
+   * designed for full data erasure (GDPR Article 17).
+   */
+  readonly storage?: SyncConsentStorageAdapter;
 }
 
 // ─── Tier Explanations ────────────────────────────────────────────────────────
@@ -167,10 +186,58 @@ export class ConsentTierManager {
   private revokedAt: string | undefined;
   private downgradedAt: string | undefined;
   private lastReason: string | undefined;
+  private readonly storage: SyncConsentStorageAdapter | undefined;
 
   constructor(options: ConsentTierManagerOptions) {
     this.policyVersion = options.policyVersion;
     this.tier = options.initialTier ?? 'NO_MEMORY';
+    this.storage = options.storage;
+    this.rehydrate();
+  }
+
+  // ─── Rehydration ──────────────────────────────────────────────────────────
+
+  /**
+   * بارگذاری snapshot از storage در زمان ساخت.
+   * Loads any persisted snapshot. If the persisted `policyVersion`
+   * differs from the manager's `policyVersion`, the persisted consent
+   * is invalidated and the new pending snapshot is flushed back to
+   * storage so all future loads observe the invalidation.
+   */
+  private rehydrate(): void {
+    if (this.storage === undefined) return;
+    const persisted = this.storage.load();
+    if (persisted === null) return;
+
+    if (persisted.policyVersion !== this.policyVersion) {
+      // Policy changed since the visitor last consented → invalidate.
+      this.state = 'pending';
+      this.tier = 'NO_MEMORY';
+      this.grantedAt = undefined;
+      this.revokedAt = undefined;
+      this.downgradedAt = undefined;
+      this.lastReason = `policy_change:${persisted.policyVersion}->${this.policyVersion}`;
+      this.persist();
+      return;
+    }
+
+    this.state = persisted.state;
+    this.tier = persisted.tier;
+    this.grantedAt = persisted.grantedAt;
+    this.revokedAt = persisted.revokedAt;
+    this.downgradedAt = persisted.downgradedAt;
+    this.lastReason = persisted.lastReason;
+  }
+
+  /** ذخیره snapshot جاری در storage (no-op وقتی storage تنظیم نشده) */
+  private persist(): void {
+    if (this.storage === undefined) return;
+    try {
+      this.storage.save(this.snapshot());
+    } catch {
+      // Storage adapters are expected to be fail-safe; swallow any
+      // residual errors so persistence never breaks state transitions.
+    }
   }
 
   // ─── State transitions ────────────────────────────────────────────────────
@@ -198,6 +265,7 @@ export class ConsentTierManager {
     this.revokedAt = undefined;
     this.downgradedAt = undefined;
     this.lastReason = 'grant';
+    this.persist();
     return ok(this.snapshot());
   }
 
@@ -211,13 +279,17 @@ export class ConsentTierManager {
     this.tier = 'NO_MEMORY';
     this.revokedAt = new Date().toISOString();
     this.lastReason = 'revoke';
+    this.persist();
     return this.snapshot();
   }
 
   /**
    * Reset به حالت اولیه `pending` با tier `NO_MEMORY`.
    * Resets the manager to its initial pristine state. Useful after a
-   * complete data erasure (GDPR Article 17).
+   * complete data erasure (GDPR Article 17). When a storage adapter
+   * is configured, the persisted snapshot is **cleared** rather than
+   * overwritten — so a subsequent reload starts from a true blank
+   * slate.
    */
   reset(): ConsentSnapshot {
     this.state = 'pending';
@@ -226,6 +298,13 @@ export class ConsentTierManager {
     this.revokedAt = undefined;
     this.downgradedAt = undefined;
     this.lastReason = 'reset';
+    if (this.storage !== undefined) {
+      try {
+        this.storage.clear();
+      } catch {
+        // ignore — adapters are best-effort
+      }
+    }
     return this.snapshot();
   }
 
@@ -243,6 +322,7 @@ export class ConsentTierManager {
     this.tier = 'NO_MEMORY';
     this.downgradedAt = new Date().toISOString();
     this.lastReason = signals.gpcEnabled ? 'gpc' : 'dnt';
+    this.persist();
     return this.snapshot();
   }
 
@@ -260,6 +340,7 @@ export class ConsentTierManager {
     this.tier = 'NO_MEMORY';
     this.grantedAt = undefined;
     this.lastReason = `policy_change:${this.policyVersion}->${newPolicyVersion}`;
+    this.persist();
     return true;
   }
 

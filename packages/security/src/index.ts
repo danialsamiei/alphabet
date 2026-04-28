@@ -33,6 +33,17 @@ export type {
   ConsentTierManagerOptions,
 } from './consent/consent-tier-manager.js';
 
+// ─── Consent storage adapters ────────────────────────────────────────────────
+export {
+  InMemoryConsentStorage,
+  WebStorageConsentStorage,
+  DEFAULT_CONSENT_STORAGE_KEY,
+} from './consent/storage/index.js';
+export type {
+  SyncConsentStorageAdapter,
+  WebStorageConsentStorageOptions,
+} from './consent/storage/index.js';
+
 // ─── PII redaction ───────────────────────────────────────────────────────────
 export { detectPII, redactPII, redactPIIDeep } from './pii/redactor.js';
 export type {
