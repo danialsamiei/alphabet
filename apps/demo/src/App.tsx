@@ -1,40 +1,36 @@
 /**
  * @file App.tsx
  * @description
- * AWAF Demo — interactive playground showing how the Adaptive Render
- * Layers SDK chooses a layer based on capability, accessibility, and
- * privacy signals.
+ * AWAF demo shell — tabbed experience hosting four sub-experiences:
+ *  1. Layer Switcher (existing immersive demo, polished + crossfade)
+ *  2. Consent Ladder visualizer
+ *  3. Real-time Context Dashboard
+ *  4. AI Protocol Playground (offline mock server)
  *
- * The demo never relies on real device detection; instead it lets the
- * user override every input to `useAdaptiveLayer` so the fallback
- * chain can be observed end-to-end without changing browsers.
+ * Shared state (locale, simulated viewport, network, consent signals)
+ * lives at the shell level so the tabs stay synchronised.
  */
 
-import { useEffect, useMemo, useState } from 'react';
-import {
-  AdaptiveSlot,
-  AwafProvider,
-  ConsentBanner,
-  TransparencyNotice,
-  Canvas2DLayer,
-  Css3DLayer,
-  StaticHtmlLayer,
-  TextOnlyLayer,
-  useAdaptiveLayer,
-  useAwafContext,
-  type AdaptiveLayer,
-} from '@awaf/ui';
+import { useEffect, useId, useMemo, useState, type CSSProperties } from 'react';
+import { AwafProvider, ConsentBanner } from '@awaf/ui';
+import { ConsentLadderExperience } from './experiences/ConsentLadderExperience.js';
+import { ContextDashboardExperience } from './experiences/ContextDashboardExperience.js';
+import { LayerSwitcherExperience } from './experiences/LayerSwitcherExperience.js';
+import { ProtocolPlaygroundExperience } from './experiences/ProtocolPlaygroundExperience.js';
 
 type LocaleKey = 'en-US' | 'fa-IR' | 'ar-SA';
 
-const LOCALES: ReadonlyArray<{ key: LocaleKey; label: string; dir: 'ltr' | 'rtl' }> = [
+const LOCALES: ReadonlyArray<{
+  key: LocaleKey;
+  label: string;
+  dir: 'ltr' | 'rtl';
+}> = [
   { key: 'en-US', label: 'English (LTR)', dir: 'ltr' },
   { key: 'fa-IR', label: 'فارسی (RTL)', dir: 'rtl' },
   { key: 'ar-SA', label: 'العربية (RTL)', dir: 'rtl' },
 ];
 
 interface DemoState {
-  readonly forceLayer: AdaptiveLayer | 'auto';
   readonly webglEnabled: boolean;
   readonly reducedMotion: boolean;
   readonly dnt: boolean;
@@ -42,10 +38,10 @@ interface DemoState {
   readonly locale: LocaleKey;
   readonly viewportSimulated: 'auto' | 'narrow' | 'wide';
   readonly networkType: 'auto' | '4g' | '3g' | '2g' | 'slow-2g';
+  readonly theme: 'auto' | 'light' | 'dark';
 }
 
 const INITIAL_STATE: DemoState = {
-  forceLayer: 'auto',
   webglEnabled: true,
   reducedMotion: false,
   dnt: false,
@@ -53,17 +49,48 @@ const INITIAL_STATE: DemoState = {
   locale: 'en-US',
   viewportSimulated: 'auto',
   networkType: 'auto',
+  theme: 'auto',
 };
+
+type TabId = 'layers' | 'consent' | 'context' | 'protocols';
+
+const TABS: ReadonlyArray<{ id: TabId; label: string; description: string }> = [
+  {
+    id: 'layers',
+    label: 'Layers',
+    description: 'Adaptive render layers with manual override.',
+  },
+  {
+    id: 'consent',
+    label: 'Consent',
+    description: 'Interactive consent ladder with live event log.',
+  },
+  {
+    id: 'context',
+    label: 'Context',
+    description: 'Real-time handshake stream + signal dashboard.',
+  },
+  {
+    id: 'protocols',
+    label: 'Protocols',
+    description: 'Offline AI protocol playground.',
+  },
+];
 
 export function App(): JSX.Element {
   const [state, setState] = useState<DemoState>(INITIAL_STATE);
   const localeMeta = LOCALES.find((l) => l.key === state.locale) ?? LOCALES[0]!;
 
-  // Reflect locale + direction on the document so RTL CSS applies.
+  // Reflect locale + direction + theme on the document.
   useEffect(() => {
     document.documentElement.lang = localeMeta.key;
     document.documentElement.dir = localeMeta.dir;
-  }, [localeMeta]);
+    if (state.theme === 'auto') {
+      document.documentElement.removeAttribute('data-awaf-theme');
+    } else {
+      document.documentElement.setAttribute('data-awaf-theme', state.theme);
+    }
+  }, [localeMeta, state.theme]);
 
   return (
     <AwafProvider
@@ -71,7 +98,12 @@ export function App(): JSX.Element {
         privacySignals: { dntEnabled: state.dnt, gpcEnabled: state.gpc },
       }}
     >
-      <DemoShell state={state} setState={setState} localeDir={localeMeta.dir} localeKey={localeMeta.key} />
+      <DemoShell
+        state={state}
+        setState={setState}
+        localeDir={localeMeta.dir}
+        localeKey={localeMeta.key}
+      />
     </AwafProvider>
   );
 }
@@ -83,63 +115,39 @@ interface ShellProps {
   readonly localeKey: LocaleKey;
 }
 
-function DemoShell({ state, setState, localeDir, localeKey }: ShellProps): JSX.Element {
-  const ctx = useAwafContext();
-  // AwafProvider is always the parent here, so ctx is non-null. Fall back
-  // gracefully just in case the demo is restructured in the future.
-  if (ctx === null) throw new Error('DemoShell must be wrapped in AwafProvider');
-  const { consent } = ctx;
-
-  // Compute the effective overrides we hand to AdaptiveSlot / Transparency.
-  const layerOptions = useMemo<Parameters<typeof useAdaptiveLayer>[0]>(
-    () => ({
-      reducedMotionOverride: state.reducedMotion,
-      webglSupportedOverride: state.webglEnabled,
-      ...(state.forceLayer !== 'auto' ? { forceLayer: state.forceLayer } : {}),
-      ...(state.viewportSimulated === 'narrow' ? { viewportWidthOverride: 480 } : {}),
-      ...(state.viewportSimulated === 'wide' ? { viewportWidthOverride: 1440 } : {}),
-      ...(state.networkType !== 'auto' ? { networkTypeOverride: state.networkType } : {}),
-    }),
-    [state]
+function DemoShell({
+  state,
+  setState,
+  localeDir,
+  localeKey,
+}: ShellProps): JSX.Element {
+  const [activeTab, setActiveTab] = useState<TabId>('layers');
+  const headerStyle = useMemo<CSSProperties>(
+    () => ({ display: 'grid', gap: '0.4rem' }),
+    [],
   );
 
-  const liveLayer = useAdaptiveLayer(layerOptions);
+  const update = <K extends keyof DemoState>(
+    key: K,
+    value: DemoState[K],
+  ): void => setState({ ...state, [key]: value });
 
-  const update = <K extends keyof DemoState>(key: K, value: DemoState[K]): void =>
-    setState({ ...state, [key]: value });
+  const tabPanelId = useId();
 
   return (
     <div className="awaf-shell" dir={localeDir} lang={localeKey}>
-      <header>
-        <h1>AWAF — Adaptive Render Layers</h1>
-        <p style={{ marginTop: '0.5rem', color: 'var(--awaf-muted)' }}>
-          Live demo of <code>@awaf/ui</code>. Toggle the inputs below to see how the
-          layer-selector picks a render layer and explains its choice.
-        </p>
-        <p style={{ margin: '0.5rem 0 0' }}>
-          Current layer: <span className="awaf-current-layer">{liveLayer.layer}</span>
-          {' '}· Reason code:{' '}
-          <span className="awaf-current-layer">{liveLayer.reasonCode}</span>
+      <header style={headerStyle}>
+        <h1>AWAF — Adaptive Web Awareness Framework</h1>
+        <p style={{ margin: 0, color: 'var(--awaf-muted)' }}>
+          Live demo of <code>@awaf/ui</code>, <code>@awaf/core</code>, and{' '}
+          <code>@awaf/api</code>'s offline mock server.
         </p>
       </header>
 
       <fieldset className="awaf-toggles">
-        <legend style={{ padding: '0 0.5rem', fontWeight: 600 }}>Simulation toggles</legend>
-
-        <label>
-          Force layer
-          <select
-            value={state.forceLayer}
-            onChange={(e) => update('forceLayer', e.target.value as DemoState['forceLayer'])}
-          >
-            <option value="auto">auto (use selector)</option>
-            <option value="R3F_IMMERSIVE">R3F_IMMERSIVE</option>
-            <option value="CSS_3D">CSS_3D</option>
-            <option value="CANVAS_2D">CANVAS_2D</option>
-            <option value="STATIC_HTML">STATIC_HTML</option>
-            <option value="TEXT_ONLY">TEXT_ONLY</option>
-          </select>
-        </label>
+        <legend style={{ padding: '0 0.5rem', fontWeight: 600 }}>
+          Simulation toggles
+        </legend>
 
         <label>
           <input
@@ -192,11 +200,28 @@ function DemoShell({ state, setState, localeDir, localeKey }: ShellProps): JSX.E
         </label>
 
         <label>
+          Theme
+          <select
+            value={state.theme}
+            onChange={(e) =>
+              update('theme', e.target.value as DemoState['theme'])
+            }
+          >
+            <option value="auto">auto</option>
+            <option value="light">light</option>
+            <option value="dark">dark</option>
+          </select>
+        </label>
+
+        <label>
           Simulated viewport
           <select
             value={state.viewportSimulated}
             onChange={(e) =>
-              update('viewportSimulated', e.target.value as DemoState['viewportSimulated'])
+              update(
+                'viewportSimulated',
+                e.target.value as DemoState['viewportSimulated'],
+              )
             }
           >
             <option value="auto">auto</option>
@@ -220,90 +245,52 @@ function DemoShell({ state, setState, localeDir, localeKey }: ShellProps): JSX.E
             <option value="slow-2g">slow-2g</option>
           </select>
         </label>
-
-        <label>
-          Consent tier
-          <select
-            value={consent.tier}
-            onChange={(e) => {
-              const next = e.target.value as 'NO_MEMORY' | 'ANONYMOUS' | 'CONSENTED' | 'ENRICHED';
-              if (next === 'NO_MEMORY') consent.revoke();
-              else consent.grant(next, ['personalization']);
-            }}
-          >
-            <option value="NO_MEMORY">NO_MEMORY</option>
-            <option value="ANONYMOUS">ANONYMOUS</option>
-            <option value="CONSENTED">CONSENTED</option>
-            <option value="ENRICHED">ENRICHED</option>
-          </select>
-        </label>
       </fieldset>
 
-      <TransparencyNotice {...layerOptions} />
+      <div className="awaf-tablist" role="tablist" aria-label="Demo experiences">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            id={`awaf-tab-${tab.id}`}
+            aria-selected={activeTab === tab.id}
+            aria-controls={`${tabPanelId}-${tab.id}`}
+            tabIndex={activeTab === tab.id ? 0 : -1}
+            onClick={() => setActiveTab(tab.id)}
+            title={tab.description}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-      <section aria-label="Adaptive render output" className="awaf-render-host">
-        <AdaptiveSlot
-          {...layerOptions}
-          r3fFallback={
-            <div style={{ padding: '1.5rem' }}>Loading immersive layer…</div>
-          }
-          r3f={(ctx) => (
-            <div
-              style={{
-                padding: '1.5rem',
-                color: '#f8fafc',
-                background:
-                  'radial-gradient(circle at 30% 20%, #1e1b4b 0%, #020617 100%)',
-                minHeight: '20rem',
-              }}
-              dir={ctx.direction}
-            >
-              <h2 style={{ margin: 0 }}>R3F Immersive (placeholder)</h2>
-              <p>
-                In a real app the lazy bundle would mount an <code>@react-three/fiber</code>{' '}
-                <code>Canvas</code>. The base bundle does not include R3F.
-              </p>
-            </div>
-          )}
-          css3d={(ctx) => (
-            <Css3DLayer
-              heading="CSS 3D layer"
-              description="Hardware-accelerated CSS transforms with no JavaScript animation loop."
-              direction={ctx.direction}
-              {...(ctx.locale !== null ? { locale: ctx.locale } : {})}
-            />
-          )}
-          canvas2d={(ctx) => (
-            <Canvas2DLayer
-              heading="Canvas 2D layer"
-              description="Lightweight 2D canvas — initialized lazily after mount."
-              direction={ctx.direction}
-              {...(ctx.locale !== null ? { locale: ctx.locale } : {})}
-            />
-          )}
-          staticHtml={(ctx) => (
-            <StaticHtmlLayer
-              heading="Static HTML layer"
-              description="Semantic HTML with no animation. Preferred when reduced-motion is set."
-              direction={ctx.direction}
-              {...(ctx.locale !== null ? { locale: ctx.locale } : {})}
-            />
-          )}
-          textOnly={(ctx) => (
-            <TextOnlyLayer
-              heading="Text-only layer"
-              description="ARIA landmarks, skip-link, and minimal styling for screen readers."
-              direction={ctx.direction}
-              {...(ctx.locale !== null ? { locale: ctx.locale } : {})}
-            />
-          )}
-        />
-      </section>
+      <div
+        role="tabpanel"
+        id={`${tabPanelId}-${activeTab}`}
+        aria-labelledby={`awaf-tab-${activeTab}`}
+        className="awaf-tabpanel"
+        tabIndex={0}
+      >
+        {activeTab === 'layers' ? (
+          <LayerSwitcherExperience
+            reducedMotion={state.reducedMotion}
+            webglEnabled={state.webglEnabled}
+            viewportSimulated={state.viewportSimulated}
+            networkType={state.networkType}
+            localeKey={localeKey}
+            localeDir={localeDir}
+          />
+        ) : null}
+        {activeTab === 'consent' ? <ConsentLadderExperience /> : null}
+        {activeTab === 'context' ? <ContextDashboardExperience /> : null}
+        {activeTab === 'protocols' ? <ProtocolPlaygroundExperience /> : null}
+      </div>
 
       <p className="awaf-footer-note">
-        DNT / GPC do <strong>not</strong> downgrade the visual layer — they only restrict
-        consent and personalization. Verify it by toggling DNT with a high-capability layer
-        active.
+        DNT / GPC do <strong>not</strong> downgrade the visual layer — they
+        only restrict consent and personalization. Verify it by toggling DNT
+        with a high-capability layer active.
       </p>
 
       <ConsentBanner showEnriched onChange={() => undefined} />
