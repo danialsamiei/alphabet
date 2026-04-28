@@ -18,6 +18,11 @@
       "import": "./dist/types/index.js",
       "require": "./dist/types/index.cjs"
     },
+    "./contracts/runtime": {
+      "types": "./dist/contracts/runtime/index.d.ts",
+      "import": "./dist/contracts/runtime/index.js",
+      "require": "./dist/contracts/runtime/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "files": ["dist"],
