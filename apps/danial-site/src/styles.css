@@ -1,0 +1,232 @@
+/* ----------------------------------------------------------------
+   Danial Samiei — personal site styles
+   Lightweight, system-font, accessible, supports prefers-color-scheme
+   and prefers-reduced-motion.
+   ---------------------------------------------------------------- */
+
+:root {
+  --ds-bg: #f8fafc;
+  --ds-fg: #0f172a;
+  --ds-muted: #475569;
+  --ds-accent: #4f46e5;
+  --ds-accent-fg: #ffffff;
+  --ds-card: #ffffff;
+  --ds-border: #e2e8f0;
+  --ds-radius: 0.75rem;
+  --ds-max: 60rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ds-bg: #0b1020;
+    --ds-fg: #e2e8f0;
+    --ds-muted: #94a3b8;
+    --ds-accent: #818cf8;
+    --ds-accent-fg: #0b1020;
+    --ds-card: #111a35;
+    --ds-border: #1e293b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--ds-bg);
+  color: var(--ds-fg);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.55;
+}
+
+a { color: var(--ds-accent); }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: 2px;
+}
+
+/* Skip link — visible only on focus, per WCAG 2.4.1 */
+.ds-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.ds-skip-link:focus {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  width: auto;
+  height: auto;
+  background: var(--ds-accent);
+  color: var(--ds-accent-fg);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  z-index: 9999;
+}
+
+.ds-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Hero ─── */
+.ds-header { padding: 3rem 1.25rem 1.5rem; }
+.ds-hero {
+  max-width: var(--ds-max);
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+.ds-hero-eyebrow {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--ds-muted);
+  margin: 0;
+}
+.ds-hero h1 {
+  margin: 0.25rem 0 0.25rem;
+  font-size: clamp(2rem, 4vw + 1rem, 3rem);
+  line-height: 1.15;
+}
+.ds-hero-affiliation { margin: 0 0 1rem; color: var(--ds-muted); }
+.ds-hero-tagline { margin: 0 0 1.5rem; max-width: 50ch; }
+.ds-hero-cta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* ─── Buttons ─── */
+.ds-btn {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--ds-border);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+.ds-btn-primary {
+  background: var(--ds-accent);
+  color: var(--ds-accent-fg);
+  border-color: var(--ds-accent);
+}
+.ds-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ─── Adaptive slot wrappers (showcase AWAF) ─── */
+.ds-adaptive { max-width: var(--ds-max); margin: 0 auto; }
+.ds-adaptive-css3d, .ds-adaptive-canvas {
+  border: 1px dashed var(--ds-border);
+  border-radius: var(--ds-radius);
+  padding: 1rem;
+}
+
+/* ─── Sections ─── */
+.ds-main { max-width: var(--ds-max); margin: 0 auto; padding: 1rem 1.25rem 3rem; }
+.ds-section { padding: 1.5rem 0; border-top: 1px solid var(--ds-border); }
+.ds-section h2 { margin-top: 0; }
+.ds-muted { color: var(--ds-muted); }
+
+.ds-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+.ds-card {
+  background: var(--ds-card);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  padding: 1rem;
+}
+.ds-card h3 { margin: 0 0 0.5rem; }
+.ds-keywords { margin: 0.5rem 0 0; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ds-keyword {
+  font-size: 0.8rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--ds-bg);
+  border: 1px solid var(--ds-border);
+}
+
+.ds-pub-list, .ds-course-list, .ds-contact-list { padding-left: 1.25rem; }
+.ds-pub-authors { font-weight: 600; }
+.ds-pub-year { color: var(--ds-muted); }
+
+/* ─── Chat ─── */
+.ds-assistant { background: var(--ds-card); border-radius: var(--ds-radius); padding: 1.25rem; }
+.ds-chat-log {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+.ds-chat-msg {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--ds-bg);
+  border: 1px solid var(--ds-border);
+}
+.ds-chat-msg.ds-chat-user { background: color-mix(in srgb, var(--ds-accent) 12%, var(--ds-bg)); }
+.ds-chat-msg.ds-chat-error { border-color: #ef4444; color: #b91c1c; }
+.ds-chat-role {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--ds-muted);
+  align-self: start;
+  padding-top: 0.15rem;
+}
+.ds-chat-content { white-space: pre-wrap; word-break: break-word; }
+
+.ds-chat-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.ds-chat-form input[type='text'] {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-bg);
+  color: inherit;
+  font: inherit;
+}
+
+/* ─── Footer ─── */
+.ds-footer {
+  border-top: 1px solid var(--ds-border);
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  color: var(--ds-muted);
+  font-size: 0.9rem;
+}
+
+/* RTL niceties — Persian / Arabic */
+:dir(rtl) .ds-pub-list, :dir(rtl) .ds-course-list, :dir(rtl) .ds-contact-list {
+  padding-left: 0;
+  padding-right: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0s !important; transition-duration: 0s !important; }
+  html { scroll-behavior: auto; }
+}
