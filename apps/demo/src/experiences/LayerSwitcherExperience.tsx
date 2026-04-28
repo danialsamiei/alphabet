@@ -11,7 +11,7 @@
  * - Manual override buttons that drive `setOverride` on the provider.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   AdaptiveSlot,
   Canvas2DLayer,
@@ -69,14 +69,6 @@ export function LayerSwitcherExperience(props: LayerSwitcherProps): JSX.Element 
 
 function LayerSwitcherInner(props: LayerSwitcherProps): JSX.Element {
   const { layer, reasonCode, override, setOverride } = useLayer();
-
-  // Crossfade: re-mount the host with a key when layer changes so CSS
-  // animation runs. The animation is zeroed out by tokens.css when
-  // prefers-reduced-motion is active.
-  const [, forceTick] = useState(0);
-  useEffect(() => {
-    forceTick((n) => n + 1);
-  }, [layer]);
 
   const slotProps = useMemo<Parameters<typeof AdaptiveSlot>[0]>(
     () => ({

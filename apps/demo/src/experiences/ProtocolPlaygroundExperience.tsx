@@ -142,7 +142,9 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
     const init: RequestInit = { method: preset.method };
     if (preset.method !== 'GET' && body.trim().length > 0) {
       try {
-        // Validate JSON before dispatching.
+        // Validate JSON before dispatching. The parsed value is not used —
+        // we forward the original `body` string so users see the exact
+        // payload they typed in the response log.
         JSON.parse(body);
         init.body = body;
         init.headers = { 'Content-Type': 'application/json' };
