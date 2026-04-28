@@ -5,6 +5,20 @@
   --awaf-muted: #475569;
   --awaf-border: rgba(15, 23, 42, 0.12);
   --awaf-accent: #4f46e5;
+  --awaf-success: #10b981;
+  --awaf-warning: #f59e0b;
+  --awaf-danger: #ef4444;
+  --awaf-surface: rgba(15, 23, 42, 0.03);
+  --awaf-glass-bg: rgba(255, 255, 255, 0.55);
+  --awaf-glass-border: rgba(255, 255, 255, 0.8);
+  --awaf-glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  --awaf-glass-blur: 18px;
+  --awaf-radius-md: 0.6rem;
+  --awaf-radius-lg: 0.85rem;
+  --awaf-duration-fast: 150ms;
+  --awaf-duration-base: 240ms;
+  --awaf-duration-slow: 420ms;
+  --awaf-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,6 +28,24 @@
     --awaf-muted: #94a3b8;
     --awaf-border: rgba(248, 250, 252, 0.18);
     --awaf-accent: #818cf8;
+    --awaf-surface: rgba(248, 250, 252, 0.04);
+    --awaf-glass-bg: rgba(15, 23, 42, 0.55);
+    --awaf-glass-border: rgba(148, 163, 184, 0.2);
+    --awaf-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --awaf-duration-fast: 0ms;
+    --awaf-duration-base: 0ms;
+    --awaf-duration-slow: 0ms;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --awaf-border: rgba(15, 23, 42, 0.45);
   }
 }
 
@@ -23,29 +55,36 @@ html, body, #root {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: var(--awaf-bg);
+  background:
+    radial-gradient(1200px 700px at 20% -10%, rgba(79, 70, 229, 0.18), transparent 60%),
+    radial-gradient(900px 600px at 110% 10%, rgba(16, 185, 129, 0.10), transparent 60%),
+    var(--awaf-bg);
   color: var(--awaf-fg);
   min-height: 100vh;
 }
 
 .awaf-shell {
-  max-width: 64rem;
+  max-width: 72rem;
   margin: 0 auto;
   padding: 2rem 1.25rem 6rem;
   display: grid;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-.awaf-shell h1 { margin: 0; font-size: 1.6rem; }
+.awaf-shell h1 { margin: 0; font-size: 1.7rem; letter-spacing: -0.01em; }
+.awaf-shell h2 { margin: 0; font-size: 1.15rem; }
 
 .awaf-toggles {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid var(--awaf-border);
-  border-radius: 0.75rem;
-  background: rgba(15, 23, 42, 0.03);
+  border: 1px solid var(--awaf-glass-border);
+  border-radius: var(--awaf-radius-lg);
+  background: var(--awaf-glass-bg);
+  backdrop-filter: blur(var(--awaf-glass-blur));
+  -webkit-backdrop-filter: blur(var(--awaf-glass-blur));
+  box-shadow: var(--awaf-glass-shadow);
 }
 
 .awaf-toggles label {
@@ -58,7 +97,7 @@ html, body, #root {
 
 .awaf-toggles select,
 .awaf-toggles input[type="text"] {
-  padding: 0.25rem 0.5rem;
+  padding: 0.3rem 0.55rem;
   border-radius: 0.4rem;
   border: 1px solid var(--awaf-border);
   background: var(--awaf-bg);
@@ -77,7 +116,7 @@ html, body, #root {
 
 .awaf-render-host {
   border: 1px solid var(--awaf-border);
-  border-radius: 0.75rem;
+  border-radius: var(--awaf-radius-lg);
   overflow: hidden;
   min-height: 20rem;
   background: var(--awaf-bg);
@@ -91,3 +130,349 @@ html, body, #root {
 }
 
 [dir="rtl"] .awaf-shell { text-align: right; }
+
+/* ─── Tabs ────────────────────────────────────────────────────────────── */
+
+.awaf-tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.4rem;
+  border: 1px solid var(--awaf-glass-border);
+  border-radius: var(--awaf-radius-lg);
+  background: var(--awaf-glass-bg);
+  backdrop-filter: blur(var(--awaf-glass-blur));
+  -webkit-backdrop-filter: blur(var(--awaf-glass-blur));
+  box-shadow: var(--awaf-glass-shadow);
+}
+
+.awaf-tablist button {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background var(--awaf-duration-fast) var(--awaf-ease),
+    border-color var(--awaf-duration-fast) var(--awaf-ease);
+}
+
+.awaf-tablist button:hover {
+  background: var(--awaf-surface);
+}
+
+.awaf-tablist button[aria-selected="true"] {
+  background: var(--awaf-accent);
+  color: white;
+  border-color: var(--awaf-accent);
+}
+
+.awaf-tabpanel {
+  outline: none;
+}
+
+/* ─── Cards ───────────────────────────────────────────────────────────── */
+
+.awaf-card {
+  border: 1px solid var(--awaf-glass-border);
+  border-radius: var(--awaf-radius-lg);
+  background: var(--awaf-glass-bg);
+  backdrop-filter: blur(var(--awaf-glass-blur));
+  -webkit-backdrop-filter: blur(var(--awaf-glass-blur));
+  box-shadow: var(--awaf-glass-shadow);
+  padding: 1.1rem 1.25rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.awaf-card-heading {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.awaf-muted-text {
+  margin: 0;
+  color: var(--awaf-muted);
+  font-size: 0.9rem;
+}
+
+.awaf-empty {
+  font-style: italic;
+}
+
+.awaf-experience {
+  display: grid;
+  gap: 1rem;
+}
+
+.awaf-grid-2 {
+  grid-template-columns: 1fr;
+}
+
+.awaf-grid-3 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 60rem) {
+  .awaf-grid-2 { grid-template-columns: 1fr 1fr; }
+  .awaf-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ─── Log + timeline + signals ────────────────────────────────────────── */
+
+.awaf-log,
+.awaf-timeline,
+.awaf-signal-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.awaf-log li {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--awaf-border);
+  border-radius: 0.5rem;
+  background: var(--awaf-surface);
+  font-size: 0.88rem;
+}
+
+.awaf-log-stacked li {
+  grid-template-columns: 1fr;
+}
+
+.awaf-log-stacked li header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.awaf-log-time {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--awaf-muted);
+}
+
+.awaf-log-tier {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.14);
+  color: var(--awaf-accent);
+}
+
+.awaf-log-tier[data-tier="NO_MEMORY"] { background: rgba(148, 163, 184, 0.2); color: var(--awaf-muted); }
+.awaf-log-tier[data-tier="ANONYMOUS"] { background: rgba(16, 185, 129, 0.16); color: var(--awaf-success); }
+.awaf-log-tier[data-tier="CONSENTED"] { background: rgba(79, 70, 229, 0.18); color: var(--awaf-accent); }
+.awaf-log-tier[data-tier="ENRICHED"]  { background: rgba(245, 158, 11, 0.18); color: var(--awaf-warning); }
+
+.awaf-timeline li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-left: 3px solid var(--awaf-accent);
+  background: var(--awaf-surface);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.awaf-timeline-phase {
+  font-weight: 600;
+}
+
+.awaf-timeline-duration {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--awaf-muted);
+}
+
+.awaf-signal-list li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--awaf-border);
+  padding: 0.35rem 0;
+}
+
+.awaf-signal-list li:last-child {
+  border-bottom: none;
+}
+
+.awaf-dl {
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.awaf-dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px dashed var(--awaf-border);
+  padding-bottom: 0.3rem;
+}
+
+.awaf-dl > div:last-child {
+  border-bottom: none;
+}
+
+.awaf-dl dt {
+  color: var(--awaf-muted);
+}
+
+.awaf-dl dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.awaf-pill {
+  display: inline-block;
+  padding: 0.05rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--awaf-surface);
+  border: 1px solid var(--awaf-border);
+}
+
+.awaf-pill[data-status="ready"] { background: rgba(16, 185, 129, 0.16); border-color: transparent; color: var(--awaf-success); }
+.awaf-pill[data-status="error"] { background: rgba(239, 68, 68, 0.16); border-color: transparent; color: var(--awaf-danger); }
+.awaf-pill[data-status="running"] { background: rgba(245, 158, 11, 0.16); border-color: transparent; color: var(--awaf-warning); }
+
+.awaf-pre {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--awaf-border);
+  border-radius: 0.5rem;
+  background: var(--awaf-surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  max-height: 18rem;
+}
+
+.awaf-error {
+  color: var(--awaf-danger);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ─── Forms (Protocol Playground) ─────────────────────────────────────── */
+
+.awaf-field {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.awaf-field span {
+  font-size: 0.85rem;
+  color: var(--awaf-muted);
+}
+
+.awaf-field select,
+.awaf-field textarea {
+  font: inherit;
+  color: inherit;
+  background: var(--awaf-bg);
+  border: 1px solid var(--awaf-border);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.6rem;
+}
+
+.awaf-field textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.awaf-button-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.awaf-primary-btn {
+  appearance: none;
+  border: none;
+  background: var(--awaf-accent);
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform var(--awaf-duration-fast) var(--awaf-ease),
+    filter var(--awaf-duration-fast) var(--awaf-ease);
+}
+
+.awaf-primary-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.awaf-primary-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.awaf-primary-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.awaf-pill-btn {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--awaf-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  transition: background var(--awaf-duration-fast) var(--awaf-ease),
+    border-color var(--awaf-duration-fast) var(--awaf-ease);
+}
+
+.awaf-pill-btn:hover {
+  background: var(--awaf-surface);
+}
+
+.awaf-pill-btn[data-active="true"] {
+  background: var(--awaf-accent);
+  color: white;
+  border-color: var(--awaf-accent);
+}
+
+.awaf-correlation {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--awaf-muted);
+}
+
+.awaf-layer-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* ─── Crossfade between layers ─────────────────────────────────────────── */
+
+.awaf-crossfade {
+  animation: awaf-fade-in var(--awaf-duration-base) var(--awaf-ease);
+}
+
+@keyframes awaf-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .awaf-crossfade { animation: none; }
+}

@@ -13,11 +13,17 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      '@awaf/ui': resolve(__dirname, '../../packages/ui/src/index.ts'),
-      '@awaf/core': resolve(__dirname, '../../packages/core/src/index.ts'),
-      '@awaf/api': resolve(__dirname, '../../packages/api/src/index.ts'),
-    },
+    alias: [
+      // Order matters: subpaths must come before the bare package alias so
+      // that `@awaf/api/mock` does not get rewritten to
+      // `<src/index.ts>/mock`.
+      { find: '@awaf/api/mock', replacement: resolve(__dirname, '../../packages/api/src/mock/index.ts') },
+      { find: '@awaf/api/transport', replacement: resolve(__dirname, '../../packages/api/src/transport/index.ts') },
+      { find: '@awaf/ui/styles/tokens.css', replacement: resolve(__dirname, '../../packages/ui/styles/tokens.css') },
+      { find: '@awaf/ui', replacement: resolve(__dirname, '../../packages/ui/src/index.ts') },
+      { find: '@awaf/core', replacement: resolve(__dirname, '../../packages/core/src/index.ts') },
+      { find: '@awaf/api', replacement: resolve(__dirname, '../../packages/api/src/index.ts') },
+    ],
   },
   build: {
     sourcemap: true,
