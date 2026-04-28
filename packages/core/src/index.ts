@@ -29,8 +29,19 @@ export type {
 } from './events/awaf-events.js';
 
 // ─── Handshake ────────────────────────────────────────────────────────────────
-export { SignalCollector, EnrichmentPipeline, HandshakeDecisionEngine } from './handshake/index.js';
-export type { SignalCollectorOptions } from './handshake/index.js';
+export {
+  SignalCollector,
+  EnrichmentPipeline,
+  HandshakeDecisionEngine,
+  HandshakeOrchestrator,
+} from './handshake/index.js';
+export type {
+  SignalCollectorOptions,
+  HandshakeOrchestratorOptions,
+  HandshakeRunOptions,
+  HandshakeOutcome,
+  HandshakePhase,
+} from './handshake/index.js';
 
 // ─── Privacy ──────────────────────────────────────────────────────────────────
 export {
