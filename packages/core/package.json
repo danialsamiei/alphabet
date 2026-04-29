@@ -23,6 +23,31 @@
       "import": "./dist/contracts/runtime/index.js",
       "require": "./dist/contracts/runtime/index.cjs"
     },
+    "./effect": {
+      "types": "./dist/effect/index.d.ts",
+      "import": "./dist/effect/index.js",
+      "require": "./dist/effect/index.cjs"
+    },
+    "./memory": {
+      "types": "./dist/memory/index.d.ts",
+      "import": "./dist/memory/index.js",
+      "require": "./dist/memory/index.cjs"
+    },
+    "./oracle": {
+      "types": "./dist/oracle/index.d.ts",
+      "import": "./dist/oracle/index.js",
+      "require": "./dist/oracle/index.cjs"
+    },
+    "./privacy-wasm": {
+      "types": "./dist/privacy-wasm/index.d.ts",
+      "import": "./dist/privacy-wasm/index.js",
+      "require": "./dist/privacy-wasm/index.cjs"
+    },
+    "./orchestrator": {
+      "types": "./dist/orchestrator/index.d.ts",
+      "import": "./dist/orchestrator/index.js",
+      "require": "./dist/orchestrator/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "files": ["dist"],
