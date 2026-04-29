@@ -1,24 +1,24 @@
-# AWAF Privacy Model
+# Alphabet Privacy Model
 
-> **Source of truth** for what AWAF collects, what it stores, and under
+> **Source of truth** for what Alphabet collects, what it stores, and under
 > which conditions. The behaviour described here is **enforced by code**
 > (see `packages/core/src/privacy` and `packages/security/src/consent`),
 > not just by documentation.
 
 ## Principles
 
-1. **Tier 0 by default.** Until a visitor explicitly grants consent, AWAF
+1. **Tier 0 by default.** Until a visitor explicitly grants consent, Alphabet
    operates in `NO_MEMORY` mode: zero storage, zero profiling, zero
    tracking, zero personalization.
 2. **DNT/GPC are first-class.** When `navigator.doNotTrack === '1'` or
-   `navigator.globalPrivacyControl === true`, AWAF **forces** the
+   `navigator.globalPrivacyControl === true`, Alphabet **forces** the
    privacy mode to Tier 0 and forbids personalization, even if the
    visitor previously granted a higher tier.
 3. **DNT/GPC do not affect rendering.** Privacy signals control storage,
    profiling, analytics, and personalization. They do **not** downgrade
    the visual layer to STATIC_HTML. A visitor with a capable device and
    GPC enabled still sees an immersive UI — they just don't get tracked.
-4. **No fingerprinting, no cookies, no PII.** AWAF reads passive browser
+4. **No fingerprinting, no cookies, no PII.** Alphabet reads passive browser
    signals (Accept-Language header, `Intl.DateTimeFormat().timeZone`,
    `screen.width`, `prefersReducedMotion`, DNT, GPC). It does **not**
    set cookies, does **not** hash navigator properties into a
@@ -34,7 +34,7 @@
 
 ## Consent ladder
 
-AWAF defines four tiers, ordered by what each one permits:
+Alphabet defines four tiers, ordered by what each one permits:
 
 | Tier         | Memory | Personalization | Analytics (k-anon) | Precise Geo |
 |--------------|:------:|:---------------:|:------------------:|:-----------:|
@@ -84,7 +84,7 @@ Behavioral learning, vector embeddings, and precise geo.
 
 ## State machine
 
-`ConsentTierManager` (in `@awaf/security`) implements the state machine.
+`ConsentTierManager` (in `@alphabet/security`) implements the state machine.
 
 ```
                 grant(tier)
@@ -111,7 +111,7 @@ Behavioral learning, vector embeddings, and precise geo.
 
 ## Privacy policy helpers
 
-All four helpers live in `@awaf/core/privacy/policy.ts`. They are pure
+All four helpers live in `@alphabet/core/privacy/policy.ts`. They are pure
 functions and the **only** authoritative source of truth for permission
 checks across the codebase.
 
@@ -121,7 +121,7 @@ import {
   canPersonalize,
   canUseAnalytics,
   canUsePreciseGeo,
-} from '@awaf/core';
+} from '@alphabet/core';
 
 canStoreMemory('NO_MEMORY');                              // false
 canStoreMemory('ANONYMOUS');                              // true
@@ -172,10 +172,10 @@ A visitor with `gpcEnabled: true` and a capable device receives:
 
 ## Out of scope
 
-- AWAF does **not** set cookies. It uses ephemeral, in-memory state and
+- Alphabet does **not** set cookies. It uses ephemeral, in-memory state and
   (at `CONSENTED`+) a rotating visitor id stored via the consuming
   application's chosen storage.
-- AWAF does **not** fingerprint. No canvas hashing, no font enumeration,
+- Alphabet does **not** fingerprint. No canvas hashing, no font enumeration,
   no WebGL renderer string capture.
-- AWAF does **not** store PII. Email, name, phone, IP — none of these
+- Alphabet does **not** store PII. Email, name, phone, IP — none of these
   ever enter the pipeline.

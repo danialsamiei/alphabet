@@ -12,13 +12,13 @@
  */
 
 import type { ConsentSnapshot, ConsentManagerState } from '../consent-tier-manager.js';
-import type { ConsentTier } from '@awaf/core';
+import type { ConsentTier } from '@alphabet/core';
 import type { SyncConsentStorageAdapter } from './types.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 /** کلید پیش‌فرض ذخیره‌سازی در `Storage` */
-export const DEFAULT_CONSENT_STORAGE_KEY = 'awaf:consent:v1';
+export const DEFAULT_CONSENT_STORAGE_KEY = 'alphabet:consent:v1';
 
 /** نسخه schema snapshot — برای migrate در آینده */
 const SCHEMA_VERSION = 1 as const;
@@ -52,7 +52,7 @@ const VALID_TIERS: ReadonlySet<ConsentTier> = new Set([
 
 /** گزینه‌های ساخت `WebStorageConsentStorage` */
 export interface WebStorageConsentStorageOptions {
-  /** کلید storage — پیش‌فرض `awaf:consent:v1` */
+  /** کلید storage — پیش‌فرض `alphabet:consent:v1` */
   readonly key?: string;
   /**
    * Storage مرجع — اگر داده نشود، تلاش می‌شود `localStorage` گرفته شود.
@@ -78,7 +78,7 @@ export interface WebStorageConsentStorageOptions {
  *
  * @example
  * // Session-scoped persistence:
- * new WebStorageConsentStorage({ storage: sessionStorage, key: 'awaf:consent' });
+ * new WebStorageConsentStorage({ storage: sessionStorage, key: 'alphabet:consent' });
  */
 export class WebStorageConsentStorage implements SyncConsentStorageAdapter {
   private readonly key: string;

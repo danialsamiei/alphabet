@@ -7,11 +7,11 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@awaf/core": ["../../packages/core/dist/index.d.ts"],
-      "@awaf/api": ["../../packages/api/dist/index.d.ts"],
-      "@awaf/ui": ["../../packages/ui/dist/index.d.ts"],
-      "@awaf/protocols": ["../../packages/protocols/dist/index.d.ts"],
-      "@awaf/security": ["../../packages/security/dist/index.d.ts"]
+      "@alphabet/core": ["../../packages/core/dist/index.d.ts"],
+      "@alphabet/api": ["../../packages/api/dist/index.d.ts"],
+      "@alphabet/ui": ["../../packages/ui/dist/index.d.ts"],
+      "@alphabet/protocols": ["../../packages/protocols/dist/index.d.ts"],
+      "@alphabet/security": ["../../packages/security/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

@@ -81,9 +81,9 @@ describe('WebStorageConsentStorage — basics', () => {
 
   it('honours a custom key', () => {
     const fake = new FakeStorage();
-    const storage = new WebStorageConsentStorage({ storage: fake, key: 'awaf-test' });
+    const storage = new WebStorageConsentStorage({ storage: fake, key: 'alphabet-test' });
     storage.save({ state: 'pending', tier: 'NO_MEMORY', policyVersion: POLICY_V1 });
-    expect(fake.getItem('awaf-test')).not.toBeNull();
+    expect(fake.getItem('alphabet-test')).not.toBeNull();
     expect(fake.getItem(DEFAULT_CONSENT_STORAGE_KEY)).toBeNull();
   });
 

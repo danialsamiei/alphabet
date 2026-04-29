@@ -20,7 +20,7 @@ function basePayload(): Omit<QrHandoffPayload, 'expiresAt' | 'nonce'> {
   return {
     sessionId: 'sess-7f3e1c2a',
     visitorId: 'v-abc12345',
-    audience: 'awaf:demo',
+    audience: 'alphabet:demo',
     consent: makeConsentScope('ANONYMOUS', { operations: ['read_context'] }),
   };
 }
@@ -32,12 +32,12 @@ describe('QrHandoffAdapter encode/decode', () => {
     if (!enc.success) return;
 
     const dec = await adapter.decode(enc.data, key(), {
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
     });
     expect(dec.success).toBe(true);
     if (dec.success) {
       expect(dec.data.sessionId).toBe('sess-7f3e1c2a');
-      expect(dec.data.audience).toBe('awaf:demo');
+      expect(dec.data.audience).toBe('alphabet:demo');
       expect(dec.data.consent.tier).toBe('ANONYMOUS');
       expect(dec.data.nonce.length).toBeGreaterThan(0);
     }
@@ -61,7 +61,7 @@ describe('QrHandoffAdapter encode/decode', () => {
     );
 
     const dec = await adapter.decode(tampered, key(), {
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
     });
     expect(dec.success).toBe(false);
     if (!dec.success) expect(dec.error.code).toBe('PAYLOAD_TAMPERED');
@@ -77,7 +77,7 @@ describe('QrHandoffAdapter encode/decode', () => {
     if (!enc.success) return;
 
     const dec = await adapter.decode(enc.data, key(), {
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
       now: () => fixedNow + 60_000, // 1 minute later
     });
     expect(dec.success).toBe(false);
@@ -90,7 +90,7 @@ describe('QrHandoffAdapter encode/decode', () => {
     if (!enc.success) return;
 
     const dec = await adapter.decode(enc.data, key(), {
-      expectedAudience: 'awaf:other',
+      expectedAudience: 'alphabet:other',
     });
     expect(dec.success).toBe(false);
     if (!dec.success) expect(dec.error.code).toBe('AUDIENCE_MISMATCH');
@@ -104,7 +104,7 @@ describe('QrHandoffAdapter encode/decode', () => {
     const wrongKey = new Uint8Array(32);
     for (let i = 0; i < wrongKey.length; i++) wrongKey[i] = 0xaa;
     const dec = await adapter.decode(enc.data, wrongKey, {
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
     });
     expect(dec.success).toBe(false);
     if (!dec.success) expect(dec.error.code).toBe('PAYLOAD_TAMPERED');

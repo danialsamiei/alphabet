@@ -1,7 +1,7 @@
 /**
- * @module @awaf/protocols/v2
+ * @module @alphabet/protocols/v2
  * @description
- * AwafProtocol v2 — additive surface for streaming AI generation,
+ * AlphabetProtocol v2 — additive surface for streaming AI generation,
  * built-in providers (OpenAI, Anthropic, Grok, Gemini, Mistral,
  * Fireworks), provider fallback chain, privacy-preserving prompt
  * engineering, predictive capability forecasting, and cryptographic
@@ -15,19 +15,19 @@
 
 // ─── Core types ──────────────────────────────────────────────────────────────
 export type {
-  AwafChatRole,
-  AwafChatMessage,
-  AwafToolDefinition,
-  AwafToolCall,
-  AwafStructuredOutputMode,
-  AwafStructuredOutputSpec,
-  AwafSampling,
-  AwafGenerationRequest,
-  AwafGenerationResponse,
-  AwafFinishReason,
-  AwafUsage,
-  AwafStreamChunk,
-  AwafProviderAdapter,
+  AlphabetChatRole,
+  AlphabetChatMessage,
+  AlphabetToolDefinition,
+  AlphabetToolCall,
+  AlphabetStructuredOutputMode,
+  AlphabetStructuredOutputSpec,
+  AlphabetSampling,
+  AlphabetGenerationRequest,
+  AlphabetGenerationResponse,
+  AlphabetFinishReason,
+  AlphabetUsage,
+  AlphabetStreamChunk,
+  AlphabetProviderAdapter,
 } from './types.js';
 
 // ─── Compression ─────────────────────────────────────────────────────────────
@@ -78,11 +78,11 @@ export * from './providers/index.js';
 
 // ─── SDK ─────────────────────────────────────────────────────────────────────
 export {
-  AwafAiClient,
-  createAwafAiClient,
+  AlphabetAiClient,
+  createAlphabetAiClient,
   prepareRequest,
 } from './sdk/index.js';
 export type {
-  AwafAiClientOptions,
-  AwafAiCallOptions,
+  AlphabetAiClientOptions,
+  AlphabetAiCallOptions,
 } from './sdk/index.js';

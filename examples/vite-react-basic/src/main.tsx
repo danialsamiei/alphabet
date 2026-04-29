@@ -1,6 +1,6 @@
 /**
  * @file main.tsx
- * @description Entry point for the AWAF Vite + React example.
+ * @description Entry point for the Alphabet Vite + React example.
  */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

@@ -1,8 +1,8 @@
 {
-  "name": "@awaf/example-vercel-ai-sdk-protocol-v2",
+  "name": "@alphabet/example-vercel-ai-sdk-protocol-v2",
   "version": "0.0.0",
   "private": true,
-  "description": "Reference snippet pack showing how to integrate AwafProtocol v2 with the Vercel AI SDK in a Next.js App Router project. See README.md — this is a documented snippet pack rather than a full standalone Next.js install to keep the AWAF monorepo lightweight.",
+  "description": "Reference snippet pack showing how to integrate AlphabetProtocol v2 with the Vercel AI SDK in a Next.js App Router project. See README.md — this is a documented snippet pack rather than a full standalone Next.js install to keep the Alphabet monorepo lightweight.",
   "scripts": {
     "typecheck": "echo \"This example is documentation-only; install Next.js + ai locally and copy the snippets into your project. See README.md.\""
   }

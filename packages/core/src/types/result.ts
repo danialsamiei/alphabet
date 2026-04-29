@@ -1,15 +1,15 @@
 /**
  * @module result
  * @description
- * الگوی Result<T,E> برای مدیریت خطای Functional در AWAF SDK.
+ * الگوی Result<T,E> برای مدیریت خطای Functional در Alphabet SDK.
  * تمام توابع public باید به جای throw از این الگو استفاده کنند.
  *
- * Result<T,E> Pattern for functional error handling in AWAF SDK.
+ * Result<T,E> Pattern for functional error handling in Alphabet SDK.
  * All public functions must use this pattern instead of throwing.
  */
 
-/** خطای پایه AWAF — تمام errorها از این ساختار پیروی می‌کنند */
-export interface AWAFError {
+/** خطای پایه Alphabet — تمام errorها از این ساختار پیروی می‌کنند */
+export interface AlphabetError {
   /** کد machine-readable (UPPER_SNAKE_CASE) */
   readonly code: string;
   /** پیام human-readable برای debugging */
@@ -22,7 +22,7 @@ export interface AWAFError {
  * نوع Result برای مدیریت موفقیت یا شکست عملیات.
  *
  * @template T - نوع داده در حالت موفقیت
- * @template E - نوع خطا (پیش‌فرض: AWAFError)
+ * @template E - نوع خطا (پیش‌فرض: AlphabetError)
  *
  * @example
  * function divide(a: number, b: number): Result<number> {
@@ -30,7 +30,7 @@ export interface AWAFError {
  *   return ok(a / b);
  * }
  */
-export type Result<T, E = AWAFError> =
+export type Result<T, E = AlphabetError> =
   | { readonly success: true; readonly data: T }
   | { readonly success: false; readonly error: E };
 
@@ -56,7 +56,7 @@ export function ok<T>(data: T): Result<T, never> {
  * @example
  * return err({ code: 'NOT_FOUND', message: 'Visitor not found' });
  */
-export function err<E = AWAFError>(error: E): Result<never, E> {
+export function err<E = AlphabetError>(error: E): Result<never, E> {
   return { success: false, error };
 }
 

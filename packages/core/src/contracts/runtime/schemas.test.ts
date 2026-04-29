@@ -1,11 +1,11 @@
 /**
- * Tests for hand-authored AWAF envelope/handshake schemas.
+ * Tests for hand-authored Alphabet envelope/handshake schemas.
  */
 import { describe, it, expect } from 'vitest';
 import {
-  awafErrorSchema,
-  awafRequestSchema,
-  awafResponseSchema,
+  alphabetErrorSchema,
+  alphabetRequestSchema,
+  alphabetResponseSchema,
   consentTierSchema,
   handshakePayloadSchema,
   handshakeResultSchema,
@@ -31,19 +31,19 @@ describe('contracts/runtime/schemas — primitives', () => {
     expect(responseMetaSchema.validate({ respondedAt: 'now' }).success).toBe(false);
   });
 
-  it('awafErrorSchema accepts the {code, message} minimal shape', () => {
-    expect(awafErrorSchema.validate({ code: 'X', message: 'y' }).success).toBe(true);
-    expect(awafErrorSchema.validate({ code: 'X' }).success).toBe(false);
+  it('alphabetErrorSchema accepts the {code, message} minimal shape', () => {
+    expect(alphabetErrorSchema.validate({ code: 'X', message: 'y' }).success).toBe(true);
+    expect(alphabetErrorSchema.validate({ code: 'X' }).success).toBe(false);
   });
 });
 
-describe('contracts/runtime/schemas — AWAFRequest envelope', () => {
+describe('contracts/runtime/schemas — AlphabetRequest envelope', () => {
   const payloadSchema = v.object({ language: v.string() });
-  const reqSchema = awafRequestSchema(payloadSchema);
+  const reqSchema = alphabetRequestSchema(payloadSchema);
 
   const validRequest = {
     protocol: 'API' as const,
-    endpoint: '/api/awaf/v1/context/handshake',
+    endpoint: '/api/alphabet/v1/context/handshake',
     visitorId: 'vst_123',
     sessionId: 'ses_456',
     consentTier: 'NO_MEMORY' as const,
@@ -72,9 +72,9 @@ describe('contracts/runtime/schemas — AWAFRequest envelope', () => {
   });
 });
 
-describe('contracts/runtime/schemas — AWAFResponse envelope', () => {
+describe('contracts/runtime/schemas — AlphabetResponse envelope', () => {
   const dataSchema = v.object({ ok: v.boolean() });
-  const resSchema = awafResponseSchema(dataSchema);
+  const resSchema = alphabetResponseSchema(dataSchema);
 
   const meta = { processingTimeMs: 1, respondedAt: '2026-01-01T00:00:00Z' };
 

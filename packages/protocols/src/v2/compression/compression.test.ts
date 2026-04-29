@@ -1,6 +1,6 @@
 /**
  * @file compression.test.ts
- * @description Tests for AwafProtocol v2 context compression strategies.
+ * @description Tests for AlphabetProtocol v2 context compression strategies.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -13,13 +13,13 @@ import {
   compose,
   DEFAULT_COMPRESSION,
 } from './index.js';
-import type { AwafChatMessage } from '../types.js';
+import type { AlphabetChatMessage } from '../types.js';
 
 const m = (
-  role: AwafChatMessage['role'],
+  role: AlphabetChatMessage['role'],
   content: string,
   priority?: number,
-): AwafChatMessage =>
+): AlphabetChatMessage =>
   priority === undefined ? { role, content } : { role, content, priority };
 
 describe('estimateTokens', () => {

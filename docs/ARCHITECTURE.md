@@ -1,5 +1,5 @@
-# معماری سیستم AWAF SDK
-# AWAF SDK System Architecture
+# معماری سیستم Alphabet SDK
+# Alphabet SDK System Architecture
 
 > **نسخه:** 1.0.0 | **تاریخ:** 2026-04-27
 > **مخزن:** `github.com/danialsamiei/awaf`
@@ -9,7 +9,7 @@
 
 ## 1. نمای کلی (Overview)
 
-چارچوب وب‌آگاه الفبا (AWAF — Alefba Web-Aware Framework) یک SDK کامل TypeScript/React است که برای ایجاد تجربه‌های وب تطبیقی (adaptive web experiences) طراحی شده است. این SDK در یک monorepo با پنج package و یک اپلیکیشن demo سازمان‌دهی می‌شود.
+چارچوب وب‌آگاه الفبا (Alphabet — Alefba Web-Aware Framework) یک SDK کامل TypeScript/React است که برای ایجاد تجربه‌های وب تطبیقی (adaptive web experiences) طراحی شده است. این SDK در یک monorepo با پنج package و یک اپلیکیشن demo سازمان‌دهی می‌شود.
 
 | شاخص | مقدار |
 |------|-------|
@@ -94,9 +94,9 @@
 ║  ┌─────────────────────────────────────────────────────────────────────────┐ ║
 ║  │  packages/core/src/                                                     │ ║
 ║  │  types/ — 11 Base Types + Brand Types + Result<T,E> Pattern           │ ║
-║  │  config/ — AWAFConfig Class (Env + File + Defaults)                    │ ║
-║  │  logger/ — AWAFLogger (4 Levels, Structured, JSON Sink)                │ ║
-║  │  events/ — AWAFEventEmitter (Typed, Priority, Once)                    │ ║
+║  │  config/ — AlphabetConfig Class (Env + File + Defaults)                    │ ║
+║  │  logger/ — AlphabetLogger (4 Levels, Structured, JSON Sink)                │ ║
+║  │  events/ — AlphabetEventEmitter (Typed, Priority, Once)                    │ ║
 ║  └─────────────────────────────────────────────────────────────────────────┘ ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
@@ -247,7 +247,7 @@
         │
         ▼
    ┌──────────────────────────────────────────────┐
-   │        AWAFRequest<T> / AWAFResponse<T>       │
+   │        AlphabetRequest<T> / AlphabetResponse<T>       │
    │        TokenBudget / StreamingConfig            │
    └──────────────────────────────────────────────┘
 ```
@@ -353,10 +353,10 @@ export interface SuggestionOption {
 }
 ```
 
-#### مدل ۸: `AWAFRequest<T>` — درخواست یکپارچه
+#### مدل ۸: `AlphabetRequest<T>` — درخواست یکپارچه
 
 ```typescript
-export interface AWAFRequest<T = unknown> {
+export interface AlphabetRequest<T = unknown> {
   readonly protocol: ProtocolType;      // 'MCP' | 'A2A' | 'QR' | 'API'
   readonly endpoint: string;
   readonly visitorId: string;
@@ -368,14 +368,14 @@ export interface AWAFRequest<T = unknown> {
 }
 ```
 
-#### مدل ۹: `AWAFResponse<T>` — پاسخ یکپارچه
+#### مدل ۹: `AlphabetResponse<T>` — پاسخ یکپارچه
 
 ```typescript
-export interface AWAFResponse<T = unknown> {
+export interface AlphabetResponse<T = unknown> {
   readonly requestId: string;
   readonly success: boolean;
   readonly data?: T;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
   readonly meta: ResponseMeta;
 }
 ```
@@ -414,7 +414,7 @@ export interface IntentSession {
 
 ```
                     ┌─────────────┐
-                    │  @awaf/demo │
+                    │  @alphabet/demo │
                     │  (apps/demo)│
                     └──────┬──────┘
                            │ depends on all
@@ -422,7 +422,7 @@ export interface IntentSession {
          │                 │                 │
          ▼                 ▼                 ▼
    ┌──────────┐     ┌──────────┐      ┌──────────────┐
-   │@awaf/ui  │     │@awaf/api │      │ @awaf/protocols│
+   │@alphabet/ui  │     │@alphabet/api │      │ @alphabet/protocols│
    │(Layer 7) │     │(Layer 4) │      │  (Layer 6)    │
    └────┬─────┘     └────┬─────┘      └───────┬───────┘
         │                │                    │
@@ -430,7 +430,7 @@ export interface IntentSession {
         │         │                           │
         ▼         ▼                           ▼
    ┌───────────────┐                   ┌──────────────┐
-   │  @awaf/core   │◄──────────────────│ @awaf/security│
+   │  @alphabet/core   │◄──────────────────│ @alphabet/security│
    │  (Layer 1-3)  │                   │  (Layer 5)   │
    │  types, config│                   └──────────────┘
    │  logger, events│
@@ -449,24 +449,24 @@ export interface IntentSession {
 ### 6.1 ترتیب وابستگی Build
 
 ```
-@awaf/core      ← هیچ وابستگی داخلی ندارد (پایه‌ترین — build اول)
-@awaf/api       ← @awaf/core
-@awaf/security  ← @awaf/core
-@awaf/protocols ← @awaf/core + @awaf/api
-@awaf/ui        ← @awaf/core + @awaf/api
-@awaf/demo      ← همه packageها (build آخر)
+@alphabet/core      ← هیچ وابستگی داخلی ندارد (پایه‌ترین — build اول)
+@alphabet/api       ← @alphabet/core
+@alphabet/security  ← @alphabet/core
+@alphabet/protocols ← @alphabet/core + @alphabet/api
+@alphabet/ui        ← @alphabet/core + @alphabet/api
+@alphabet/demo      ← همه packageها (build آخر)
 ```
 
 ### 6.2 جدول Exports هر Package
 
 | Package | Exports اصلی | مسیر dist |
 |---------|-------------|-----------|
-| `@awaf/core` | types, brands, result, config, logger, events | `packages/core/dist/` |
-| `@awaf/api` | ۱۶ endpoint client + SSE streaming | `packages/api/dist/` |
-| `@awaf/ui` | ۵ لایه degradation + hooks + components | `packages/ui/dist/` |
-| `@awaf/protocols` | MCP, A2A, QR, API adapters | `packages/protocols/dist/` |
-| `@awaf/security` | threat mitigations, sanitizers, audit | `packages/security/dist/` |
-| `@awaf/demo` | اپلیکیشن نمونه (Vite app) | `apps/demo/dist/` |
+| `@alphabet/core` | types, brands, result, config, logger, events | `packages/core/dist/` |
+| `@alphabet/api` | ۱۶ endpoint client + SSE streaming | `packages/api/dist/` |
+| `@alphabet/ui` | ۵ لایه degradation + hooks + components | `packages/ui/dist/` |
+| `@alphabet/protocols` | MCP, A2A, QR, API adapters | `packages/protocols/dist/` |
+| `@alphabet/security` | threat mitigations, sanitizers, audit | `packages/security/dist/` |
+| `@alphabet/demo` | اپلیکیشن نمونه (Vite app) | `apps/demo/dist/` |
 
 ---
 
@@ -512,12 +512,12 @@ export interface IntentSession {
                            ▼
 ┌──────────────────────────────────────────────────────────────┐
 │  Phase 2: build (topological order)                          │
-│  ├─ Step 1: @awaf/core    → vite build + tsc --emitDeclarationOnly │
-│  ├─ Step 2: @awaf/api     → vite build + tsc (after core)   │
-│  ├─ Step 3: @awaf/security → vite build + tsc (after core)  │
-│  ├─ Step 4: @awaf/protocols → vite build (after core+api) │
-│  ├─ Step 5: @awaf/ui      → vite build (after core+api)     │
-│  └─ Step 6: @awaf/demo     → vite build (after all packages)│
+│  ├─ Step 1: @alphabet/core    → vite build + tsc --emitDeclarationOnly │
+│  ├─ Step 2: @alphabet/api     → vite build + tsc (after core)   │
+│  ├─ Step 3: @alphabet/security → vite build + tsc (after core)  │
+│  ├─ Step 4: @alphabet/protocols → vite build (after core+api) │
+│  ├─ Step 5: @alphabet/ui      → vite build (after core+api)     │
+│  └─ Step 6: @alphabet/demo     → vite build (after all packages)│
 └──────────────────────────┬───────────────────────────────────┘
                            │
                            ▼
@@ -544,12 +544,12 @@ export interface IntentSession {
   "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["@awaf/*"]],
+  "fixed": [["@alphabet/*"]],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@awaf/demo"]
+  "ignore": ["@alphabet/demo"]
 }
 ```
 
@@ -712,11 +712,11 @@ Tier 0: NO MEMORY       ┌─────────────────�
 
 | Package | Path Alias | مسیر فیزیکی |
 |---------|-----------|------------|
-| `@awaf/core` | `@awaf/core/*` | `packages/core/src/*` |
-| `@awaf/api` | `@awaf/api/*` | `packages/api/src/*` |
-| `@awaf/ui` | `@awaf/ui/*` | `packages/ui/src/*` |
-| `@awaf/protocols` | `@awaf/protocols/*` | `packages/protocols/src/*` |
-| `@awaf/security` | `@awaf/security/*` | `packages/security/src/*` |
+| `@alphabet/core` | `@alphabet/core/*` | `packages/core/src/*` |
+| `@alphabet/api` | `@alphabet/api/*` | `packages/api/src/*` |
+| `@alphabet/ui` | `@alphabet/ui/*` | `packages/ui/src/*` |
+| `@alphabet/protocols` | `@alphabet/protocols/*` | `packages/protocols/src/*` |
+| `@alphabet/security` | `@alphabet/security/*` | `packages/security/src/*` |
 
 ---
 
@@ -742,4 +742,4 @@ Tier 0: NO MEMORY       ┌─────────────────�
 
 ---
 
-*این سند بخشی از مستندات SDK AWAF است. برای جزئیات بیشتر به فایل‌های DEVELOPMENT.md، API_REFERENCE.md، CONTRIBUTING.md، SECURITY.md و CODING_CONVENTIONS.md مراجعه کنید.*
+*این سند بخشی از مستندات SDK Alphabet است. برای جزئیات بیشتر به فایل‌های DEVELOPMENT.md، API_REFERENCE.md، CONTRIBUTING.md، SECURITY.md و CODING_CONVENTIONS.md مراجعه کنید.*

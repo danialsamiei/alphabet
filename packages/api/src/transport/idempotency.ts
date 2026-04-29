@@ -3,13 +3,13 @@
  * @description
  * Auto-generated `Idempotency-Key` headers for unsafe HTTP verbs.
  *
- * AWAF uses retry on 5xx and 429, which means a `POST` or `DELETE` may be
+ * Alphabet uses retry on 5xx and 429, which means a `POST` or `DELETE` may be
  * delivered to the server more than once. The server is expected to dedupe
  * by `Idempotency-Key`; this module produces one per **logical** request
  * (so all retries of the same call carry the same key, but two distinct
  * calls do not collide).
  *
- * Format: `awaf_<26-char ULID-like>`. We do **not** depend on `crypto.randomUUID`
+ * Format: `alphabet_<26-char ULID-like>`. We do **not** depend on `crypto.randomUUID`
  * because some edge runtimes lack it; instead we use `crypto.getRandomValues`
  * (universally available in Node 20+, browsers, edge) and fall back to
  * `Math.random` only as a last resort. The key is **opaque** — the server
@@ -45,10 +45,10 @@ function randomBase32(length: number): string {
 /**
  * Generate an idempotency key for one logical request.
  *
- * @returns A 32-char string of the form `awaf_<26 base32 chars>`.
+ * @returns A 32-char string of the form `alphabet_<26 base32 chars>`.
  */
 export function generateIdempotencyKey(): string {
-  return `awaf_${randomBase32(26)}`;
+  return `alphabet_${randomBase32(26)}`;
 }
 
 /** HTTP methods considered "unsafe" per RFC 9110 §9.2.1. */

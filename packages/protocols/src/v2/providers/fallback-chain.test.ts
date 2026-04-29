@@ -6,13 +6,13 @@
 import { describe, it, expect } from 'vitest';
 import { createFallbackChain } from './fallback-chain.js';
 import type {
-  AwafGenerationRequest,
-  AwafProviderAdapter,
-  AwafStreamChunk,
+  AlphabetGenerationRequest,
+  AlphabetProviderAdapter,
+  AlphabetStreamChunk,
 } from '../types.js';
 import { protocolError } from '../../errors/index.js';
 
-const REQ: AwafGenerationRequest = {
+const REQ: AlphabetGenerationRequest = {
   model: 'm',
   messages: [{ role: 'user', content: 'hi' }],
   context: {
@@ -23,7 +23,7 @@ const REQ: AwafGenerationRequest = {
   },
 };
 
-function failProvider(id: string, status: number | undefined = undefined): AwafProviderAdapter {
+function failProvider(id: string, status: number | undefined = undefined): AlphabetProviderAdapter {
   return {
     id,
     name: id,
@@ -34,20 +34,20 @@ function failProvider(id: string, status: number | undefined = undefined): AwafP
         error: protocolError('ADAPTER_NOT_CONFIGURED', `${id} unavailable`, {
           ...(status !== undefined ? { status } : {}),
         }),
-      } as AwafStreamChunk;
+      } as AlphabetStreamChunk;
     },
     generate: async () => ({ success: false, error: protocolError('ADAPTER_NOT_CONFIGURED', `${id} bad`) }),
   };
 }
 
-function okProvider(id: string, text: string): AwafProviderAdapter {
+function okProvider(id: string, text: string): AlphabetProviderAdapter {
   return {
     id,
     name: id,
     // eslint-disable-next-line @typescript-eslint/require-await
     stream: async function* () {
-      yield { type: 'text-delta', text } as AwafStreamChunk;
-      yield { type: 'finish', reason: 'stop' } as AwafStreamChunk;
+      yield { type: 'text-delta', text } as AlphabetStreamChunk;
+      yield { type: 'finish', reason: 'stop' } as AlphabetStreamChunk;
     },
     generate: async () => ({
       success: true,
@@ -61,7 +61,7 @@ describe('createFallbackChain', () => {
     const chain = createFallbackChain({
       providers: [okProvider('a', 'A'), okProvider('b', 'B')],
     });
-    const chunks: AwafStreamChunk[] = [];
+    const chunks: AlphabetStreamChunk[] = [];
     for await (const c of chain.stream(REQ)) chunks.push(c);
     expect(chunks.find((c) => c.type === 'text-delta')).toEqual({ type: 'text-delta', text: 'A' });
   });
@@ -72,7 +72,7 @@ describe('createFallbackChain', () => {
       providers: [failProvider('a'), okProvider('b', 'B')],
       onFallback: (i) => calls.push(`${i.fromProviderId}->${i.toProviderId ?? 'none'}`),
     });
-    const chunks: AwafStreamChunk[] = [];
+    const chunks: AlphabetStreamChunk[] = [];
     for await (const c of chain.stream(REQ)) chunks.push(c);
     expect(calls).toEqual(['a->b']);
     expect(chunks.find((c) => c.type === 'text-delta')).toEqual({ type: 'text-delta', text: 'B' });
@@ -82,7 +82,7 @@ describe('createFallbackChain', () => {
     const chain = createFallbackChain({
       providers: [failProvider('a', 400), okProvider('b', 'B')],
     });
-    const chunks: AwafStreamChunk[] = [];
+    const chunks: AlphabetStreamChunk[] = [];
     for await (const c of chain.stream(REQ)) chunks.push(c);
     // 400 is not retryable; chain returns the original error.
     expect(chunks.some((c) => c.type === 'error')).toBe(true);
@@ -102,7 +102,7 @@ describe('createFallbackChain', () => {
 
   it('uses modelByProvider override', async () => {
     let receivedModel = '';
-    const probe: AwafProviderAdapter = {
+    const probe: AlphabetProviderAdapter = {
       id: 'a',
       name: 'a',
       // eslint-disable-next-line @typescript-eslint/require-await
@@ -134,7 +134,7 @@ describe('createFallbackChain', () => {
     const chain = createFallbackChain({
       providers: [failProvider('a'), failProvider('b')],
     });
-    const chunks: AwafStreamChunk[] = [];
+    const chunks: AlphabetStreamChunk[] = [];
     for await (const c of chain.stream(REQ)) chunks.push(c);
     expect(chunks.length).toBe(1);
     expect(chunks[0]?.type).toBe('error');

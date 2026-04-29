@@ -15,7 +15,7 @@ import {
   canUsePreciseGeo,
   hasPrivacySignal,
   type PrivacySignals,
-} from '@awaf/core';
+} from '@alphabet/core';
 import { benchOptions, isSmokeRun, printSuite, runBench } from './helpers.js';
 
 const noSignals: PrivacySignals = { dntEnabled: false, gpcEnabled: false };

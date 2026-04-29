@@ -6,7 +6,7 @@
  * The assistant is grounded *only* on Danial Samiei's public profile
  * (the {@link Profile} object). It is instructed to refuse fabrication
  * and to defer to email contact for anything outside that scope —
- * matching AWAF's hallucination-firewall principle.
+ * matching Alphabet's hallucination-firewall principle.
  */
 
 import type { Profile } from '../data/profile.js';

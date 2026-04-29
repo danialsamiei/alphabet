@@ -1,7 +1,7 @@
 {
-  "name": "@awaf/core",
+  "name": "@alphabet/core",
   "version": "1.0.0",
-  "description": "Core of the AWAF (Adaptive Web Awareness Framework) SDK: types, config, logger, event hub, context-handshake primitives (signal collector, enrichment pipeline, decision engine), and the privacy permission helpers (canStoreMemory, canPersonalize, canUseAnalytics, canUsePreciseGeo). Privacy-first, dependency-free, edge-safe.",
+  "description": "Core of the Alphabet SDK (danial.ai Edition): types, config, logger, event hub, context-handshake primitives (signal collector, enrichment pipeline, decision engine), and the privacy permission helpers (canStoreMemory, canPersonalize, canUseAnalytics, canUsePreciseGeo). Privacy-first, dependency-free, edge-safe.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",

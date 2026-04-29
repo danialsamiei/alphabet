@@ -1,24 +1,24 @@
 /**
- * @module @awaf/protocols/v2/providers/openai-compat
+ * @module @alphabet/protocols/v2/providers/openai-compat
  * @description
  * Generic adapter for OpenAI-compatible Chat Completions endpoints.
  * Used directly by the OpenAI provider and re-targeted (via base URL)
  * by Grok (xAI), Mistral, and Fireworks.
  *
- * Translates the normalized AwafProtocol v2 request into the OpenAI
+ * Translates the normalized AlphabetProtocol v2 request into the OpenAI
  * Chat Completions wire format and parses streaming SSE chunks back
- * into normalized `AwafStreamChunk` values.
+ * into normalized `AlphabetStreamChunk` values.
  */
 
 import type {
-  AwafChatMessage,
-  AwafGenerationRequest,
-  AwafGenerationResponse,
-  AwafProviderAdapter,
-  AwafStreamChunk,
-  AwafToolDefinition,
+  AlphabetChatMessage,
+  AlphabetGenerationRequest,
+  AlphabetGenerationResponse,
+  AlphabetProviderAdapter,
+  AlphabetStreamChunk,
+  AlphabetToolDefinition,
 } from '../types.js';
-import type { Result } from '@awaf/core';
+import type { Result } from '@alphabet/core';
 import {
   collapseStream,
   getFetch,
@@ -28,7 +28,7 @@ import {
   DEFAULT_PROVIDER_TIMEOUT_MS,
   type ProviderClientOptions,
 } from './shared.js';
-import { protocolError, type AwafProtocolError } from '../../errors/index.js';
+import { protocolError, type AlphabetProtocolError } from '../../errors/index.js';
 
 // ─── Wire types ──────────────────────────────────────────────────────────────
 
@@ -54,7 +54,7 @@ interface OpenAiBody {
   readonly stop?: readonly string[];
   readonly tools?: readonly {
     readonly type: 'function';
-    readonly function: AwafToolDefinition;
+    readonly function: AlphabetToolDefinition;
   }[];
   readonly tool_choice?: unknown;
   readonly response_format?: { readonly type: 'json_object' | 'json_schema'; readonly json_schema?: unknown };
@@ -62,7 +62,7 @@ interface OpenAiBody {
 
 // ─── Translation ─────────────────────────────────────────────────────────────
 
-function toOpenAiMessage(m: AwafChatMessage): OpenAiToolMessage {
+function toOpenAiMessage(m: AlphabetChatMessage): OpenAiToolMessage {
   if (m.role === 'tool') {
     return {
       role: 'tool',
@@ -84,7 +84,7 @@ function toOpenAiMessage(m: AwafChatMessage): OpenAiToolMessage {
   return { role: m.role, content: m.content };
 }
 
-function buildBody(req: AwafGenerationRequest, stream: boolean): OpenAiBody {
+function buildBody(req: AlphabetGenerationRequest, stream: boolean): OpenAiBody {
   const body: OpenAiBody = {
     model: req.model,
     messages: req.messages.map(toOpenAiMessage),
@@ -115,7 +115,7 @@ function buildBody(req: AwafGenerationRequest, stream: boolean): OpenAiBody {
               ? {
                   type: 'json_schema' as const,
                   json_schema: {
-                    name: req.structuredOutput.name ?? 'awaf_structured',
+                    name: req.structuredOutput.name ?? 'alphabet_structured',
                     schema: req.structuredOutput.schema,
                     strict: true,
                   },
@@ -145,9 +145,9 @@ interface SseDelta {
   readonly usage?: { readonly prompt_tokens?: number; readonly completion_tokens?: number; readonly total_tokens?: number };
 }
 
-function mapFinish(reason: string | null | undefined): AwafStreamChunk | null {
+function mapFinish(reason: string | null | undefined): AlphabetStreamChunk | null {
   if (reason === null || reason === undefined) return null;
-  const map: Record<string, AwafStreamChunk['type']> = {
+  const map: Record<string, AlphabetStreamChunk['type']> = {
     stop: 'finish',
     length: 'finish',
     tool_calls: 'finish',
@@ -168,7 +168,7 @@ function mapFinish(reason: string | null | undefined): AwafStreamChunk | null {
 async function* decodeSse(
   res: Response,
   structured: boolean,
-): AsyncIterable<AwafStreamChunk> {
+): AsyncIterable<AlphabetStreamChunk> {
   if (res.body === null) {
     yield { type: 'error', error: protocolError('ADAPTER_NOT_CONFIGURED', 'Response body is null') };
     return;
@@ -216,7 +216,7 @@ async function* decodeSse(
               ...(delta.usage.total_tokens !== undefined ? { totalTokens: delta.usage.total_tokens } : {}),
             }
           : undefined;
-      yield { ...finish, ...(usage !== undefined ? { usage } : {}) } as AwafStreamChunk;
+      yield { ...finish, ...(usage !== undefined ? { usage } : {}) } as AlphabetStreamChunk;
     } else if (delta.usage !== undefined) {
       yield {
         type: 'usage',
@@ -245,11 +245,11 @@ export interface OpenAiCompatAdapterOptions extends ProviderClientOptions {
  */
 export function createOpenAiCompatAdapter(
   options: OpenAiCompatAdapterOptions,
-): AwafProviderAdapter {
+): AlphabetProviderAdapter {
   const fetchImpl = getFetch(options);
   const timeout = options.timeoutMs ?? DEFAULT_PROVIDER_TIMEOUT_MS;
 
-  async function* stream(req: AwafGenerationRequest): AsyncIterable<AwafStreamChunk> {
+  async function* stream(req: AlphabetGenerationRequest): AsyncIterable<AlphabetStreamChunk> {
     const { signal, cancel } = withTimeoutSignal(req.signal, timeout);
     let res: Response;
     try {
@@ -287,13 +287,13 @@ export function createOpenAiCompatAdapter(
     }
   }
 
-  const adapter: AwafProviderAdapter = {
+  const adapter: AlphabetProviderAdapter = {
     id: options.id,
     name: options.name,
     stream,
     generate: async (
-      req: AwafGenerationRequest,
-    ): Promise<Result<AwafGenerationResponse, AwafProtocolError>> =>
+      req: AlphabetGenerationRequest,
+    ): Promise<Result<AlphabetGenerationResponse, AlphabetProtocolError>> =>
       collapseStream(options.id, req.model, stream(req), req.structuredOutput !== undefined),
   };
   return adapter;

@@ -15,8 +15,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@awaf/core': resolve(__dirname, '../core/src/index.ts'),
-      '@awaf/api': resolve(__dirname, '../api/src/index.ts'),
+      '@alphabet/core': resolve(__dirname, '../core/src/index.ts'),
+      '@alphabet/api': resolve(__dirname, '../api/src/index.ts'),
     },
   },
 });

@@ -1,11 +1,11 @@
 /**
- * @module awaf-client
+ * @module alphabet-client
  * @description
- * AwafClient — کلاینت HTTP یکپارچه برای تمام ۱۶ endpoint در AWAF API.
- * Unified HTTP client for all 16 AWAF API endpoints with retry and timeout.
+ * AlphabetClient — کلاینت HTTP یکپارچه برای تمام ۱۶ endpoint در Alphabet API.
+ * Unified HTTP client for all 16 Alphabet API endpoints with retry and timeout.
  *
  * @example
- * const client = new AwafClient({
+ * const client = new AlphabetClient({
  *   apiBaseUrl: 'http://localhost:3000/api',
  *   bearerToken: 'sess-abc123',
  * });
@@ -15,8 +15,8 @@
  * }
  */
 
-import type { AWAFError, Result, HandshakeRequestPayload, HandshakeResult } from '@awaf/core';
-import { ok, err, AWAF_ROUTES, normalizeApiBaseUrl } from '@awaf/core';
+import type { AlphabetError, Result, HandshakeRequestPayload, HandshakeResult } from '@alphabet/core';
+import { ok, err, ALPHABET_ROUTES, normalizeApiBaseUrl } from '@alphabet/core';
 import type {
   ConsentRequest, ConsentResponse,
   PreferenceRequest, PreferenceResponse,
@@ -38,9 +38,9 @@ import type {
 // ─── Options ──────────────────────────────────────────────────────────────────
 
 /**
- * گزینه‌های AwafClient.
+ * گزینه‌های AlphabetClient.
  */
-export interface AwafClientOptions {
+export interface AlphabetClientOptions {
   /** آدرس پایه API — مثال: "http://localhost:3000/api" */
   readonly apiBaseUrl: string;
   /** Bearer token برای endpointهای auth'd */
@@ -53,20 +53,20 @@ export interface AwafClientOptions {
   readonly maxRetries?: number;
 }
 
-// ─── AwafClient ───────────────────────────────────────────────────────────────
+// ─── AlphabetClient ───────────────────────────────────────────────────────────────
 
 /**
- * کلاینت HTTP یکپارچه AWAF — تمام ۱۶ endpoint.
- * Unified AWAF HTTP client — all 16 endpoints.
+ * کلاینت HTTP یکپارچه Alphabet — تمام ۱۶ endpoint.
+ * Unified Alphabet HTTP client — all 16 endpoints.
  */
-export class AwafClient {
+export class AlphabetClient {
   private readonly base: string;
   private readonly bearerToken: string | undefined;
   private readonly apiKey: string | undefined;
   private readonly timeoutMs: number;
   private readonly maxRetries: number;
 
-  constructor(options: AwafClientOptions) {
+  constructor(options: AlphabetClientOptions) {
     this.base = normalizeApiBaseUrl(options.apiBaseUrl);
     this.bearerToken = options.bearerToken;
     this.apiKey = options.apiKey;
@@ -80,24 +80,24 @@ export class AwafClient {
    * POST /api/context/handshake — دریافت سیگنال‌های بازدیدکننده و دریافت UI config.
    * Auth: None.
    */
-  async postHandshake(payload: HandshakeRequestPayload): Promise<Result<HandshakeResult, AWAFError>> {
-    return this.post<HandshakeResult>(AWAF_ROUTES.contextHandshake, payload, { noAuth: true });
+  async postHandshake(payload: HandshakeRequestPayload): Promise<Result<HandshakeResult, AlphabetError>> {
+    return this.post<HandshakeResult>(ALPHABET_ROUTES.contextHandshake, payload, { noAuth: true });
   }
 
   /**
    * POST /api/context/consent — ثبت یا revoke کردن رضایت بازدیدکننده.
    * Auth: Bearer.
    */
-  async postConsent(payload: ConsentRequest): Promise<Result<ConsentResponse, AWAFError>> {
-    return this.post<ConsentResponse>(AWAF_ROUTES.contextConsent, payload);
+  async postConsent(payload: ConsentRequest): Promise<Result<ConsentResponse, AlphabetError>> {
+    return this.post<ConsentResponse>(ALPHABET_ROUTES.contextConsent, payload);
   }
 
   /**
    * POST /api/context/preference — ذخیره preferenceهای صریح بازدیدکننده.
    * Auth: Bearer.
    */
-  async postPreference(payload: PreferenceRequest): Promise<Result<PreferenceResponse, AWAFError>> {
-    return this.post<PreferenceResponse>(AWAF_ROUTES.contextPreference, payload);
+  async postPreference(payload: PreferenceRequest): Promise<Result<PreferenceResponse, AlphabetError>> {
+    return this.post<PreferenceResponse>(ALPHABET_ROUTES.contextPreference, payload);
   }
 
   // ── Group 2: Visitor Interaction ──────────────────────────────────────────
@@ -106,8 +106,8 @@ export class AwafClient {
    * POST /api/interact — تعامل text/voice با AI (non-streaming).
    * Auth: Bearer.
    */
-  async postInteract(payload: InteractRequest): Promise<Result<InteractResponse, AWAFError>> {
-    return this.post<InteractResponse>(AWAF_ROUTES.interact, { ...payload, streaming: false });
+  async postInteract(payload: InteractRequest): Promise<Result<InteractResponse, AlphabetError>> {
+    return this.post<InteractResponse>(ALPHABET_ROUTES.interact, { ...payload, streaming: false });
   }
 
   /**
@@ -121,7 +121,7 @@ export class AwafClient {
    * }
    */
   async *streamInteract(payload: InteractRequest): AsyncGenerator<InteractStreamEvent, void, undefined> {
-    yield *this.sseStream<InteractStreamEvent>(AWAF_ROUTES.interact, { ...payload, streaming: true });
+    yield *this.sseStream<InteractStreamEvent>(ALPHABET_ROUTES.interact, { ...payload, streaming: true });
   }
 
   /**
@@ -140,22 +140,22 @@ export class AwafClient {
     audioFile: File | Blob,
     language?: string,
     model?: 'whisper-1',
-  ): Promise<Result<VoiceTranscribeResponse, AWAFError>> {
+  ): Promise<Result<VoiceTranscribeResponse, AlphabetError>> {
     const form = new FormData();
     form.append('visitorId', visitorId);
     form.append('sessionId', sessionId);
     form.append('audio', audioFile);
     if (language !== undefined) form.append('language', language);
     if (model !== undefined) form.append('model', model);
-    return this.postForm<VoiceTranscribeResponse>(AWAF_ROUTES.voiceTranscribe, form);
+    return this.postForm<VoiceTranscribeResponse>(ALPHABET_ROUTES.voiceTranscribe, form);
   }
 
   /**
    * GET /api/suggestions — دریافت suggestionهای پویا بر اساس context.
    * Auth: None.
    */
-  async getSuggestions(query: SuggestionsQuery): Promise<Result<SuggestionsResponse, AWAFError>> {
-    return this.get<SuggestionsResponse>(AWAF_ROUTES.suggestions, query as unknown as Record<string, unknown>, { noAuth: true });
+  async getSuggestions(query: SuggestionsQuery): Promise<Result<SuggestionsResponse, AlphabetError>> {
+    return this.get<SuggestionsResponse>(ALPHABET_ROUTES.suggestions, query as unknown as Record<string, unknown>, { noAuth: true });
   }
 
   // ── Group 3: Technology Pulse ─────────────────────────────────────────────
@@ -164,16 +164,16 @@ export class AwafClient {
    * GET /api/technology-pulse — لیست سیگنال‌های technology با فیلتر.
    * Auth: None.
    */
-  async getTechnologyPulse(query: TechnologyPulseQuery): Promise<Result<TechnologyPulseResponse, AWAFError>> {
-    return this.get<TechnologyPulseResponse>(AWAF_ROUTES.technologyPulse, query as unknown as Record<string, unknown>, { noAuth: true });
+  async getTechnologyPulse(query: TechnologyPulseQuery): Promise<Result<TechnologyPulseResponse, AlphabetError>> {
+    return this.get<TechnologyPulseResponse>(ALPHABET_ROUTES.technologyPulse, query as unknown as Record<string, unknown>, { noAuth: true });
   }
 
   /**
    * POST /api/technology-pulse/brief — تولید خلاصه daily/weekly سیگنال‌ها.
    * Auth: Bearer.
    */
-  async postTechnologyPulseBrief(payload: TechnologyPulseBriefRequest): Promise<Result<TechnologyPulseBriefResponse, AWAFError>> {
-    return this.post<TechnologyPulseBriefResponse>(AWAF_ROUTES.technologyPulseBrief, payload);
+  async postTechnologyPulseBrief(payload: TechnologyPulseBriefRequest): Promise<Result<TechnologyPulseBriefResponse, AlphabetError>> {
+    return this.post<TechnologyPulseBriefResponse>(ALPHABET_ROUTES.technologyPulseBrief, payload);
   }
 
   // ── Group 4: Memory ──────────────────────────────────────────────────────
@@ -182,24 +182,24 @@ export class AwafClient {
    * POST /api/visitor/memory — ذخیره حافظه بازدیدکننده.
    * Auth: Bearer.
    */
-  async postVisitorMemory(payload: StoreMemoryRequest): Promise<Result<StoreMemoryResponse, AWAFError>> {
-    return this.post<StoreMemoryResponse>(AWAF_ROUTES.visitorMemoryStore, payload);
+  async postVisitorMemory(payload: StoreMemoryRequest): Promise<Result<StoreMemoryResponse, AlphabetError>> {
+    return this.post<StoreMemoryResponse>(ALPHABET_ROUTES.visitorMemoryStore, payload);
   }
 
   /**
    * GET /api/visitor/memory — بازیابی حافظه بازدیدکننده.
    * Auth: Bearer.
    */
-  async getVisitorMemory(query: GetMemoryQuery): Promise<Result<GetMemoryResponse, AWAFError>> {
-    return this.get<GetMemoryResponse>(AWAF_ROUTES.visitorMemoryRead, query as unknown as Record<string, unknown>);
+  async getVisitorMemory(query: GetMemoryQuery): Promise<Result<GetMemoryResponse, AlphabetError>> {
+    return this.get<GetMemoryResponse>(ALPHABET_ROUTES.visitorMemoryRead, query as unknown as Record<string, unknown>);
   }
 
   /**
    * DELETE /api/visitor/memory — حذف حافظه (GDPR Art. 17 / CCPA).
    * Auth: Bearer.
    */
-  async deleteVisitorMemory(payload: EraseMemoryRequest): Promise<Result<EraseMemoryResponse, AWAFError>> {
-    return this.delete<EraseMemoryResponse>(AWAF_ROUTES.visitorMemoryDelete, payload);
+  async deleteVisitorMemory(payload: EraseMemoryRequest): Promise<Result<EraseMemoryResponse, AlphabetError>> {
+    return this.delete<EraseMemoryResponse>(ALPHABET_ROUTES.visitorMemoryDelete, payload);
   }
 
   // ── Group 5: OpenClaw Mesh ────────────────────────────────────────────────
@@ -208,24 +208,24 @@ export class AwafClient {
    * POST /api/claw/query — جستجوی یکپارچه در Memory Mesh.
    * Auth: Bearer.
    */
-  async postClawQuery(payload: ClawQueryRequest): Promise<Result<ClawQueryResponse, AWAFError>> {
-    return this.post<ClawQueryResponse>(AWAF_ROUTES.clawQuery, payload);
+  async postClawQuery(payload: ClawQueryRequest): Promise<Result<ClawQueryResponse, AlphabetError>> {
+    return this.post<ClawQueryResponse>(ALPHABET_ROUTES.clawQuery, payload);
   }
 
   /**
    * POST /api/claw/ingest — ingestion محتوا به Memory Mesh.
    * Auth: API Key.
    */
-  async postClawIngest(payload: ClawIngestRequest): Promise<Result<ClawIngestResponse, AWAFError>> {
-    return this.post<ClawIngestResponse>(AWAF_ROUTES.clawIngest, payload, { apiKey: true });
+  async postClawIngest(payload: ClawIngestRequest): Promise<Result<ClawIngestResponse, AlphabetError>> {
+    return this.post<ClawIngestResponse>(ALPHABET_ROUTES.clawIngest, payload, { apiKey: true });
   }
 
   /**
    * POST /api/claw/admin/audit — بازرسی و مدیریت حافظه (admin only).
    * Auth: API Key (Admin).
    */
-  async postClawAdminAudit(payload: ClawAdminAuditRequest): Promise<Result<ClawAdminAuditResponse, AWAFError>> {
-    return this.post<ClawAdminAuditResponse>(AWAF_ROUTES.clawAdminAudit, payload, { apiKey: true });
+  async postClawAdminAudit(payload: ClawAdminAuditRequest): Promise<Result<ClawAdminAuditResponse, AlphabetError>> {
+    return this.post<ClawAdminAuditResponse>(ALPHABET_ROUTES.clawAdminAudit, payload, { apiKey: true });
   }
 
   // ── Group 6: Admin ────────────────────────────────────────────────────────
@@ -234,16 +234,16 @@ export class AwafClient {
    * GET /api/admin/visitor-insights — داشبورد admin با داده‌های aggregate.
    * Auth: API Key (Admin).
    */
-  async getAdminVisitorInsights(query: VisitorInsightsQuery): Promise<Result<VisitorInsightsResponse, AWAFError>> {
-    return this.get<VisitorInsightsResponse>(AWAF_ROUTES.adminVisitorInsights, query as unknown as Record<string, unknown>, { apiKey: true });
+  async getAdminVisitorInsights(query: VisitorInsightsQuery): Promise<Result<VisitorInsightsResponse, AlphabetError>> {
+    return this.get<VisitorInsightsResponse>(ALPHABET_ROUTES.adminVisitorInsights, query as unknown as Record<string, unknown>, { apiKey: true });
   }
 
   /**
    * GET /api/admin/technology-pulse/sources — مدیریت منابع Technology Pulse.
    * Auth: API Key (Admin).
    */
-  async getAdminPulseSources(query: PulseSourcesQuery): Promise<Result<PulseSourcesResponse, AWAFError>> {
-    return this.get<PulseSourcesResponse>(AWAF_ROUTES.adminPulseSources, query as unknown as Record<string, unknown>, { apiKey: true });
+  async getAdminPulseSources(query: PulseSourcesQuery): Promise<Result<PulseSourcesResponse, AlphabetError>> {
+    return this.get<PulseSourcesResponse>(ALPHABET_ROUTES.adminPulseSources, query as unknown as Record<string, unknown>, { apiKey: true });
   }
 
   // ── Private: Auth Headers ─────────────────────────────────────────────────
@@ -289,7 +289,7 @@ export class AwafClient {
     url: string,
     init: RequestInit,
     attempt: number,
-  ): Promise<Result<T, AWAFError>> {
+  ): Promise<Result<T, AlphabetError>> {
     try {
       const response = await this.fetchWithTimeout(url, init);
 
@@ -297,7 +297,7 @@ export class AwafClient {
         if (response.status >= 500 && attempt < this.maxRetries) {
           return this.doRequest<T>(url, init, attempt + 1);
         }
-        const body = await response.json().catch(() => null) as { error?: AWAFError } | null;
+        const body = await response.json().catch(() => null) as { error?: AlphabetError } | null;
         return err(body?.error ?? {
           code: 'HTTP_ERROR',
           message: `Request failed with HTTP ${response.status}`,
@@ -305,7 +305,7 @@ export class AwafClient {
         });
       }
 
-      const json = await response.json() as T & { success?: boolean; error?: AWAFError };
+      const json = await response.json() as T & { success?: boolean; error?: AlphabetError };
       if (json.success === false) {
         return err(json.error ?? { code: 'API_ERROR', message: 'Server returned an unsuccessful response' });
       }
@@ -328,7 +328,7 @@ export class AwafClient {
     path: string,
     payload: unknown,
     opts: { noAuth?: boolean; apiKey?: boolean } = {},
-  ): Promise<Result<T, AWAFError>> {
+  ): Promise<Result<T, AlphabetError>> {
     return this.doRequest<T>(
       `${this.base}${path}`,
       {
@@ -344,7 +344,7 @@ export class AwafClient {
     path: string,
     params: Record<string, unknown> = {},
     opts: { noAuth?: boolean; apiKey?: boolean } = {},
-  ): Promise<Result<T, AWAFError>> {
+  ): Promise<Result<T, AlphabetError>> {
     return this.doRequest<T>(
       this.buildUrl(path, params),
       { method: 'GET', headers: { ...this.authHeaders(opts) } },
@@ -356,7 +356,7 @@ export class AwafClient {
     path: string,
     payload: unknown,
     opts: { noAuth?: boolean; apiKey?: boolean } = {},
-  ): Promise<Result<T, AWAFError>> {
+  ): Promise<Result<T, AlphabetError>> {
     return this.doRequest<T>(
       `${this.base}${path}`,
       {
@@ -372,7 +372,7 @@ export class AwafClient {
     path: string,
     form: FormData,
     opts: { noAuth?: boolean; apiKey?: boolean } = {},
-  ): Promise<Result<T, AWAFError>> {
+  ): Promise<Result<T, AlphabetError>> {
     return this.doRequest<T>(
       `${this.base}${path}`,
       { method: 'POST', headers: { ...this.authHeaders(opts) }, body: form },

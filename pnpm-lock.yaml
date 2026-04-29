@@ -32,10 +32,10 @@ importers:
 
   apps/danial-site:
     dependencies:
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@awaf/ui':
+      '@alphabet/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       react:
@@ -66,19 +66,19 @@ importers:
 
   apps/demo:
     dependencies:
-      '@awaf/api':
+      '@alphabet/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@awaf/protocols':
+      '@alphabet/protocols':
         specifier: workspace:*
         version: link:../../packages/protocols
-      '@awaf/security':
+      '@alphabet/security':
         specifier: workspace:*
         version: link:../../packages/security
-      '@awaf/ui':
+      '@alphabet/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       react:
@@ -106,10 +106,10 @@ importers:
 
   benchmarks:
     dependencies:
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../packages/core
-      '@awaf/ui':
+      '@alphabet/ui':
         specifier: workspace:*
         version: link:../packages/ui
     devDependencies:
@@ -134,13 +134,13 @@ importers:
 
   examples/vite-react-basic:
     dependencies:
-      '@awaf/api':
+      '@alphabet/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@awaf/ui':
+      '@alphabet/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       react:
@@ -168,7 +168,7 @@ importers:
 
   packages/api:
     dependencies:
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -200,7 +200,7 @@ importers:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@25.6.0)(jsdom@29.1.0)
 
-  packages/create-awaf:
+  packages/create-alphabet:
     devDependencies:
       '@types/node':
         specifier: ^20.10.0
@@ -214,10 +214,10 @@ importers:
 
   packages/protocols:
     dependencies:
-      '@awaf/api':
+      '@alphabet/api':
         specifier: workspace:*
         version: link:../api
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -233,7 +233,7 @@ importers:
 
   packages/security:
     dependencies:
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -249,10 +249,10 @@ importers:
 
   packages/ui:
     dependencies:
-      '@awaf/api':
+      '@alphabet/api':
         specifier: workspace:*
         version: link:../api
-      '@awaf/core':
+      '@alphabet/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

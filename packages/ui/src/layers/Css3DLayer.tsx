@@ -39,7 +39,7 @@ const cardBase: CSSProperties = {
  * آماده شده. animation فقط در صورت غیرفعال بودن reduced-motion اعمال می‌شود.
  */
 export function Css3DLayer({
-  heading = 'AWAF',
+  heading = 'Alphabet',
   description,
   children,
   direction = 'ltr',
@@ -51,11 +51,11 @@ export function Css3DLayer({
     : { ...cardBase, transition: 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)' };
   return (
     <section
-      data-awaf-layer="CSS_3D"
+      data-alphabet-layer="CSS_3D"
       dir={direction}
       {...(locale !== undefined ? { lang: locale } : {})}
       style={wrapperStyle}
-      aria-label="AWAF CSS 3D layer"
+      aria-label="Alphabet CSS 3D layer"
     >
       <div style={card}>
         <h1 style={{ margin: 0 }}>{heading}</h1>

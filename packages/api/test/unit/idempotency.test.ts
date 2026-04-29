@@ -9,9 +9,9 @@ import {
 } from '../../src/transport/idempotency.js';
 
 describe('transport/idempotency', () => {
-  it('generateIdempotencyKey returns a valid awaf_-prefixed key', () => {
+  it('generateIdempotencyKey returns a valid alphabet_-prefixed key', () => {
     const k = generateIdempotencyKey();
-    expect(k).toMatch(/^awaf_[0-9A-HJKMNP-TV-Z]{26}$/);
+    expect(k).toMatch(/^alphabet_[0-9A-HJKMNP-TV-Z]{26}$/);
   });
 
   it('generates collision-resistant keys (no duplicates in 1000 calls)', () => {
@@ -36,7 +36,7 @@ describe('transport/idempotency', () => {
 
   it('withIdempotencyKey injects a key for unsafe verbs', () => {
     const headers = withIdempotencyKey({ 'Content-Type': 'application/json' }, 'POST');
-    expect(headers.get('Idempotency-Key')).toMatch(/^awaf_/);
+    expect(headers.get('Idempotency-Key')).toMatch(/^alphabet_/);
     expect(headers.get('Content-Type')).toBe('application/json');
   });
 

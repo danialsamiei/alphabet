@@ -1,6 +1,6 @@
 # Launch narrative
 
-> A 5-minute introduction to AWAF for developers who have never seen
+> A 5-minute introduction to Alphabet for developers who have never seen
 > the project before. If you only read one document, read this one.
 
 ---
@@ -24,13 +24,13 @@ model inference. Feature-flag platforms solve experimentation. None of
 them, by design, solves the cross-cutting problem of **"adapt the
 experience to who is here, without spying on them."**
 
-That is the gap AWAF fills.
+That is the gap Alphabet fills.
 
 ---
 
 ## Solution
 
-**AWAF is a privacy-first adaptive web SDK for building context-aware,
+**Alphabet is a privacy-first adaptive web SDK for building context-aware,
 multilingual, capability-adaptive, AI-ready web experiences without
 invasive tracking.**
 
@@ -70,14 +70,14 @@ necessary, in 2025–2026:
   strings.
 - **Edge runtimes are everywhere.** Cloudflare Workers, Vercel Edge,
   and Deno Deploy make it cheap to do the handshake at request time,
-  before any HTML reaches the browser. AWAF's pure-TypeScript core is
+  before any HTML reaches the browser. Alphabet's pure-TypeScript core is
   edge-safe by construction.
 - **AI surfaces are eating the web.** Every product is adding an LLM
   feature. None of them should leak unconsented memory or
-  PII to the model. AWAF normalizes that boundary.
+  PII to the model. Alphabet normalizes that boundary.
 - **The accessibility and i18n communities have done the hard work.**
   RTL, BCP-47 negotiation, and reduced-motion fallbacks are now well
-  understood. AWAF can stand on those shoulders.
+  understood. Alphabet can stand on those shoulders.
 
 Short version: the *signals* are universally available, the *legal
 floor* is rising, the *runtime* is moving to the edge, and the *output*
@@ -88,7 +88,7 @@ those four together is the missing piece.
 
 ## Target developers
 
-AWAF is built for:
+Alphabet is built for:
 
 - **Indie product engineers** who want their site to feel correct in
   Persian, Arabic, Bulgarian, Japanese, and English — without learning
@@ -105,7 +105,7 @@ AWAF is built for:
   contract for visitor context with consent enforcement at the
   boundary.
 
-AWAF is **not** built for: marketing-attribution stacks, enterprises
+Alphabet is **not** built for: marketing-attribution stacks, enterprises
 that require a certified CMP, or projects that want a meta-framework.
 For those, use the right tool.
 
@@ -122,7 +122,7 @@ A demo that fits in five minutes and tells the story honestly:
 
 2. **(0:30 – 1:30) Show the `<TransparencyNotice />` panel.** It
    explains *why* this layer was chosen: detected locale, detected
-   direction, capability tier, accessibility preferences. AWAF is
+   direction, capability tier, accessibility preferences. Alphabet is
    honest about its inputs.
 
 3. **(1:30 – 2:30) Resize the window / toggle DevTools "throttling: 3G"
@@ -159,8 +159,8 @@ The full plan is in [`ROADMAP.md`](./ROADMAP.md). The condensed view:
 |---|---|---|
 | **1 — Truth alignment** *(current)* | Honest README, status audit, documentation that is navigable in under five minutes. | What you are reading now. |
 | **2 — Smallest end-to-end** | `HandshakeOrchestrator`, full lifecycle (`detect → enrich → decide → display → consent → morph`), in-repo mock server, working Layers 4 + 5 demo. | `pnpm dev` opens an adaptive page; handshake completes in < 100 ms. |
-| **3 — First-class adapters** | `@awaf/next`, `@awaf/vite`, `@awaf/astro` integrations. | Drop-in install for the three most common stacks. |
-| **4 — Pulse plugin (opt-in)** | `@awaf/pulse`: trust-tiered ingestion, C2PA-style provenance, RAG-grounded brief generation. | Optional plugin; not required for 1.0. |
+| **3 — First-class adapters** | `@alphabet/next`, `@alphabet/vite`, `@alphabet/astro` integrations. | Drop-in install for the three most common stacks. |
+| **4 — Pulse plugin (opt-in)** | `@alphabet/pulse`: trust-tiered ingestion, C2PA-style provenance, RAG-grounded brief generation. | Optional plugin; not required for 1.0. |
 | **5 — Hardening** | Sub-100 ms handshake benchmark in CI, NIST AI RMF mapping doc, cost guardian, differential-privacy helpers, accessibility audit, security review. | 1.0 release. |
 
 No fixed dates are committed. Phases are scoped, not timeboxed. Every
@@ -170,7 +170,7 @@ phase ends with a concrete, demonstrable artifact.
 
 ## Principles
 
-The four principles AWAF will not compromise on, even when convenient:
+The four principles Alphabet will not compromise on, even when convenient:
 
 ### Privacy-first
 Tier 0 (`NO_MEMORY`) is the default. DNT and GPC always win at runtime.
@@ -179,7 +179,7 @@ PII never appears in logs. Geo defaults to coarse
 explicit code flags **and** a passing `canUsePreciseGeo()` check.
 
 ### No fingerprinting
-AWAF reads only passive signals the browser already exposes for
+Alphabet reads only passive signals the browser already exposes for
 legitimate purposes. It never hashes navigator properties into a
 fingerprint. No canvas / WebGL / audio / font-list fingerprints. No
 cookies. No localStorage by default.
@@ -190,7 +190,7 @@ or broken versions of higher tiers. The base bundle is R3F-free and the
 immersive layer is loaded lazily only when selected. CI enforces this.
 
 ### AI-ready, but provider-neutral
-AWAF normalizes context, consent, and memory permissions for AI
+Alphabet normalizes context, consent, and memory permissions for AI
 consumers — and *stops there*. It does not bundle OpenAI, Anthropic, or
 Vercel AI SDK as a runtime dependency. Provider integrations are
 optional, user-supplied adapters.
@@ -201,7 +201,7 @@ optional, user-supplied adapters.
 
 1.0 will mean: the README's "Implemented features" section matches the
 codebase, the roadmap's Phase 5 exit criteria are met, and a fresh
-developer can install AWAF, run an adaptive page, and ship to
+developer can install Alphabet, run an adaptive page, and ship to
 production in under an hour, with **no** invasive tracking and **no**
 overclaiming.
 

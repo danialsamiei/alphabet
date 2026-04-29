@@ -1,19 +1,19 @@
 /**
  * Integration tests: the mock server should accept and respond to all 16
- * AWAF endpoints with envelopes that pass runtime validation.
+ * Alphabet endpoints with envelopes that pass runtime validation.
  *
  * These tests are the W1 exit criterion: a consumer can install
- * `@awaf/api`, point it at the mock server, and round-trip every endpoint
+ * `@alphabet/api`, point it at the mock server, and round-trip every endpoint
  * with no external services.
  */
 import { describe, it, expect } from 'vitest';
-import { AWAF_ROUTES, fullRoute } from '@awaf/core';
+import { ALPHABET_ROUTES, fullRoute } from '@alphabet/core';
 import {
-  awafResponseSchema,
+  alphabetResponseSchema,
   responseMetaSchema,
   v,
   handshakeResultSchema,
-} from '@awaf/core/contracts/runtime';
+} from '@alphabet/core/contracts/runtime';
 import { createMockServer } from '../../src/mock/index.js';
 import { withRetry } from '../../src/transport/retry.js';
 
@@ -21,10 +21,10 @@ const noSleep = (_ms: number): Promise<void> => Promise.resolve();
 
 describe('mock server — envelope shape (all 16 endpoints)', () => {
   const mock = createMockServer({ seed: 7 });
-  const passthroughSchema = awafResponseSchema(v.unknown());
+  const passthroughSchema = alphabetResponseSchema(v.unknown());
 
   // Method × path matrix for all 16 endpoints.
-  const cases: Array<{ key: keyof typeof AWAF_ROUTES; method: string; body?: unknown }> = [
+  const cases: Array<{ key: keyof typeof ALPHABET_ROUTES; method: string; body?: unknown }> = [
     { key: 'contextHandshake', method: 'POST', body: { language: 'en' } },
     { key: 'contextConsent', method: 'POST', body: { tier: 'CONSENTED' } },
     { key: 'contextPreference', method: 'POST', body: { reducedMotion: false } },
@@ -43,7 +43,7 @@ describe('mock server — envelope shape (all 16 endpoints)', () => {
     { key: 'adminPulseSources', method: 'GET' },
   ];
 
-  it.each(cases)('$method $key returns a valid AWAFResponse envelope', async ({ key, method, body }) => {
+  it.each(cases)('$method $key returns a valid AlphabetResponse envelope', async ({ key, method, body }) => {
     const path = fullRoute(key);
     const response = await mock.request(path, {
       method,
@@ -111,9 +111,9 @@ describe('mock server — determinism', () => {
 });
 
 describe('mock server — unknown route returns 404 envelope', () => {
-  it('returns a 404 with a structured AWAFError', async () => {
+  it('returns a 404 with a structured AlphabetError', async () => {
     const mock = createMockServer({ seed: 1 });
-    const response = await mock.request('/api/awaf/v1/does/not/exist', { method: 'GET' });
+    const response = await mock.request('/api/alphabet/v1/does/not/exist', { method: 'GET' });
     expect(response.status).toBe(404);
     const json = (await response.json()) as { success: boolean; error: { code: string } };
     expect(json.success).toBe(false);
@@ -153,11 +153,11 @@ describe('mock server — forced failure + retry composition', () => {
 });
 
 describe('mock server — legacy /api prefix is also routed', () => {
-  it('accepts /api/context/handshake and the canonical /api/awaf/v1 path', async () => {
+  it('accepts /api/context/handshake and the canonical /api/alphabet/v1 path', async () => {
     const mock = createMockServer({ seed: 1 });
     const init = { method: 'POST', body: JSON.stringify({}) };
     const a = await mock.request('/api/context/handshake', init);
-    const b = await mock.request('/api/awaf/v1/context/handshake', init);
+    const b = await mock.request('/api/alphabet/v1/context/handshake', init);
     expect(a.status).toBe(200);
     expect(b.status).toBe(200);
   });

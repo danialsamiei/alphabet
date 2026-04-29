@@ -1,7 +1,7 @@
 /**
  * @module transport/fetcher
  * @description
- * The {@link Fetcher} interface is the single seam between `AwafClient` and
+ * The {@link Fetcher} interface is the single seam between `AlphabetClient` and
  * the underlying HTTP transport. By depending on this interface rather than
  * `globalThis.fetch` directly, we get three things for free:
  *
@@ -9,7 +9,7 @@
  *    need to mock the global.
  * 2. **Pluggability.** A consumer can wrap the default fetcher with auth
  *    refresh, telemetry, or service-mesh routing without forking the client.
- * 3. **Mock-server interop.** `@awaf/api/mock` exposes a `Fetcher` that
+ * 3. **Mock-server interop.** `@alphabet/api/mock` exposes a `Fetcher` that
  *    routes requests in-process — no `globalThis` patching required.
  *
  * The interface is intentionally minimal: one `request(input, init)` method
@@ -19,7 +19,7 @@
  */
 
 /**
- * Minimal HTTP transport contract used by the AWAF SDK.
+ * Minimal HTTP transport contract used by the Alphabet SDK.
  *
  * Conforms to the relevant subset of the WHATWG Fetch API; an
  * implementation backed directly by `globalThis.fetch` is provided as

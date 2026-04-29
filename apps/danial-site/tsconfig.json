@@ -8,8 +8,8 @@
     "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
-      "@awaf/core": ["../../packages/core/dist/index.d.ts"],
-      "@awaf/ui": ["../../packages/ui/dist/index.d.ts"]
+      "@alphabet/core": ["../../packages/core/dist/index.d.ts"],
+      "@alphabet/ui": ["../../packages/ui/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

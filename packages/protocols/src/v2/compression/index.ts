@@ -1,7 +1,7 @@
 /**
- * @module @awaf/protocols/v2/compression
+ * @module @alphabet/protocols/v2/compression
  * @description
- * Memory-efficient context compression for AwafProtocol v2.
+ * Memory-efficient context compression for AlphabetProtocol v2.
  *
  * Strategies (each pure, composable):
  *   • `estimateTokens` — fast heuristic (≈ 4 chars per token, clipped on
@@ -18,7 +18,7 @@
  * compatible with edge runtimes that lack network access during build.
  */
 
-import type { AwafChatMessage } from '../types.js';
+import type { AlphabetChatMessage } from '../types.js';
 
 // ─── Token estimator ─────────────────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ export function estimateTokens(text: string): number {
 }
 
 /** Sum of token estimates across a message list (content only). */
-export function estimateMessagesTokens(messages: readonly AwafChatMessage[]): number {
+export function estimateMessagesTokens(messages: readonly AlphabetChatMessage[]): number {
   let total = 0;
   for (const m of messages) {
     total += estimateTokens(m.content);
@@ -59,9 +59,9 @@ export function estimateMessagesTokens(messages: readonly AwafChatMessage[]): nu
  * detects fixed points.
  */
 export type CompressionStrategy = (
-  messages: readonly AwafChatMessage[],
+  messages: readonly AlphabetChatMessage[],
   budget: number,
-) => readonly AwafChatMessage[];
+) => readonly AlphabetChatMessage[];
 
 // ─── Strategies ──────────────────────────────────────────────────────────────
 
@@ -72,16 +72,16 @@ export type CompressionStrategy = (
  * spawned them so the conversation stays well-formed.
  */
 export function compressByPriority(
-  messages: readonly AwafChatMessage[],
+  messages: readonly AlphabetChatMessage[],
   budget: number,
-): readonly AwafChatMessage[] {
+): readonly AlphabetChatMessage[] {
   if (estimateMessagesTokens(messages) <= budget) return [...messages];
 
   const indexed = messages.map((m, i) => ({ m, i }));
   // Anchor: system always survives, plus tool messages pinned to their assistants.
   const pinned = new Set<number>();
   for (let i = 0; i < messages.length; i += 1) {
-    const m = messages[i] as AwafChatMessage;
+    const m = messages[i] as AlphabetChatMessage;
     if (m.role === 'system') pinned.add(i);
   }
   // Sort non-pinned by (priority desc, recency desc).
@@ -133,8 +133,8 @@ function fnv1a(s: string): number {
  * turn. Keeps the earliest occurrence to preserve causality.
  */
 export function compressBySemanticDedupe(
-  messages: readonly AwafChatMessage[],
-): readonly AwafChatMessage[] {
+  messages: readonly AlphabetChatMessage[],
+): readonly AlphabetChatMessage[] {
   const seen = new Set<number>();
   return messages.filter((m) => {
     if (m.role !== 'user') return true;
@@ -153,10 +153,10 @@ export function compressBySemanticDedupe(
  */
 export function compose(
   strategies: readonly CompressionStrategy[],
-  messages: readonly AwafChatMessage[],
+  messages: readonly AlphabetChatMessage[],
   budget: number,
-): { readonly messages: readonly AwafChatMessage[]; readonly tokens: number } {
-  let current: readonly AwafChatMessage[] = messages;
+): { readonly messages: readonly AlphabetChatMessage[]; readonly tokens: number } {
+  let current: readonly AlphabetChatMessage[] = messages;
   for (const s of strategies) {
     if (estimateMessagesTokens(current) <= budget) break;
     current = s(current, budget);

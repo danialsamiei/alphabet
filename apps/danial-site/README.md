@@ -1,12 +1,12 @@
-# Danial Samiei — Personal Site (`@awaf/danial-site`)
+# Danial Samiei — Personal Site (`@alphabet/danial-site`)
 
-An interactive personal & professional page for **Danial Samiei**, researcher and assistant professor. Built on the [AWAF](../../README.md) SDK and powered by the [GitHub Models](https://docs.github.com/en/github-models) LLM API.
+An interactive personal & professional page for **Danial Samiei**, researcher and assistant professor. Built on the [Alphabet](../../README.md) SDK and powered by the [GitHub Models](https://docs.github.com/en/github-models) LLM API.
 
 This app is a **demo**. The bio, publications, courses, and contact data in `src/data/profile.ts` are placeholder content — edit that single file to update the page.
 
 ## What's interactive?
 
-- **Adaptive hero** — wrapped in `AwafProvider` + `AdaptiveSlot` so the same page degrades cleanly across AWAF's five render layers (R3F → CSS3D → Canvas2D → static HTML → text-only).
+- **Adaptive hero** — wrapped in `AlphabetProvider` + `AdaptiveSlot` so the same page degrades cleanly across Alphabet's five render layers (R3F → CSS3D → Canvas2D → static HTML → text-only).
 - **Grounded AI assistant** — a chat panel (`AssistantChat.tsx`) that talks to a GitHub Models chat-completion endpoint. The system prompt is built from the public profile (`buildSystemPrompt`) so the model is told **only** about Danial's published bio and is instructed to refuse fabrication.
 - **Fully accessible** — skip link, ARIA-live chat log, prefers-reduced-motion, prefers-color-scheme, RTL support.
 
@@ -41,10 +41,10 @@ Open two terminals:
 
 ```bash
 # Terminal 1 — the chat proxy (holds GITHUB_TOKEN)
-GITHUB_TOKEN=$GITHUB_TOKEN pnpm --filter @awaf/danial-site dev:proxy
+GITHUB_TOKEN=$GITHUB_TOKEN pnpm --filter @alphabet/danial-site dev:proxy
 
 # Terminal 2 — the Vite dev server
-pnpm --filter @awaf/danial-site dev
+pnpm --filter @alphabet/danial-site dev
 ```
 
 Open <http://localhost:5174>.
@@ -65,7 +65,7 @@ curl -s http://localhost:8787/api/assistant \
 ## Test
 
 ```bash
-pnpm --filter @awaf/danial-site test
+pnpm --filter @alphabet/danial-site test
 ```
 
 The test suite mocks `fetch` and verifies the GitHub Models request envelope and response parsing — no token is required to run tests.
@@ -73,7 +73,7 @@ The test suite mocks `fetch` and verifies the GitHub Models request envelope and
 ## Build
 
 ```bash
-pnpm --filter @awaf/danial-site build
+pnpm --filter @alphabet/danial-site build
 ```
 
 ## Customize the profile
@@ -84,7 +84,7 @@ Edit `src/data/profile.ts`. Every component (Hero / About / Research / Publicati
 
 | File | Purpose |
 | --- | --- |
-| `src/App.tsx` | Page shell, wraps everything in `AwafProvider` + `AdaptiveSlot` |
+| `src/App.tsx` | Page shell, wraps everything in `AlphabetProvider` + `AdaptiveSlot` |
 | `src/data/profile.ts` | Single source of truth for bio content (edit this) |
 | `src/components/AssistantChat.tsx` | Chat UI, talks to `/api/assistant` |
 | `src/lib/github-models.ts` | Tiny chat-completion client (browser + server) |

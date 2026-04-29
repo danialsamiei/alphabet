@@ -1,31 +1,31 @@
 /**
- * @module @awaf/protocols
+ * @module @alphabet/protocols
  * @description
- * AWAF Protocol adapter layer — Direct API, MCP, A2A, QR Handoff.
+ * Alphabet Protocol adapter layer — Direct API, MCP, A2A, QR Handoff.
  *
- * AWAF normalizes context, consent, memory permissions, and UI
+ * Alphabet normalizes context, consent, memory permissions, and UI
  * adaptation signals across protocols. It is **not** an LLM provider
  * SDK; provider integrations live behind the optional `ai-sdk` adapter
  * interface and remain provider-agnostic.
  */
 
-// ─── Re-exports from @awaf/core ──────────────────────────────────────────────
-export type { ProtocolType } from '@awaf/core';
+// ─── Re-exports from @alphabet/core ──────────────────────────────────────────────
+export type { ProtocolType } from '@alphabet/core';
 
 // ─── Contract types ──────────────────────────────────────────────────────────
 export type {
-  AwafProtocolRequest,
-  AwafProtocolResponse,
-  AwafToolContext,
-  AwafConsentScope,
-  AwafConsentOperation,
-  AwafMemoryPermission,
+  AlphabetProtocolRequest,
+  AlphabetProtocolResponse,
+  AlphabetToolContext,
+  AlphabetConsentScope,
+  AlphabetConsentOperation,
+  AlphabetMemoryPermission,
 } from './contract.js';
 
 // ─── Errors ──────────────────────────────────────────────────────────────────
 export type {
-  AwafProtocolError,
-  AwafProtocolErrorCode,
+  AlphabetProtocolError,
+  AlphabetProtocolErrorCode,
 } from './errors/index.js';
 export { protocolError } from './errors/index.js';
 
@@ -49,12 +49,12 @@ export type {
 
 export {
   McpAdapter,
-  AWAF_MCP_TOOLS,
-  AWAF_MCP_TOOL_MANIFESTS,
+  ALPHABET_MCP_TOOLS,
+  ALPHABET_MCP_TOOL_MANIFESTS,
 } from './mcp/index.js';
 export type {
-  AwafMcpToolName,
-  AwafMcpToolManifest,
+  AlphabetMcpToolName,
+  AlphabetMcpToolManifest,
   JsonSchema,
   McpAdapterOptions,
   MemoryQueryBackend,
@@ -66,14 +66,14 @@ export type {
 
 export {
   A2AAdapter,
-  AWAF_A2A_AGENT_CARD,
+  Alphabet_A2A_AGENT_CARD,
 } from './a2a/index.js';
 export type {
   A2AAdapterOptions,
   A2ATask,
   A2ATaskMessage,
   A2ATaskPart,
-  AwafA2AAgentCard,
+  AlphabetA2AAgentCard,
 } from './a2a/index.js';
 
 export { QrHandoffAdapter } from './qr-handoff/index.js';
@@ -85,15 +85,15 @@ export type {
 
 // ─── Optional AI SDK adapter contract ────────────────────────────────────────
 export type {
-  AwafAiRequest,
-  AwafAiResponse,
-  AwafAiProviderAdapter,
+  AlphabetAiRequest,
+  AlphabetAiResponse,
+  AlphabetAiProviderAdapter,
 } from './ai-sdk/index.js';
 
-// ─── AwafProtocol v2 (streaming + providers + consent proof + pulse v2) ─────
+// ─── AlphabetProtocol v2 (streaming + providers + consent proof + pulse v2) ─────
 // v2 is additive; the v1 contract above remains the canonical legacy
 // surface. Consumers wanting streaming AI, built-in providers, the
 // fallback chain, privacy-preserving prompt engineering, predictive
 // capability forecasting, or cryptographic consent proofs should import
-// from `@awaf/protocols/v2`.
+// from `@alphabet/protocols/v2`.
 export * as v2 from './v2/index.js';

@@ -42,7 +42,7 @@ function defaultDraw(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement): 
  * پس از mount روی client اجرا می‌شود.
  */
 export function Canvas2DLayer({
-  heading = 'AWAF',
+  heading = 'Alphabet',
   description,
   children,
   direction = 'ltr',
@@ -70,7 +70,7 @@ export function Canvas2DLayer({
 
   return (
     <section
-      data-awaf-layer="CANVAS_2D"
+      data-alphabet-layer="CANVAS_2D"
       dir={direction}
       {...(locale !== undefined ? { lang: locale } : {})}
       style={{
@@ -79,7 +79,7 @@ export function Canvas2DLayer({
         padding: '1.5rem',
         fontFamily: 'system-ui, sans-serif',
       }}
-      aria-label="AWAF canvas layer"
+      aria-label="Alphabet canvas layer"
     >
       <canvas
         ref={canvasRef}

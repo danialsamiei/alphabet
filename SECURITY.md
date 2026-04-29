@@ -6,17 +6,17 @@
 
 ## Supported Versions
 
-AWAF is in active pre-1.0 development. Security fixes will be backported to
+Alphabet is in active pre-1.0 development. Security fixes will be backported to
 the latest published minor of every package per the table below once the
 first public release is cut.
 
 | Package          | Supported versions |
 |------------------|--------------------|
-| `@awaf/core`     | latest minor       |
-| `@awaf/api`      | latest minor       |
-| `@awaf/ui`       | latest minor       |
-| `@awaf/protocols`| latest minor       |
-| `@awaf/security` | latest minor       |
+| `@alphabet/core`     | latest minor       |
+| `@alphabet/api`      | latest minor       |
+| `@alphabet/ui`       | latest minor       |
+| `@alphabet/protocols`| latest minor       |
+| `@alphabet/security` | latest minor       |
 
 Pre-release `0.x` versions receive fixes only on the highest published minor.
 
@@ -40,7 +40,7 @@ When you report, please include:
 
 - Affected package and version (or commit SHA)
 - A minimal reproduction (preferably a failing test)
-- Threat category (mapped to AWAF's eight categories in `docs/SECURITY.md`)
+- Threat category (mapped to Alphabet's eight categories in `docs/SECURITY.md`)
 - Suggested mitigation if you have one
 
 ## Disclosure
@@ -54,7 +54,7 @@ We follow **coordinated disclosure**:
 
 ## In-scope
 
-- All `@awaf/*` packages in this monorepo
+- All `@alphabet/*` packages in this monorepo
 - `apps/demo` and `apps/danial-site` insofar as they exercise SDK behaviour
 - The OpenAPI specs in `openapi/`
 - The protocol adapters in `packages/protocols`
@@ -69,7 +69,7 @@ We follow **coordinated disclosure**:
 
 ## Privacy & Data Protection
 
-AWAF is privacy-first by construction. If you discover an issue that:
+Alphabet is privacy-first by construction. If you discover an issue that:
 
 - Causes PII to be persisted at consent tier 0 or 1
 - Bypasses DNT / Sec-GPC handling

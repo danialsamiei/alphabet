@@ -1,4 +1,4 @@
-# AWAF Production Release Checklist
+# Alphabet Production Release Checklist
 
 > **Status:** ✅ Production-ready as of this PR.
 > Generated as part of the production-readiness sweep. Run through this list
@@ -16,7 +16,7 @@ against the live state of the repository.
       and `pnpm build` on every push and PR to `main`.
 - [x] **Bundle analysis + size budgets** — `pnpm size` (size-limit) emits
       `size-report.json` and the report is uploaded as a CI artifact.
-      `pnpm size:check-r3f-free` keeps the base `@awaf/ui` bundle R3F-free
+      `pnpm size:check-r3f-free` keeps the base `@alphabet/ui` bundle R3F-free
       (see `scripts/check-ui-r3f-free.mjs`).
 - [x] **Built `dist/` artifacts** uploaded for every CI run for download
       and pre-publish smoke testing.
@@ -31,7 +31,7 @@ against the live state of the repository.
       on push, PR, and weekly schedule with the `security-extended` and
       `security-and-quality` query packs.
 - [x] **OpenAPI lint** — `pnpm openapi:lint` validates both
-      `openapi/awaf.v1.yaml` and `openapi/awaf-protocol.v2.yaml` via
+      `openapi/alphabet.v1.yaml` and `openapi/alphabet-protocol.v2.yaml` via
       Redocly CLI in CI.
 - [x] **Performance smoke** — `pnpm benchmark:smoke` runs handshake
       benchmarks in CI to guard the < 80 ms-on-3G target.
@@ -46,14 +46,14 @@ against the live state of the repository.
 ## 2. Versioning & release
 
 - [x] **Changesets** configured (`.changeset/config.json`, fixed group
-      `["@awaf/*"]`, `apps/demo` ignored, `access: public`).
+      `["@alphabet/*"]`, `apps/demo` ignored, `access: public`).
 - [x] **First public release pinned** via `.changeset/v1-0-0-release.md` —
-      `@awaf/core`, `@awaf/api`, `@awaf/ui`, `@awaf/protocols`,
-      `@awaf/security` cut as `v1.0.0` together as a fixed group.
-      *Note:* the original task brief mentioned `@awaf/core v0.2.0` /
-      `@awaf/ui v0.1.0`; the project has since adopted a unified `v1.0.0`
-      cut with stub packages pinning the public surface area for `@awaf/ui`,
-      `@awaf/protocols`, `@awaf/security` (concrete impl lands in
+      `@alphabet/core`, `@alphabet/api`, `@alphabet/ui`, `@alphabet/protocols`,
+      `@alphabet/security` cut as `v1.0.0` together as a fixed group.
+      *Note:* the original task brief mentioned `@alphabet/core v0.2.0` /
+      `@alphabet/ui v0.1.0`; the project has since adopted a unified `v1.0.0`
+      cut with stub packages pinning the public surface area for `@alphabet/ui`,
+      `@alphabet/protocols`, `@alphabet/security` (concrete impl lands in
       subsequent minor releases per `docs/ROADMAP.md`).
 - [x] **Per-package release contract** documented in `docs/RELEASE.md`
       (ESM-first, exports map with `types` first, `sideEffects: false`,
@@ -74,8 +74,8 @@ against the live state of the repository.
       - `PERFORMANCE.md`, `RELEASE.md`, `IMPLEMENTATION_STATUS.md`
       - `ROADMAP.md`, `LAUNCH_NARRATIVE.md`, `EXAMPLES.md`
       - `CONTRIBUTING.md`, `CODING_CONVENTIONS.md`, `DEVELOPMENT.md`
-- [x] **OpenAPI specs** — `openapi/awaf.v1.yaml` (16 REST endpoints) and
-      `openapi/awaf-protocol.v2.yaml` (MCP/A2A/QR/v2 providers).
+- [x] **OpenAPI specs** — `openapi/alphabet.v1.yaml` (16 REST endpoints) and
+      `openapi/alphabet-protocol.v2.yaml` (MCP/A2A/QR/v2 providers).
 - [x] **Examples** — `examples/` and runnable `apps/demo` + `apps/danial-site`.
       *Future:* a Nextra/Docusaurus front-end can consume the existing
       `docs/*` markdown verbatim — the source content is already there.
@@ -109,7 +109,7 @@ against the live state of the repository.
 - [x] **NIST AI RMF 1.0 (GOVERN/MAP/MEASURE/MANAGE)** mapped per threat in
       `packages/security/src/security/NISTAIMapping.ts` and tabulated in
       `docs/SECURITY.md` § "هم‌راستایی NIST AI 100-1".
-- [x] **Eight AWAF threat categories** with risk scores documented and
+- [x] **Eight Alphabet threat categories** with risk scores documented and
       defended (prompt injection, memory poisoning, over-personalization,
       privacy violation, hallucination, content sensitivity, voice abuse,
       tracking opacity).
@@ -151,10 +151,10 @@ against the live state of the repository.
       `< 100 ms` (full pipeline) and `< 80 ms` (3G-aware path) per
       `docs/PERFORMANCE.md`.
 - [x] **Layer detection cached** — result is stored in
-      `sessionStorage.awaf_layer` to avoid repeated detection overhead on
+      `sessionStorage.alphabet_layer` to avoid repeated detection overhead on
       navigation.
 - [x] **Lazy 3D layer** — `R3FImmersiveLayer.lazy.tsx` is dynamically
-      imported by `AdaptiveSlot`; R3F + three are external in `@awaf/ui`'s
+      imported by `AdaptiveSlot`; R3F + three are external in `@alphabet/ui`'s
       Vite config so the base bundle stays R3F-free (verified by
       `pnpm size:check-r3f-free`).
 - [x] **Tree-shakeable barrel exports** — every package ships `sideEffects:

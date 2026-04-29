@@ -1,7 +1,7 @@
 /**
- * @module @awaf/ui
+ * @module @alphabet/ui
  * @description
- * `@awaf/ui` — Adaptive Render Layers SDK for React.
+ * `@alphabet/ui` — Adaptive Render Layers SDK for React.
  *
  * یک SDK سبک React برای رندر تطبیقی (Adaptive Render Layers) که بر اساس
  * قابلیت دستگاه، تنظیمات دسترسی‌پذیری، رضایت کاربر، و محدودیت‌های SSR
@@ -9,7 +9,7 @@
  *
  * **Naming:** the public concept is now "Adaptive Render Layers"
  * (renamed from "UI Degradation"). The five layers themselves keep
- * their stable enum values from `@awaf/core` for compatibility.
+ * their stable enum values from `@alphabet/core` for compatibility.
  *
  * **Bundle:** the base entrypoint is intentionally lightweight and
  * does *not* import React Three Fiber. R3F is loaded lazily by
@@ -30,7 +30,7 @@ export * from './layers/index.js';
 // ─── Runtime helpers ──────────────────────────────────────────────────────────
 export * from './runtime/index.js';
 
-// ─── Re-exported types from @awaf/core ────────────────────────────────────────
+// ─── Re-exported types from @alphabet/core ────────────────────────────────────────
 export type {
   CapabilityLayer,
   ConsentTier,
@@ -38,5 +38,5 @@ export type {
   HandshakeDecision,
   UIConfig,
   PrivacyMode,
-} from '@awaf/core';
+} from '@alphabet/core';
 

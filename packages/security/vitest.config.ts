@@ -9,7 +9,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@awaf/core': resolve(__dirname, '../core/src'),
+      '@alphabet/core': resolve(__dirname, '../core/src'),
     },
   },
 });

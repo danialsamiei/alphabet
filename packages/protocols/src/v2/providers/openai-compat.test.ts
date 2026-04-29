@@ -6,9 +6,9 @@
 
 import { describe, it, expect } from 'vitest';
 import { createOpenAiCompatAdapter } from './openai-compat.js';
-import type { AwafGenerationRequest, AwafStreamChunk } from '../types.js';
+import type { AlphabetGenerationRequest, AlphabetStreamChunk } from '../types.js';
 
-const REQ: AwafGenerationRequest = {
+const REQ: AlphabetGenerationRequest = {
   model: 'gpt-test',
   messages: [{ role: 'user', content: 'hello' }],
   context: {
@@ -52,7 +52,7 @@ describe('createOpenAiCompatAdapter', () => {
       baseUrl: 'https://example.test/v1',
       fetch,
     });
-    const out: AwafStreamChunk[] = [];
+    const out: AlphabetStreamChunk[] = [];
     for await (const c of provider.stream(REQ)) out.push(c);
     const text = out.filter((c) => c.type === 'text-delta').map((c) => (c as { text: string }).text).join('');
     expect(text).toBe('Hello');
@@ -107,7 +107,7 @@ describe('createOpenAiCompatAdapter', () => {
       baseUrl: 'https://example.test/v1',
       fetch,
     });
-    const out: AwafStreamChunk[] = [];
+    const out: AlphabetStreamChunk[] = [];
     for await (const c of provider.stream(REQ)) out.push(c);
     expect(out.length).toBe(1);
     expect(out[0]?.type).toBe('error');
@@ -151,7 +151,7 @@ describe('createOpenAiCompatAdapter', () => {
       fetch,
     });
     setTimeout(() => ctl.abort(), 0);
-    const out: AwafStreamChunk[] = [];
+    const out: AlphabetStreamChunk[] = [];
     for await (const c of provider.stream({ ...REQ, signal: ctl.signal })) out.push(c);
     expect(out[0]?.type).toBe('error');
   });

@@ -1,7 +1,7 @@
 /**
  * @module contracts/runtime/schemas
  * @description
- * Hand-authored runtime schemas for the AWAF transport envelope and the
+ * Hand-authored runtime schemas for the Alphabet transport envelope and the
  * handshake payload. These mirror the TypeScript interfaces in
  * `../../types/api.ts` and `../../types/base.ts` exactly — they are the
  * **runtime** half of the type contract that lets clients reject malformed
@@ -19,16 +19,16 @@
 
 import { v, type Infer } from './structural.js';
 import type { Validator } from './validator.js';
-import type { AWAFRequest, AWAFResponse, ResponseMeta } from '../../types/api.js';
+import type { AlphabetRequest, AlphabetResponse, ResponseMeta } from '../../types/api.js';
 
 // ─── Building blocks ──────────────────────────────────────────────────────────
 
 /**
- * Validator for the {@link AWAFError} shape (no PII guarantees, just shape).
+ * Validator for the {@link AlphabetError} shape (no PII guarantees, just shape).
  * `details` is `unknown` because consumers stuff arbitrary diagnostic fields
  * in there; `code` and `message` are required.
  */
-export const awafErrorSchema = v.object({
+export const alphabetErrorSchema = v.object({
   code: v.string(),
   message: v.string(),
   details: v.optional(v.record(v.unknown())),
@@ -62,18 +62,18 @@ export const capabilityLayerSchema = v.enum([
   'TEXT_ONLY',
 ] as const);
 
-// ─── AWAFRequest envelope ────────────────────────────────────────────────────
+// ─── AlphabetRequest envelope ────────────────────────────────────────────────────
 
 /**
- * Validator for {@link AWAFRequest} with an arbitrary payload schema.
+ * Validator for {@link AlphabetRequest} with an arbitrary payload schema.
  *
  * @example
- * const handshakeRequestSchema = awafRequestSchema(handshakePayloadSchema);
+ * const handshakeRequestSchema = alphabetRequestSchema(handshakePayloadSchema);
  */
-export function awafRequestSchema<T>(
+export function alphabetRequestSchema<T>(
   payloadSchema: Validator<T>,
-): Validator<AWAFRequest<T>> {
-  // Cast: the structural inference is structurally identical to AWAFRequest<T>,
+): Validator<AlphabetRequest<T>> {
+  // Cast: the structural inference is structurally identical to AlphabetRequest<T>,
   // but TypeScript cannot connect the brand types (VisitorId, SessionId,
   // RequestId) to plain `string` without adapter helpers. Brand validation
   // happens at construction time in `types/brands.ts`; the wire format is
@@ -87,26 +87,26 @@ export function awafRequestSchema<T>(
     payload: payloadSchema,
     timestamp: v.string(),
     requestId: v.string(),
-  }) as unknown as Validator<AWAFRequest<T>>;
+  }) as unknown as Validator<AlphabetRequest<T>>;
 }
 
 /**
- * Validator for {@link AWAFResponse} with an arbitrary `data` schema.
+ * Validator for {@link AlphabetResponse} with an arbitrary `data` schema.
  *
  * Both `data` and `error` are optional at the wire level: a response either
  * carries `data` (success) or `error` (failure). Higher-level code in the
  * client checks the `success` flag and chooses the right branch.
  */
-export function awafResponseSchema<T>(
+export function alphabetResponseSchema<T>(
   dataSchema: Validator<T>,
-): Validator<AWAFResponse<T>> {
+): Validator<AlphabetResponse<T>> {
   return v.object({
     requestId: v.string(),
     success: v.boolean(),
     data: v.optional(dataSchema),
-    error: v.optional(awafErrorSchema),
+    error: v.optional(alphabetErrorSchema),
     meta: responseMetaSchema,
-  }) as unknown as Validator<AWAFResponse<T>>;
+  }) as unknown as Validator<AlphabetResponse<T>>;
 }
 
 // ─── Handshake payload schemas ───────────────────────────────────────────────
@@ -114,10 +114,10 @@ export function awafResponseSchema<T>(
 /**
  * Validator for the **wire shape** of the handshake request payload.
  * Matches `HandshakeRequestPayload` in `types/api.ts`. We keep this separate
- * from the full `AWAFRequest` envelope because some transports (notably the
+ * from the full `AlphabetRequest` envelope because some transports (notably the
  * legacy `HandshakeClient`) post the payload directly without an envelope.
  *
- * Only fields actually inspected by the AWAF SDK are validated — clients
+ * Only fields actually inspected by the Alphabet SDK are validated — clients
  * may send additional vendor-specific signals which we ignore but do not
  * reject. The schema therefore is **not** marked `.strict()`.
  */
@@ -169,7 +169,7 @@ export type HandshakePayloadShape = Infer<typeof handshakePayloadSchema>;
  * Validator for the handshake **result** (server → client).
  *
  * This intentionally validates only the fields documented in the OpenAPI
- * spec for `/api/awaf/v1/context/handshake`. Servers MAY include additional
+ * spec for `/api/alphabet/v1/context/handshake`. Servers MAY include additional
  * fields (e.g. for experiments) which the client passes through unchanged.
  */
 export const handshakeResultSchema = v.object({

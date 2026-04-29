@@ -243,9 +243,9 @@ export class HandshakeDecisionEngine {
     direction: 'ltr' | 'rtl'
   ): Record<string, string> {
     return {
-      '--awaf-layer': layer,
-      '--awaf-direction': direction,
-      '--awaf-font-family': direction === 'rtl'
+      '--alphabet-layer': layer,
+      '--alphabet-direction': direction,
+      '--alphabet-font-family': direction === 'rtl'
         ? "'Vazirmatn', 'Tahoma', sans-serif"
         : "'Inter', 'Segoe UI', sans-serif",
     };

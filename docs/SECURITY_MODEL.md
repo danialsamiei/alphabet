@@ -1,8 +1,8 @@
-# AWAF Security Model
+# Alphabet Security Model
 
-> **Scope.** This document describes the threats `@awaf/security` is designed
+> **Scope.** This document describes the threats `@alphabet/security` is designed
 > to mitigate, the guardrails it provides today, and — equally importantly —
-> what it does **not** do. AWAF is a privacy-first SDK; security claims here
+> what it does **not** do. Alphabet is a privacy-first SDK; security claims here
 > are deliberately narrow and verifiable.
 >
 > **This document does not claim full compliance with OWASP LLM Top 10 or
@@ -15,22 +15,22 @@
 
 The SDK is consumed in two trust contexts:
 
-1. **Browser SDK.** `@awaf/core`, `@awaf/api`, `@awaf/ui`, `@awaf/security`
+1. **Browser SDK.** `@alphabet/core`, `@alphabet/api`, `@alphabet/ui`, `@alphabet/security`
    ship as a JavaScript bundle running on the visitor's device. The
    adversary may control the network, other scripts on the page, or
    crafted user input.
-2. **Host application.** A consumer integrates AWAF behind their own
+2. **Host application.** A consumer integrates Alphabet behind their own
    backend. The host application is responsible for authentication,
    server-side storage, durability, and any compliance-grade audit
    logging.
 
-`@awaf/security` provides **client-side and shared-utility guardrails**
+`@alphabet/security` provides **client-side and shared-utility guardrails**
 that help the host application avoid common AI-aware-web pitfalls. It is
 not a server-side security framework.
 
 ### Adversaries we explicitly consider
 
-| Adversary                       | Capability                                                          | Mitigation in `@awaf/security`                                                  |
+| Adversary                       | Capability                                                          | Mitigation in `@alphabet/security`                                                  |
 | ------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Malicious user input            | Authors free-text that will be passed to an LLM                     | `detectPromptRisk` heuristics; recommended `block` action for high-risk input.  |
 | AI-generated output             | LLM produces HTML, links, or markup that will be rendered in the UI | `sanitizeHtml`, `validateUrl`, `markTextAsSafe`, branded `SafeRender` type.     |
@@ -41,7 +41,7 @@ not a server-side security framework.
 
 ### Adversaries we do **not** address
 
-`@awaf/security` does not attempt to mitigate the following — host
+`@alphabet/security` does not attempt to mitigate the following — host
 applications must use other tools:
 
 - **Native model-level jailbreaks** that bypass heuristic patterns.
@@ -65,9 +65,9 @@ applications must use other tools:
 - `ConsentTierManager` is a state machine over `pending → granted →
   revoked`, with monotonic tier upgrades, DNT/GPC auto-downgrade, and
   policy-version invalidation. Every operation returns
-  `Result<…, AWAFError>` so callers cannot silently bypass policy.
+  `Result<…, AlphabetError>` so callers cannot silently bypass policy.
 - The pure helpers `canStoreMemory`, `canPersonalize`,
-  `canUseAnalytics`, and `canUsePreciseGeo` (in `@awaf/core/privacy`)
+  `canUseAnalytics`, and `canUsePreciseGeo` (in `@alphabet/core/privacy`)
   are the only sanctioned way to gate behaviour on consent.
 
 ### 2.2 PII redaction
@@ -132,7 +132,7 @@ applications must use other tools:
      domain `R` is allowed only if `R` is in
      `DEFAULT_DOMAIN_READ_ACL[O]`. The default ACL keeps `visitor`
      strictly isolated.
-- All three checks return `Result<{ allowed: true }, AWAFError>` with
+- All three checks return `Result<{ allowed: true }, AlphabetError>` with
   a stable error code (`MEMORY_WRITE_BLOCKED_NO_CONSENT`,
   `MEMORY_WRITE_BLOCKED_TIER`, `MEMORY_WRITE_BLOCKED_ROLE`,
   `MEMORY_READ_BLOCKED_NO_CONSENT`, `MEMORY_READ_BLOCKED_ACL`) so the
@@ -140,7 +140,7 @@ applications must use other tools:
 
 ### 2.6 Audit logging
 
-- `AWAFAuditLogger` exposes one method per documented event category:
+- `AlphabetAuditLogger` exposes one method per documented event category:
   `consent_changed`, `privacy_signal_detected`, `memory_write_blocked`,
   `memory_read_blocked`, `prompt_risk_detected`, `output_rejected`,
   `policy_version_changed`.
@@ -155,17 +155,17 @@ applications must use other tools:
 
 ## 3. OWASP LLM Top 10 alignment
 
-The table below records *partial alignment* — i.e., where AWAF ships a
+The table below records *partial alignment* — i.e., where Alphabet ships a
 control that mitigates **some** of the risk in each category. It is not
 a compliance claim.
 
-| OWASP risk                            | What AWAF does                                                                                            | What AWAF does **not** do                                                |
+| OWASP risk                            | What Alphabet does                                                                                            | What Alphabet does **not** do                                                |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | **LLM01** Prompt Injection            | `detectPromptRisk` heuristics + `block`/`review` actions, audit event `prompt_risk_detected`.             | LLM-side sandboxing, fine-grained tool gating, model-specific guards.    |
 | **LLM02** Insecure Output Handling    | `sanitizeHtml`, `validateUrl`, `markTextAsSafe`, branded `SafeRender` type.                               | DOMPurify-grade HTML5 parsing, iframe sandboxing, response streaming.    |
 | **LLM03** Training Data Poisoning     | Memory ACL keeps `class_notes` / `tech_pulse` admin-only.                                                 | Provenance-chain tracking, training-data validation.                     |
 | **LLM04** Model Denial of Service     | —                                                                                                         | Cost guardian, token-budget circuit breaker (planned).                   |
-| **LLM05** Supply-chain Vulnerabilities| Zero runtime dependencies in `@awaf/security`; CI runs lockfile checks.                                   | SBOM publication, provenance attestation.                                |
+| **LLM05** Supply-chain Vulnerabilities| Zero runtime dependencies in `@alphabet/security`; CI runs lockfile checks.                                   | SBOM publication, provenance attestation.                                |
 | **LLM06** Sensitive Info Disclosure   | `redactPII`, audit-logger redaction-by-default, `MemoryIntegrityGuard` cross-domain read ACL.             | Server-side DLP, encrypted storage at rest.                              |
 | **LLM07** Insecure Plugin Design      | Output validation rejects `javascript:`, `data:`, `file:`, `vbscript:` URLs.                              | Plugin / tool authorization, rate limits.                                |
 | **LLM08** Excessive Agency            | Consent tiers gate all personalization and memory writes.                                                 | Action-confirmation UI, undo / right-to-erasure flow (partially planned).|
@@ -176,23 +176,23 @@ a compliance claim.
 
 ## 4. NIST AI RMF 1.0 alignment
 
-`@awaf/security` partially supports the *MEASURE* and *MANAGE*
+`@alphabet/security` partially supports the *MEASURE* and *MANAGE*
 functions of the AI RMF 1.0 by emitting structured audit events
 (`prompt_risk_detected`, `memory_write_blocked`, `output_rejected`)
 that downstream tooling can aggregate to compute the metrics required
 by the framework.
 
-A formal mapping table linking AWAF audit events to specific RMF
+A formal mapping table linking Alphabet audit events to specific RMF
 sub-categories is **planned** (see [`docs/ROADMAP.md`](ROADMAP.md))
 and will live alongside the existing privacy model document. Until
-that mapping is published, do not represent AWAF as RMF-aligned in
+that mapping is published, do not represent Alphabet as RMF-aligned in
 public messaging.
 
 ---
 
 ## 5. Recommended deployment practices
 
-1. **Treat `@awaf/security` as one layer.** Always combine with: a
+1. **Treat `@alphabet/security` as one layer.** Always combine with: a
    server-side authentication / authorization layer, server-side
    rate-limiting, and a vetted HTML sanitizer (DOMPurify in a sandboxed
    iframe) for any *untrusted* rich text.
@@ -226,10 +226,10 @@ public messaging.
 ### 6.1 Consent check before memory writes
 
 ```ts
-import { MemoryIntegrityGuard, AWAFAuditLogger } from '@awaf/security';
+import { MemoryIntegrityGuard, AlphabetAuditLogger } from '@alphabet/security';
 
 const guard = new MemoryIntegrityGuard();
-const audit = new AWAFAuditLogger({ sink: mySink });
+const audit = new AlphabetAuditLogger({ sink: mySink });
 
 const decision = guard.canWrite({
   domain: 'visitor',
@@ -256,7 +256,7 @@ The audit logger does this for you by default. If you log directly
 through your own pipeline:
 
 ```ts
-import { redactPIIDeep } from '@awaf/security';
+import { redactPIIDeep } from '@alphabet/security';
 
 const safe = redactPIIDeep(errorPayload).value;
 myLogger.error(safe);
@@ -265,7 +265,7 @@ myLogger.error(safe);
 ### 6.3 Output validation before rendering
 
 ```tsx
-import { sanitizeHtml, validateUrl } from '@awaf/security';
+import { sanitizeHtml, validateUrl } from '@alphabet/security';
 
 const html = sanitizeHtml(aiText);
 if (!html.safe) return <FallbackPlainText value={aiText} />;
@@ -279,7 +279,7 @@ return <a href={url.normalized} rel="noopener noreferrer">…</a>;
 ### 6.4 Prompt-risk gate before LLM invocation
 
 ```ts
-import { detectPromptRisk } from '@awaf/security';
+import { detectPromptRisk } from '@alphabet/security';
 
 const r = detectPromptRisk(userInput);
 if (r.action === 'block') {
@@ -302,4 +302,4 @@ Please do **not** open public issues for vulnerabilities.
 
 ---
 
-*Document version: 1.0.0 — published alongside `@awaf/security` 1.0.0.*
+*Document version: 1.0.0 — published alongside `@alphabet/security` 1.0.0.*

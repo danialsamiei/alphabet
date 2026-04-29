@@ -4,8 +4,8 @@
  * لایه ۱ — R3F Immersive (lazy entry point).
  * Layer 1 — React Three Fiber immersive layer. **This file is the lazy
  * entry point** that `AdaptiveSlot` loads with `React.lazy()`. It is
- * shipped as its own bundle (`@awaf/ui/layers/r3f`) so the base
- * `@awaf/ui` entrypoint does **not** include R3F or three.js.
+ * shipped as its own bundle (`@alphabet/ui/layers/r3f`) so the base
+ * `@alphabet/ui` entrypoint does **not** include R3F or three.js.
  *
  * Note: `@react-three/fiber` and `three` are listed as `external` in
  * the rollup config. Consumers who actually want R3F must install them
@@ -38,16 +38,16 @@ export interface R3FImmersiveLayerProps {
  * so screen-reader users still receive content.
  */
 export function R3FImmersiveLayer({
-  heading = 'AWAF',
+  heading = 'Alphabet',
   description,
   scene,
   direction = 'ltr',
   locale,
-  accessibleLabel = 'AWAF immersive 3D scene (decorative)',
+  accessibleLabel = 'Alphabet immersive 3D scene (decorative)',
 }: R3FImmersiveLayerProps): JSX.Element {
   return (
     <section
-      data-awaf-layer="R3F_IMMERSIVE"
+      data-alphabet-layer="R3F_IMMERSIVE"
       dir={direction}
       {...(locale !== undefined ? { lang: locale } : {})}
       style={{

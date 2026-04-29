@@ -4,12 +4,12 @@
  * Dependency-free runtime validator combinators.
  *
  * This is a tiny, deliberately conservative implementation of the
- * {@link Validator} contract. It supports exactly what AWAF schemas
+ * {@link Validator} contract. It supports exactly what Alphabet schemas
  * need today: primitive types, literals, enums, objects with a fixed
  * key set, optional fields, arrays, unions, and records.
  *
  * Design choices:
- * - **No dependencies.** Keeps `@awaf/core` peer-dep-free.
+ * - **No dependencies.** Keeps `@alphabet/core` peer-dep-free.
  * - **Deterministic output.** Same input → same `Result` byte-for-byte.
  * - **Aggregate failures.** Object validation collects every leaf issue
  *   in one pass so a malformed payload reports all problems, not just the

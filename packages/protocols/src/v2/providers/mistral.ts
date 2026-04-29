@@ -1,11 +1,11 @@
 /**
- * @module @awaf/protocols/v2/providers/mistral
+ * @module @alphabet/protocols/v2/providers/mistral
  * @description
  * Mistral provider adapter — OpenAI-compatible chat completions on
  * `https://api.mistral.ai/v1`.
  */
 
-import type { AwafProviderAdapter } from '../types.js';
+import type { AlphabetProviderAdapter } from '../types.js';
 import {
   createOpenAiCompatAdapter,
   type OpenAiCompatAdapterOptions,
@@ -18,7 +18,7 @@ export type MistralProviderOptions = Omit<OpenAiCompatAdapterOptions, 'id' | 'na
 };
 
 /** Create a Mistral provider adapter. */
-export function createMistralProvider(options: MistralProviderOptions): AwafProviderAdapter {
+export function createMistralProvider(options: MistralProviderOptions): AlphabetProviderAdapter {
   return createOpenAiCompatAdapter({
     id: 'mistral',
     name: 'Mistral',

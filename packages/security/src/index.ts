@@ -1,5 +1,5 @@
 /**
- * @module @awaf/security
+ * @module @alphabet/security
  * @description
  * پکیج Security — guardrailهای عملی برای SDK web آگاه از AI.
  * Security package — practical, lightweight guardrails for an
@@ -17,12 +17,12 @@
  *  - `prompt-injection`  — `detectPromptRisk`, heuristic injection scoring.
  *  - `output-validation` — `validateUrl`, `sanitizeHtml`, `markTextAsSafe`.
  *  - `memory-integrity`  — `MemoryIntegrityGuard` (tier + ACL enforcement).
- *  - `audit`             — `AWAFAuditLogger`, `InMemoryAuditSink`.
+ *  - `audit`             — `AlphabetAuditLogger`, `InMemoryAuditSink`.
  *  - `policies`          — privacy policy version, ACL defaults,
  *                          prompt-injection patterns.
  */
 
-export type { AWAFError } from '@awaf/core';
+export type { AlphabetError } from '@alphabet/core';
 
 // ─── Consent ─────────────────────────────────────────────────────────────────
 export { ConsentTierManager } from './consent/consent-tier-manager.js';
@@ -92,7 +92,7 @@ export type {
 } from './memory-integrity/memory-integrity-guard.js';
 
 // ─── Audit logging ───────────────────────────────────────────────────────────
-export { AWAFAuditLogger, InMemoryAuditSink } from './audit/audit-logger.js';
+export { AlphabetAuditLogger, InMemoryAuditSink } from './audit/audit-logger.js';
 export type {
   AuditEvent,
   AuditEventBase,

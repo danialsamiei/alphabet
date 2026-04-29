@@ -1,9 +1,9 @@
 /**
- * @module @awaf/protocols/v2/pulse
+ * @module @alphabet/protocols/v2/pulse
  * @description
  * Technology Pulse v2 — predictive capability forecasting and proactive
  * layer-downgrade hints, layered on top of the existing
- * `CapabilityPredictor` (`@awaf/core/handshake/predictor`).
+ * `CapabilityPredictor` (`@alphabet/core/handshake/predictor`).
  *
  * Goals:
  *   • Translate the predictor's raw warnings + EWMA forecast into
@@ -14,8 +14,8 @@
  *     existing predictor's privacy posture.
  */
 
-import { predictor as predictorNs } from '@awaf/core';
-import type { CapabilityLayer } from '@awaf/core';
+import { predictor as predictorNs } from '@alphabet/core';
+import type { CapabilityLayer } from '@alphabet/core';
 
 const { CapabilityPredictor } = predictorNs;
 
@@ -48,7 +48,7 @@ export type LayerForecastHint =
 export interface ProactiveLayerForecasterOptions {
   /**
    * Layers ordered from richest to leanest. Used to pick a downgrade
-   * target. The default mirrors `LAYER_TRANSITIONS` in `@awaf/core`.
+   * target. The default mirrors `LAYER_TRANSITIONS` in `@alphabet/core`.
    */
   readonly layerOrder?: readonly CapabilityLayer[];
   /** Minimum confidence required before emitting a hint (default 0.4). */

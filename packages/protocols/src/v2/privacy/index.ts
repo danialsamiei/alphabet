@@ -1,14 +1,14 @@
 /**
- * @module @awaf/protocols/v2/privacy
+ * @module @alphabet/protocols/v2/privacy
  * @description
- * Privacy-preserving prompt engineering helpers for AwafProtocol v2.
+ * Privacy-preserving prompt engineering helpers for AlphabetProtocol v2.
  *
  *   • `redactPromptPII` — runs a regex-based PII pass over chat messages
- *     before dispatch. Mirrors `@awaf/security`'s redactor without
+ *     before dispatch. Mirrors `@alphabet/security`'s redactor without
  *     bundling it as a dep, so the protocols package stays at the
  *     bottom of the workspace dep tree.
  *   • `injectConsentAwareContext` — produces a system prelude built
- *     from the visitor's `AwafToolContext`, restricted to fields the
+ *     from the visitor's `AlphabetToolContext`, restricted to fields the
  *     current consent tier permits. DNT/GPC and `privacyRestricted`
  *     suppress personalization-level fields entirely.
  *
@@ -16,13 +16,13 @@
  * mutate input.
  */
 
-import { canPersonalize, hasPrivacySignal, type PrivacySignals } from '@awaf/core';
-import type { AwafChatMessage } from '../types.js';
-import type { AwafToolContext } from '../../contract.js';
+import { canPersonalize, hasPrivacySignal, type PrivacySignals } from '@alphabet/core';
+import type { AlphabetChatMessage } from '../types.js';
+import type { AlphabetToolContext } from '../../contract.js';
 
 // ─── PII redactor ────────────────────────────────────────────────────────────
 
-/** Patterns mirrored from `@awaf/security` PII redactor (high-confidence). */
+/** Patterns mirrored from `@alphabet/security` PII redactor (high-confidence). */
 const REDACTORS: ReadonlyArray<readonly [RegExp, string]> = [
   [/[\w.+-]+@[\w-]+\.[\w.-]+/gi, '[email]'],
   [/\+?\d[\d\s().-]{7,}\d/g, '[phone]'],
@@ -69,8 +69,8 @@ export function redactPromptString(input: string): {
  * Run PII redaction over every message's `content`. Returns the new
  * message list and an aggregate report.
  */
-export function redactPromptPII(messages: readonly AwafChatMessage[]): {
-  readonly messages: readonly AwafChatMessage[];
+export function redactPromptPII(messages: readonly AlphabetChatMessage[]): {
+  readonly messages: readonly AlphabetChatMessage[];
   readonly report: RedactionReport;
 } {
   const kinds = new Set<string>();
@@ -98,10 +98,10 @@ export interface ConsentAwareInjectionOptions {
 }
 
 const DEFAULT_PREAMBLE =
-  'AWAF runtime context (read-only, PII-free). Adapt your response to the user without violating their consent or DNT/GPC preferences.';
+  'Alphabet runtime context (read-only, PII-free). Adapt your response to the user without violating their consent or DNT/GPC preferences.';
 
 /**
- * Build a consent-aware system prelude from `AwafToolContext`. Fields
+ * Build a consent-aware system prelude from `AlphabetToolContext`. Fields
  * are filtered by the visitor's consent tier and active privacy
  * signals:
  *
@@ -114,9 +114,9 @@ const DEFAULT_PREAMBLE =
  * conversation.
  */
 export function injectConsentAwareContext(
-  context: AwafToolContext,
+  context: AlphabetToolContext,
   options: ConsentAwareInjectionOptions,
-): AwafChatMessage {
+): AlphabetChatMessage {
   const { privacy } = options;
   const allowPersonalization =
     canPersonalize(context.consentTier, privacy) && !context.privacyRestricted;

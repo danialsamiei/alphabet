@@ -20,8 +20,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@awaf/core/contracts/runtime': resolve(__dirname, '../core/src/contracts/runtime/index.ts'),
-      '@awaf/core': resolve(__dirname, '../core/src/index.ts'),
+      '@alphabet/core/contracts/runtime': resolve(__dirname, '../core/src/contracts/runtime/index.ts'),
+      '@alphabet/core': resolve(__dirname, '../core/src/index.ts'),
     },
   },
 });

@@ -26,7 +26,7 @@ export interface TextOnlyLayerProps {
  * skip link، و focus visible default.
  */
 export function TextOnlyLayer({
-  heading = 'AWAF',
+  heading = 'Alphabet',
   description,
   children,
   direction = 'ltr',
@@ -34,7 +34,7 @@ export function TextOnlyLayer({
 }: TextOnlyLayerProps): JSX.Element {
   return (
     <div
-      data-awaf-layer="TEXT_ONLY"
+      data-alphabet-layer="TEXT_ONLY"
       dir={direction}
       {...(locale !== undefined ? { lang: locale } : {})}
       style={{
@@ -47,7 +47,7 @@ export function TextOnlyLayer({
       }}
     >
       <a
-        href="#awaf-main"
+        href="#alphabet-main"
         style={{
           position: 'absolute',
           left: '-9999px',
@@ -61,13 +61,13 @@ export function TextOnlyLayer({
       <header role="banner">
         <h1>{heading}</h1>
       </header>
-      <main id="awaf-main" role="main" aria-label="Main content">
+      <main id="alphabet-main" role="main" aria-label="Main content">
         {description !== undefined ? <p>{description}</p> : null}
         {children}
       </main>
       <footer role="contentinfo">
         <p>
-          <small>Rendered with the AWAF text-only adaptive layer.</small>
+          <small>Rendered with the Alphabet text-only adaptive layer.</small>
         </p>
       </footer>
     </div>

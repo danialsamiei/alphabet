@@ -1,5 +1,5 @@
 /**
- * @module @awaf/protocols/v2/providers/gemini
+ * @module @alphabet/protocols/v2/providers/gemini
  * @description
  * Google Gemini provider adapter — uses the Generative Language API
  * (`https://generativelanguage.googleapis.com/v1beta`) with
@@ -11,11 +11,11 @@
  */
 
 import type {
-  AwafChatMessage,
-  AwafGenerationRequest,
-  AwafProviderAdapter,
-  AwafStreamChunk,
-  AwafFinishReason,
+  AlphabetChatMessage,
+  AlphabetGenerationRequest,
+  AlphabetProviderAdapter,
+  AlphabetStreamChunk,
+  AlphabetFinishReason,
 } from '../types.js';
 import {
   collapseStream,
@@ -54,7 +54,7 @@ interface GeminiBody {
   }>;
 }
 
-function toGeminiContents(messages: readonly AwafChatMessage[]): {
+function toGeminiContents(messages: readonly AlphabetChatMessage[]): {
   systemInstruction: GeminiBody['systemInstruction'] | undefined;
   contents: GeminiContent[];
 } {
@@ -109,7 +109,7 @@ function safeParse(s: string): unknown {
   }
 }
 
-function buildBody(req: AwafGenerationRequest): GeminiBody {
+function buildBody(req: AlphabetGenerationRequest): GeminiBody {
   const { systemInstruction, contents } = toGeminiContents(req.messages);
   const generationConfig: Record<string, unknown> = {};
   if (req.sampling?.temperature !== undefined) generationConfig.temperature = req.sampling.temperature;
@@ -156,7 +156,7 @@ interface GeminiStreamEvent {
   };
 }
 
-function mapFinish(reason: string | undefined): AwafFinishReason {
+function mapFinish(reason: string | undefined): AlphabetFinishReason {
   switch (reason) {
     case 'STOP':
       return 'stop';
@@ -173,7 +173,7 @@ function mapFinish(reason: string | undefined): AwafFinishReason {
 async function* decode(
   res: Response,
   structured: boolean,
-): AsyncIterable<AwafStreamChunk> {
+): AsyncIterable<AlphabetStreamChunk> {
   if (res.body === null) {
     yield { type: 'error', error: protocolError('ADAPTER_NOT_CONFIGURED', 'Response body is null') };
     return;
@@ -225,13 +225,13 @@ async function* decode(
 }
 
 /** Create a Gemini provider adapter. */
-export function createGeminiProvider(options: ProviderClientOptions): AwafProviderAdapter {
+export function createGeminiProvider(options: ProviderClientOptions): AlphabetProviderAdapter {
   const fetchImpl = getFetch(options);
   const baseUrl = options.baseUrl ?? GEMINI_BASE_URL;
   const timeout = options.timeoutMs ?? DEFAULT_PROVIDER_TIMEOUT_MS;
   const id = 'gemini';
 
-  async function* stream(req: AwafGenerationRequest): AsyncIterable<AwafStreamChunk> {
+  async function* stream(req: AlphabetGenerationRequest): AsyncIterable<AlphabetStreamChunk> {
     const { signal, cancel } = withTimeoutSignal(req.signal, timeout);
     const sep = options.apiKey.length > 0 ? `?alt=sse&key=${encodeURIComponent(options.apiKey)}` : '?alt=sse';
     const url = `${baseUrl.replace(/\/$/, '')}/models/${encodeURIComponent(req.model)}:streamGenerateContent${sep}`;

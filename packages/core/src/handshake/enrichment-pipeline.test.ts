@@ -82,7 +82,7 @@ describe('EnrichmentPipeline.enrich()', () => {
   });
 
   it('should categorize Google referrer as "search"', () => {
-    const result = pipeline.enrich(makeSignals({ referrer: 'https://www.google.com/search?q=awaf' }));
+    const result = pipeline.enrich(makeSignals({ referrer: 'https://www.google.com/search?q=alphabet' }));
     expect(result.referrerCategory).toBe('search');
   });
 

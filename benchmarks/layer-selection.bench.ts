@@ -5,7 +5,7 @@
  */
 
 import { Bench } from 'tinybench';
-import { selectAdaptiveLayer } from '@awaf/ui/runtime';
+import { selectAdaptiveLayer } from '@alphabet/ui/runtime';
 import { benchOptions, isSmokeRun, printSuite, runBench } from './helpers.js';
 
 export async function runLayerSelectionSuite(): Promise<void> {

@@ -1,6 +1,6 @@
 /**
  * @file main.tsx
- * @description Entry point for the AWAF Demo app.
+ * @description Entry point for the Alphabet Demo app.
  */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

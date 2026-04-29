@@ -1,12 +1,12 @@
 /**
  * @module api
  * @description
- * مدل‌های داده API در AWAF SDK — AWAFRequest، AWAFResponse، TokenBudget، ResponseMeta.
- * API data models: AWAFRequest, AWAFResponse, TokenBudget, ResponseMeta.
+ * مدل‌های داده API در Alphabet SDK — AlphabetRequest، AlphabetResponse، TokenBudget، ResponseMeta.
+ * API data models: AlphabetRequest, AlphabetResponse, TokenBudget, ResponseMeta.
  */
 
 import type { ConsentTier, ProtocolType, TokenTier, CapabilityLayer } from './base.js';
-import type { AWAFError } from './result.js';
+import type { AlphabetError } from './result.js';
 import type { VisitorId, SessionId, RequestId } from './brands.js';
 
 // ─── Response Meta ────────────────────────────────────────────────────────────
@@ -25,16 +25,16 @@ export interface ResponseMeta {
   readonly respondedAt: string;
 }
 
-// ─── AWAF Request ─────────────────────────────────────────────────────────────
+// ─── Alphabet Request ─────────────────────────────────────────────────────────────
 
 /**
- * درخواست یکپارچه AWAF — کانتینر استاندارد برای تمام پروتکل‌ها.
- * Unified AWAF request — standard container for all protocols.
+ * درخواست یکپارچه Alphabet — کانتینر استاندارد برای تمام پروتکل‌ها.
+ * Unified Alphabet request — standard container for all protocols.
  *
  * @template T - نوع payload
  *
  * @example
- * const request: AWAFRequest<HandshakePayload> = {
+ * const request: AlphabetRequest<HandshakePayload> = {
  *   protocol: 'API',
  *   endpoint: '/api/context/handshake',
  *   visitorId: visitorId,
@@ -45,7 +45,7 @@ export interface ResponseMeta {
  *   requestId: createRequestId(),
  * };
  */
-export interface AWAFRequest<T = unknown> {
+export interface AlphabetRequest<T = unknown> {
   /** پروتکل استفاده‌شده */
   readonly protocol: ProtocolType;
   /** endpoint مقصد */
@@ -64,23 +64,23 @@ export interface AWAFRequest<T = unknown> {
   readonly requestId: RequestId;
 }
 
-// ─── AWAF Response ────────────────────────────────────────────────────────────
+// ─── Alphabet Response ────────────────────────────────────────────────────────────
 
 /**
- * پاسخ یکپارچه AWAF — کانتینر استاندارد برای تمام پاسخ‌ها.
- * Unified AWAF response — standard container for all responses.
+ * پاسخ یکپارچه Alphabet — کانتینر استاندارد برای تمام پاسخ‌ها.
+ * Unified Alphabet response — standard container for all responses.
  *
  * @template T - نوع داده پاسخ
  *
  * @example
- * const response: AWAFResponse<VisitorContext> = {
+ * const response: AlphabetResponse<VisitorContext> = {
  *   requestId: reqId,
  *   success: true,
  *   data: visitorContext,
  *   meta: { processingTimeMs: 42, respondedAt: '...' },
  * };
  */
-export interface AWAFResponse<T = unknown> {
+export interface AlphabetResponse<T = unknown> {
   /** شناسه درخواست مرتبط */
   readonly requestId: RequestId;
   /** آیا درخواست موفق بود */
@@ -88,7 +88,7 @@ export interface AWAFResponse<T = unknown> {
   /** داده پاسخ (فقط در حالت موفقیت) */
   readonly data?: T;
   /** خطا (فقط در حالت شکست) */
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
   /** متادیتای پاسخ */
   readonly meta: ResponseMeta;
 }
@@ -175,7 +175,7 @@ export interface HandshakeResult {
   /** رضایت اعطا شد (null = رد شد یا DNT) */
   readonly consentGranted: boolean | null;
   /** خطا در صورت شکست */
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 // ─── Handshake Decision ───────────────────────────────────────────────────────
@@ -234,7 +234,7 @@ export interface StreamingConfig {
   /** callback برای پایان stream */
   readonly onComplete: (fullText: string) => void;
   /** callback برای خطا */
-  readonly onError: (error: AWAFError) => void;
+  readonly onError: (error: AlphabetError) => void;
   /** timeout به میلی‌ثانیه */
   readonly timeoutMs?: number;
 }

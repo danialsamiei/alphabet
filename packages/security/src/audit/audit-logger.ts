@@ -18,7 +18,7 @@
 
 import { redactPIIDeep } from '../pii/redactor.js';
 import type { PIIFinding } from '../pii/redactor.js';
-import type { ConsentTier, MemoryDomain } from '@awaf/core';
+import type { ConsentTier, MemoryDomain } from '@alphabet/core';
 import type { PromptRiskLevel } from '../prompt-injection/detector.js';
 
 // ─── Event types ─────────────────────────────────────────────────────────────
@@ -177,15 +177,15 @@ export class InMemoryAuditSink {
 // ─── Logger ──────────────────────────────────────────────────────────────────
 
 /**
- * AWAFAuditLogger — facade ثابت روی sink با redaction PII پیش‌فرض.
+ * AlphabetAuditLogger — facade ثابت روی sink با redaction PII پیش‌فرض.
  *
  * @example
  * const sink = new InMemoryAuditSink();
- * const logger = new AWAFAuditLogger({ sink: sink.write });
+ * const logger = new AlphabetAuditLogger({ sink: sink.write });
  * logger.consentChanged({ previousState: 'pending', nextState: 'granted', ... });
  * sink.snapshot()[0].category === 'consent_changed';
  */
-export class AWAFAuditLogger {
+export class AlphabetAuditLogger {
   private readonly sink: AuditSink;
   private readonly redact: boolean;
   private readonly defaultCorrelationId: string | undefined;

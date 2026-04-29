@@ -5,14 +5,14 @@
 
 import { describe, it, expect } from 'vitest';
 import {
-  AWAF_MCP_TOOLS,
-  AWAF_MCP_TOOL_MANIFESTS,
+  ALPHABET_MCP_TOOLS,
+  ALPHABET_MCP_TOOL_MANIFESTS,
   McpAdapter,
 } from './index.js';
 import { makeConsentScope } from '../normalizers/index.js';
-import type { AwafProtocolRequest, AwafToolContext } from '../contract.js';
+import type { AlphabetProtocolRequest, AlphabetToolContext } from '../contract.js';
 
-const baseContext: AwafToolContext = {
+const baseContext: AlphabetToolContext = {
   visitorId: 'v-abc12345',
   sessionId: 'sess-1',
   consentTier: 'CONSENTED',
@@ -24,7 +24,7 @@ const baseContext: AwafToolContext = {
 
 function makeRequest(
   consentOps: readonly ('read_context' | 'read_memory' | 'personalize')[] = ['read_context']
-): AwafProtocolRequest {
+): AlphabetProtocolRequest {
   return {
     protocol: 'MCP',
     operation: 'mcp.invoke',
@@ -38,16 +38,16 @@ function makeRequest(
 
 const noPrivacy = { dntEnabled: false, gpcEnabled: false } as const;
 
-describe('AWAF MCP tool manifests', () => {
+describe('Alphabet MCP tool manifests', () => {
   it('exposes all four tools with valid input schemas', () => {
-    expect(AWAF_MCP_TOOLS).toEqual([
+    expect(ALPHABET_MCP_TOOLS).toEqual([
       'context_handshake',
       'memory_query',
       'consent_status',
       'adaptive_layer_explain',
     ]);
-    for (const name of AWAF_MCP_TOOLS) {
-      const m = AWAF_MCP_TOOL_MANIFESTS[name];
+    for (const name of ALPHABET_MCP_TOOLS) {
+      const m = ALPHABET_MCP_TOOL_MANIFESTS[name];
       expect(m.name).toBe(name);
       expect(typeof m.description).toBe('string');
       expect(m.inputSchema.type).toBe('object');
@@ -74,7 +74,7 @@ describe('McpAdapter.invoke', () => {
 
   it('denies memory_query when consent tier is NO_MEMORY', async () => {
     const adapter = new McpAdapter();
-    const req: AwafProtocolRequest = {
+    const req: AlphabetProtocolRequest = {
       ...makeRequest(['read_memory']),
       context: { ...baseContext, consentTier: 'NO_MEMORY' },
       consent: makeConsentScope('NO_MEMORY', { operations: ['read_memory'] }),

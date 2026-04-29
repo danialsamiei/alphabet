@@ -10,7 +10,7 @@ import {
   makeConsentScope,
   validateConsentScope,
 } from './index.js';
-import type { AwafToolContext } from '../contract.js';
+import type { AlphabetToolContext } from '../contract.js';
 
 const noPrivacy = { dntEnabled: false, gpcEnabled: false } as const;
 
@@ -118,7 +118,7 @@ describe('looksLikePII / ensureNoPIIInContext', () => {
   });
 
   it('rejects context with PII-shaped fields', () => {
-    const ctx: AwafToolContext = {
+    const ctx: AlphabetToolContext = {
       visitorId: 'v-abc12345',
       sessionId: 'sess-1',
       consentTier: 'ANONYMOUS',

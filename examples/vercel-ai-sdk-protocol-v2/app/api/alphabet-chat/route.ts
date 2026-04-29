@@ -1,38 +1,38 @@
 /**
  * @file route.ts
  * @description
- * Next.js App Router edge route that bridges AwafProtocol v2 streaming
+ * Next.js App Router edge route that bridges AlphabetProtocol v2 streaming
  * to a Server-Sent Events response that the Vercel AI SDK can consume
- * via `useChat({ api: '/api/awaf-chat' })`.
+ * via `useChat({ api: '/api/alphabet-chat' })`.
  *
  * Lifecycle:
- *   1. Read the consent proof from the `x-awaf-consent-proof` header.
+ *   1. Read the consent proof from the `x-alphabet-consent-proof` header.
  *   2. Build a fallback chain (OpenAI → Anthropic → Gemini).
- *   3. Wrap the chain in an `AwafAiClient` so consent verification, PII
+ *   3. Wrap the chain in an `AlphabetAiClient` so consent verification, PII
  *      redaction, consent-aware prelude, and context compression all
  *      run *before* any provider call.
- *   4. Stream `AwafStreamChunk` events as SSE — one `data:` line per
+ *   4. Stream `AlphabetStreamChunk` events as SSE — one `data:` line per
  *      chunk, terminated by a `data: [DONE]` line.
  *
- * Drop this file into `app/api/awaf-chat/route.ts` of any Next.js
- * project that depends on `ai`, `@ai-sdk/react`, and `@awaf/protocols`.
+ * Drop this file into `app/api/alphabet-chat/route.ts` of any Next.js
+ * project that depends on `ai`, `@ai-sdk/react`, and `@alphabet/protocols`.
  */
 
 import {
-  AwafAiClient,
+  AlphabetAiClient,
   createFallbackChain,
   createOpenAiProvider,
   createAnthropicProvider,
   createGeminiProvider,
-  type AwafGenerationRequest,
-  type AwafStreamChunk,
-} from '@awaf/protocols/v2';
+  type AlphabetGenerationRequest,
+  type AlphabetStreamChunk,
+} from '@alphabet/protocols/v2';
 
 export const runtime = 'edge';
 
 // ─── Lazy provider construction ──────────────────────────────────────────────
 
-function buildClient(): AwafAiClient {
+function buildClient(): AlphabetAiClient {
   const providers = [
     createOpenAiProvider({ apiKey: process.env.OPENAI_API_KEY ?? '' }),
     createAnthropicProvider({ apiKey: process.env.ANTHROPIC_API_KEY ?? '' }),
@@ -46,7 +46,7 @@ function buildClient(): AwafAiClient {
       gemini: 'gemini-1.5-flash',
     },
   });
-  return new AwafAiClient({
+  return new AlphabetAiClient({
     provider: chain,
     defaultPrivacy: { dntEnabled: false, gpcEnabled: false },
     defaultTokenBudget: 4_000,
@@ -60,7 +60,7 @@ const client = buildClient();
 let consentPublicKeyPromise: Promise<CryptoKey> | undefined;
 
 async function loadConsentPublicKey(): Promise<CryptoKey | undefined> {
-  const jwk = process.env.AWAF_CONSENT_PROOF_PUBLIC_KEY_JWK;
+  const jwk = process.env.ALPHABET_CONSENT_PROOF_PUBLIC_KEY_JWK;
   if (jwk === undefined || jwk.length === 0) return undefined;
   if (consentPublicKeyPromise === undefined) {
     consentPublicKeyPromise = crypto.subtle.importKey(
@@ -74,7 +74,7 @@ async function loadConsentPublicKey(): Promise<CryptoKey | undefined> {
   return consentPublicKeyPromise;
 }
 
-// ─── Wire AwafChatMessage ↔ Vercel useChat messages ──────────────────────────
+// ─── Wire AlphabetChatMessage ↔ Vercel useChat messages ──────────────────────────
 
 interface VercelChatMessage {
   readonly role: 'user' | 'assistant' | 'system';
@@ -93,10 +93,10 @@ interface VercelChatBody {
 
 export async function POST(req: Request): Promise<Response> {
   const body = (await req.json()) as VercelChatBody;
-  const proofToken = req.headers.get('x-awaf-consent-proof');
-  const expectedAudience = req.headers.get('x-awaf-audience') ?? 'awaf:demo';
+  const proofToken = req.headers.get('x-alphabet-consent-proof');
+  const expectedAudience = req.headers.get('x-alphabet-audience') ?? 'alphabet:demo';
 
-  const generationRequest: AwafGenerationRequest = {
+  const generationRequest: AlphabetGenerationRequest = {
     model: 'gpt-4o-mini', // overridden per-provider by the chain
     messages: body.messages.map((m) => ({ role: m.role, content: m.content })),
     context: {
@@ -109,7 +109,7 @@ export async function POST(req: Request): Promise<Response> {
     },
   };
 
-  const callOptions: Parameters<AwafAiClient['stream']>[1] = {};
+  const callOptions: Parameters<AlphabetAiClient['stream']>[1] = {};
   const publicKey = await loadConsentPublicKey();
   if (proofToken !== null && publicKey !== undefined) {
     callOptions.consentProof = {
@@ -149,6 +149,6 @@ export async function POST(req: Request): Promise<Response> {
   });
 }
 
-function serializeChunk(chunk: AwafStreamChunk): string {
+function serializeChunk(chunk: AlphabetStreamChunk): string {
   return JSON.stringify(chunk);
 }

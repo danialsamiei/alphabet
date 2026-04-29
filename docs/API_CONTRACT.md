@@ -1,41 +1,41 @@
 # API contract
 
-This document describes the **stable shapes** that AWAF guarantees
+This document describes the **stable shapes** that Alphabet guarantees
 across versions and the **route table** that the HTTP surface exposes.
 The full OpenAPI 3.1 description lives at
-[`openapi/awaf.v1.yaml`](../openapi/awaf.v1.yaml); this file is the
+[`openapi/alphabet.v1.yaml`](../openapi/alphabet.v1.yaml); this file is the
 narrative companion.
 
 ---
 
 ## Versioning
 
-- **Canonical version prefix:** `/api/awaf/v1`. Single source of truth
-  is `packages/core/src/contracts/routes.ts` (the `AWAF_ROUTES`
-  constant), re-exported from `@awaf/api` for clients.
-- **Legacy `/api` mount** is still accepted by `@awaf/api` clients via
+- **Canonical version prefix:** `/api/alphabet/v1`. Single source of truth
+  is `packages/core/src/contracts/routes.ts` (the `ALPHABET_ROUTES`
+  constant), re-exported from `@alphabet/api` for clients.
+- **Legacy `/api` mount** is still accepted by `@alphabet/api` clients via
   `normalizeApiBaseUrl()`, but is deprecated.
-- **`Result<T, E>` and `AWAFRequest` / `AWAFResponse` envelopes** are
+- **`Result<T, E>` and `AlphabetRequest` / `AlphabetResponse` envelopes** are
   v0/v1-frozen. Breaking changes will require a major version bump.
 
 ```ts
-type Result<T, E = AWAFError> =
+type Result<T, E = AlphabetError> =
   | { ok: true; value: T }
   | { ok: false; error: E };
 
-interface AWAFRequest<T> {
+interface AlphabetRequest<T> {
   meta: RequestMeta;     // requestId, locale, traceId, …
   data: T;
 }
 
-interface AWAFResponse<T> {
+interface AlphabetResponse<T> {
   meta: ResponseMeta;    // requestId, latencyMs, deprecation hints, …
   data: T;
 }
 ```
 
-Every method on `AwafClient` returns `Promise<Result<T, AWAFError>>`.
-This is the AWAF answer to "where is the try/catch?": exceptions are
+Every method on `AlphabetClient` returns `Promise<Result<T, AlphabetError>>`.
+This is the Alphabet answer to "where is the try/catch?": exceptions are
 reserved for genuinely unrecoverable conditions (corrupted state,
 infrastructure failure); business errors are values.
 
@@ -45,25 +45,25 @@ infrastructure failure); business errors are values.
 
 | # | Group | Endpoint | Method | Path |
 |---|-------|----------|:------:|------|
-| 1 | Context Handshake | Handshake     | `POST`   | `/api/awaf/v1/context/handshake`            |
-| 2 | Context Handshake | Consent       | `POST`   | `/api/awaf/v1/context/consent`              |
-| 3 | Context Handshake | Preference    | `POST`   | `/api/awaf/v1/context/preference`           |
-| 4 | Visitor Interaction | Interact    | `POST`   | `/api/awaf/v1/interact`                     |
-| 5 | Visitor Interaction | Voice       | `POST`   | `/api/awaf/v1/voice/transcribe`             |
-| 6 | Visitor Interaction | Suggestions | `GET`    | `/api/awaf/v1/suggestions`                  |
-| 7 | AWAF Pulse | Pulse list             | `GET`    | `/api/awaf/v1/technology-pulse`             |
-| 8 | AWAF Pulse | Pulse brief            | `POST`   | `/api/awaf/v1/technology-pulse/brief`       |
-| 9 | Consent-Aware Memory | Store        | `POST`   | `/api/awaf/v1/visitor/memory`               |
-| 10 | Consent-Aware Memory | Retrieve    | `GET`    | `/api/awaf/v1/visitor/memory`               |
-| 11 | Consent-Aware Memory | Erase       | `DELETE` | `/api/awaf/v1/visitor/memory`               |
-| 12 | OpenClaw Mesh | Query              | `POST`   | `/api/awaf/v1/claw/query`                   |
-| 13 | OpenClaw Mesh | Ingest             | `POST`   | `/api/awaf/v1/claw/ingest`                  |
-| 14 | OpenClaw Mesh | Admin audit        | `POST`   | `/api/awaf/v1/claw/admin/audit`             |
-| 15 | Admin | Visitor insights           | `GET`    | `/api/awaf/v1/admin/visitor-insights`       |
-| 16 | Admin | Pulse sources              | `GET`    | `/api/awaf/v1/admin/technology-pulse/sources` |
+| 1 | Context Handshake | Handshake     | `POST`   | `/api/alphabet/v1/context/handshake`            |
+| 2 | Context Handshake | Consent       | `POST`   | `/api/alphabet/v1/context/consent`              |
+| 3 | Context Handshake | Preference    | `POST`   | `/api/alphabet/v1/context/preference`           |
+| 4 | Visitor Interaction | Interact    | `POST`   | `/api/alphabet/v1/interact`                     |
+| 5 | Visitor Interaction | Voice       | `POST`   | `/api/alphabet/v1/voice/transcribe`             |
+| 6 | Visitor Interaction | Suggestions | `GET`    | `/api/alphabet/v1/suggestions`                  |
+| 7 | Alphabet Pulse | Pulse list             | `GET`    | `/api/alphabet/v1/technology-pulse`             |
+| 8 | Alphabet Pulse | Pulse brief            | `POST`   | `/api/alphabet/v1/technology-pulse/brief`       |
+| 9 | Consent-Aware Memory | Store        | `POST`   | `/api/alphabet/v1/visitor/memory`               |
+| 10 | Consent-Aware Memory | Retrieve    | `GET`    | `/api/alphabet/v1/visitor/memory`               |
+| 11 | Consent-Aware Memory | Erase       | `DELETE` | `/api/alphabet/v1/visitor/memory`               |
+| 12 | OpenClaw Mesh | Query              | `POST`   | `/api/alphabet/v1/claw/query`                   |
+| 13 | OpenClaw Mesh | Ingest             | `POST`   | `/api/alphabet/v1/claw/ingest`                  |
+| 14 | OpenClaw Mesh | Admin audit        | `POST`   | `/api/alphabet/v1/claw/admin/audit`             |
+| 15 | Admin | Visitor insights           | `GET`    | `/api/alphabet/v1/admin/visitor-insights`       |
+| 16 | Admin | Pulse sources              | `GET`    | `/api/alphabet/v1/admin/technology-pulse/sources` |
 
-> Endpoints not yet wired end-to-end are tagged `x-awaf-status: planned`
-> in the OpenAPI document. The HTTP wrappers exist on `AwafClient`, but
+> Endpoints not yet wired end-to-end are tagged `x-alphabet-status: planned`
+> in the OpenAPI document. The HTTP wrappers exist on `AlphabetClient`, but
 > there is no in-repo mock server yet — see
 > [`docs/IMPLEMENTATION_STATUS.md`](./IMPLEMENTATION_STATUS.md).
 
@@ -71,7 +71,7 @@ infrastructure failure); business errors are values.
 
 ## Common envelope
 
-Every documented endpoint accepts and returns JSON with the AWAF
+Every documented endpoint accepts and returns JSON with the Alphabet
 envelope:
 
 ```jsonc
@@ -129,10 +129,10 @@ envelope:
 ## Client usage
 
 ```ts
-import { AwafClient } from '@awaf/api';
+import { AlphabetClient } from '@alphabet/api';
 
-const client = new AwafClient({
-  apiBaseUrl: 'https://example.com', // or 'https://example.com/api/awaf/v1'
+const client = new AlphabetClient({
+  apiBaseUrl: 'https://example.com', // or 'https://example.com/api/alphabet/v1'
   timeoutMs: 5_000,
 });
 
@@ -147,7 +147,7 @@ if (!result.ok) {
 `apiBaseUrl` accepts:
 
 - a bare origin: `https://example.com`
-- the canonical prefix: `https://example.com/api/awaf/v1`
+- the canonical prefix: `https://example.com/api/alphabet/v1`
 - the legacy mount: `https://example.com/api`
 
 `normalizeApiBaseUrl()` ensures every method appends the right path.
@@ -156,7 +156,7 @@ if (!result.ok) {
 
 ## Cross-references
 
-- OpenAPI: [`openapi/awaf.v1.yaml`](../openapi/awaf.v1.yaml).
+- OpenAPI: [`openapi/alphabet.v1.yaml`](../openapi/alphabet.v1.yaml).
 - Routes: `packages/core/src/contracts/routes.ts` and
   `packages/api/src/index.ts` (re-export).
 - Detailed endpoint reference (Persian + English):

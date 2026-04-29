@@ -1,18 +1,18 @@
 /**
- * @module @awaf/protocols/v2/providers/anthropic
+ * @module @alphabet/protocols/v2/providers/anthropic
  * @description
  * Anthropic provider adapter — uses the Messages API on
  * https://api.anthropic.com/v1/messages with `anthropic-version` set
- * to `2023-06-01`. Streaming events are normalized into `AwafStreamChunk`.
+ * to `2023-06-01`. Streaming events are normalized into `AlphabetStreamChunk`.
  */
 
 import type {
-  AwafChatMessage,
-  AwafGenerationRequest,
-  AwafProviderAdapter,
-  AwafStreamChunk,
-  AwafToolDefinition,
-  AwafFinishReason,
+  AlphabetChatMessage,
+  AlphabetGenerationRequest,
+  AlphabetProviderAdapter,
+  AlphabetStreamChunk,
+  AlphabetToolDefinition,
+  AlphabetFinishReason,
 } from '../types.js';
 import {
   collapseStream,
@@ -66,7 +66,7 @@ interface AnthropicBody {
 }
 
 function toAnthropicMessages(
-  messages: readonly AwafChatMessage[],
+  messages: readonly AlphabetChatMessage[],
 ): { system: string | undefined; messages: AnthropicMessage[] } {
   const systemParts: string[] = [];
   const out: AnthropicMessage[] = [];
@@ -114,11 +114,11 @@ function toAnthropicMessages(
   return { system: systemParts.length === 0 ? undefined : systemParts.join('\n'), messages: out };
 }
 
-function buildBody(req: AwafGenerationRequest, stream: boolean): AnthropicBody {
+function buildBody(req: AlphabetGenerationRequest, stream: boolean): AnthropicBody {
   const { system, messages } = toAnthropicMessages(req.messages);
   const tools: AnthropicBody['tools'] | undefined =
     req.tools !== undefined && req.tools.length > 0
-      ? req.tools.map((t: AwafToolDefinition) => ({
+      ? req.tools.map((t: AlphabetToolDefinition) => ({
           name: t.name,
           description: t.description,
           input_schema: t.parameters,
@@ -158,7 +158,7 @@ interface AnthropicEvent {
   readonly message?: { readonly stop_reason?: string };
 }
 
-function mapStop(reason: string | undefined): AwafFinishReason {
+function mapStop(reason: string | undefined): AlphabetFinishReason {
   switch (reason) {
     case 'end_turn':
       return 'stop';
@@ -176,7 +176,7 @@ function mapStop(reason: string | undefined): AwafFinishReason {
 async function* decode(
   res: Response,
   structured: boolean,
-): AsyncIterable<AwafStreamChunk> {
+): AsyncIterable<AlphabetStreamChunk> {
   if (res.body === null) {
     yield { type: 'error', error: protocolError('ADAPTER_NOT_CONFIGURED', 'Response body is null') };
     return;
@@ -232,14 +232,14 @@ async function* decode(
 /** Create an Anthropic provider adapter. */
 export function createAnthropicProvider(
   options: AnthropicProviderOptions,
-): AwafProviderAdapter {
+): AlphabetProviderAdapter {
   const fetchImpl = getFetch(options);
   const baseUrl = options.baseUrl ?? ANTHROPIC_BASE_URL;
   const timeout = options.timeoutMs ?? DEFAULT_PROVIDER_TIMEOUT_MS;
   const version = options.anthropicVersion ?? '2023-06-01';
   const id = 'anthropic';
 
-  async function* stream(req: AwafGenerationRequest): AsyncIterable<AwafStreamChunk> {
+  async function* stream(req: AlphabetGenerationRequest): AsyncIterable<AlphabetStreamChunk> {
     const { signal, cancel } = withTimeoutSignal(req.signal, timeout);
     let res: Response;
     try {

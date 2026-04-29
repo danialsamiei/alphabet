@@ -5,8 +5,8 @@
  * Barrel export for the adaptive render layers.
  *
  * Note: `R3FImmersiveLayer` is **not** re-exported here on purpose so
- * that importing `@awaf/ui/layers` does not pull R3F into the bundle.
- * Use `@awaf/ui/layers/r3f` (or `React.lazy`) when needed.
+ * that importing `@alphabet/ui/layers` does not pull R3F into the bundle.
+ * Use `@alphabet/ui/layers/r3f` (or `React.lazy`) when needed.
  */
 
 export * from './TextOnlyLayer.js';

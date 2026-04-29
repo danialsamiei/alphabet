@@ -26,7 +26,7 @@ export default defineConfig({
         `${entryName}.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
-      external: ['@awaf/core', '@awaf/api'],
+      external: ['@alphabet/core', '@alphabet/api'],
       output: {
         preserveModules: false,
       },

@@ -2,19 +2,19 @@
  * @file experiences/ProtocolPlaygroundExperience.tsx
  * @description
  * AI Protocol Playground — a small form that issues requests against
- * the in-process `@awaf/api` mock server (which fulfils the canonical
- * 16 AWAF endpoints with deterministic, seeded responses). All work is
+ * the in-process `@alphabet/api` mock server (which fulfils the canonical
+ * 16 Alphabet endpoints with deterministic, seeded responses). All work is
  * 100 % offline — no network round-trips, no external dependencies.
  *
  * The playground is intentionally schema-agnostic: it emits the typed
- * route paths from `AWAF_ROUTES` and a JSON body chosen by the user.
+ * route paths from `ALPHABET_ROUTES` and a JSON body chosen by the user.
  * Mock responses are pretty-printed alongside metadata so visitors can
  * see request/response correlation in real time.
  */
 
 import { useMemo, useState } from 'react';
-import { createMockServer, type MockServerHandle } from '@awaf/api/mock';
-import { AWAF_ROUTES, API_VERSION_PREFIX } from '@awaf/core';
+import { createMockServer, type MockServerHandle } from '@alphabet/api/mock';
+import { ALPHABET_ROUTES, API_VERSION_PREFIX } from '@alphabet/core';
 
 interface PresetOperation {
   readonly id: string;
@@ -29,7 +29,7 @@ const PRESETS: ReadonlyArray<PresetOperation> = [
     id: 'handshake',
     label: 'Context handshake',
     method: 'POST',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.contextHandshake}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.contextHandshake}`,
     bodyTemplate: JSON.stringify(
       { language: 'en-US', timezone: 'Europe/London' },
       null,
@@ -40,7 +40,7 @@ const PRESETS: ReadonlyArray<PresetOperation> = [
     id: 'consent',
     label: 'Update consent',
     method: 'POST',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.contextConsent}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.contextConsent}`,
     bodyTemplate: JSON.stringify(
       { tier: 'CONSENTED', purposes: ['personalization'] },
       null,
@@ -51,21 +51,21 @@ const PRESETS: ReadonlyArray<PresetOperation> = [
     id: 'suggestions',
     label: 'Ranked suggestions',
     method: 'GET',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.suggestions}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.suggestions}`,
     bodyTemplate: '',
   },
   {
     id: 'pulse',
-    label: 'AWAF Pulse list',
+    label: 'Alphabet Pulse list',
     method: 'GET',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.technologyPulse}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.technologyPulse}`,
     bodyTemplate: '',
   },
   {
     id: 'pulse-brief',
-    label: 'AWAF Pulse brief',
+    label: 'Alphabet Pulse brief',
     method: 'POST',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.technologyPulseBrief}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.technologyPulseBrief}`,
     bodyTemplate: JSON.stringify(
       { topic: 'small language models', length: 'short' },
       null,
@@ -76,7 +76,7 @@ const PRESETS: ReadonlyArray<PresetOperation> = [
     id: 'memory-store',
     label: 'Store memory',
     method: 'POST',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.visitorMemoryStore}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.visitorMemoryStore}`,
     bodyTemplate: JSON.stringify(
       { domain: 'preferences', key: 'theme', value: 'dark' },
       null,
@@ -87,14 +87,14 @@ const PRESETS: ReadonlyArray<PresetOperation> = [
     id: 'memory-erase',
     label: 'Erase memory (GDPR)',
     method: 'DELETE',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.visitorMemoryDelete}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.visitorMemoryDelete}`,
     bodyTemplate: '',
   },
   {
     id: 'claw-query',
     label: 'OpenClaw query',
     method: 'POST',
-    path: `${API_VERSION_PREFIX}${AWAF_ROUTES.clawQuery}`,
+    path: `${API_VERSION_PREFIX}${ALPHABET_ROUTES.clawQuery}`,
     bodyTemplate: JSON.stringify(
       { query: 'how should I configure consent?', topK: 3 },
       null,
@@ -198,15 +198,15 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
   };
 
   return (
-    <div className="awaf-experience awaf-grid-2">
-      <div className="awaf-card">
-        <h3 className="awaf-card-heading">Compose request</h3>
-        <p className="awaf-muted-text">
+    <div className="alphabet-experience alphabet-grid-2">
+      <div className="alphabet-card">
+        <h3 className="alphabet-card-heading">Compose request</h3>
+        <p className="alphabet-muted-text">
           Issued against an in-process <code>createMockServer</code>{' '}
           (deterministic, seeded). No network calls are made.
         </p>
 
-        <label className="awaf-field">
+        <label className="alphabet-field">
           <span>Preset</span>
           <select
             value={presetId}
@@ -220,7 +220,7 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
           </select>
         </label>
 
-        <label className="awaf-field">
+        <label className="alphabet-field">
           <span>Body (JSON)</span>
           <textarea
             value={body}
@@ -236,10 +236,10 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
           />
         </label>
 
-        <div className="awaf-button-row">
+        <div className="alphabet-button-row">
           <button
             type="button"
-            className="awaf-primary-btn"
+            className="alphabet-primary-btn"
             disabled={pending}
             onClick={() => {
               void handleSend();
@@ -249,7 +249,7 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
           </button>
           <button
             type="button"
-            className="awaf-pill-btn"
+            className="alphabet-pill-btn"
             onClick={() => setLog([])}
           >
             Clear log
@@ -257,37 +257,37 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
         </div>
 
         {error !== null ? (
-          <p className="awaf-error" role="alert">
+          <p className="alphabet-error" role="alert">
             {error}
           </p>
         ) : null}
       </div>
 
-      <aside className="awaf-card" aria-label="Response log">
-        <h3 className="awaf-card-heading">Response log</h3>
+      <aside className="alphabet-card" aria-label="Response log">
+        <h3 className="alphabet-card-heading">Response log</h3>
         {log.length === 0 ? (
-          <p className="awaf-muted-text awaf-empty">
+          <p className="alphabet-muted-text alphabet-empty">
             No requests yet — pick a preset and send.
           </p>
         ) : (
-          <ol className="awaf-log awaf-log-stacked">
+          <ol className="alphabet-log alphabet-log-stacked">
             {log.map((entry) => (
               <li key={entry.id}>
                 <header>
-                  <span className="awaf-pill" data-status="ready">
+                  <span className="alphabet-pill" data-status="ready">
                     {entry.method} · {entry.status}
                   </span>
-                  <span className="awaf-muted-text">
+                  <span className="alphabet-muted-text">
                     {entry.durationMs.toFixed(1)} ms
                   </span>
                   {entry.correlationId !== undefined ? (
-                    <code className="awaf-correlation">
+                    <code className="alphabet-correlation">
                       {entry.correlationId}
                     </code>
                   ) : null}
                 </header>
-                <code className="awaf-muted-text">{entry.path}</code>
-                <pre className="awaf-pre">{entry.body}</pre>
+                <code className="alphabet-muted-text">{entry.path}</code>
+                <pre className="alphabet-pre">{entry.body}</pre>
               </li>
             ))}
           </ol>

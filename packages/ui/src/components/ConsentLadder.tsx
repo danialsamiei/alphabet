@@ -7,9 +7,9 @@
  * down, revoke, or reset. Each rung carries a transparent description
  * of what data is processed at that tier.
  *
- * Wires into the existing `useAwafConsent` hook by default but accepts
+ * Wires into the existing `useAlphabetConsent` hook by default but accepts
  * an override so the demo can drive a `ConsentTierManager` from
- * `@awaf/security` instead.
+ * `@alphabet/security` instead.
  *
  * Accessibility:
  *  - Rendered as a `<ol>` with `aria-label` describing the ladder.
@@ -19,12 +19,12 @@
  */
 
 import { useId, useMemo, type CSSProperties, type ReactNode } from 'react';
-import type { ConsentTier, ConsentPurpose } from '@awaf/core';
-import { useAwafContext } from './AwafProvider.js';
+import type { ConsentTier, ConsentPurpose } from '@alphabet/core';
+import { useAlphabetContext } from './AlphabetProvider.js';
 import {
-  useAwafConsent,
-  type UseAwafConsentReturn,
-} from '../hooks/useAwafConsent.js';
+  useAlphabetConsent,
+  type UseAlphabetConsentReturn,
+} from '../hooks/useAlphabetConsent.js';
 
 /** Static metadata for each tier — locale-overridable via `tierLabels`. */
 export interface TierMetadata {
@@ -94,8 +94,8 @@ const PURPOSES_BY_TIER: Readonly<
 };
 
 export interface ConsentLadderProps {
-  /** Override consent state (otherwise uses AwafContext or standalone hook). */
-  readonly consent?: UseAwafConsentReturn;
+  /** Override consent state (otherwise uses AlphabetContext or standalone hook). */
+  readonly consent?: UseAlphabetConsentReturn;
   /** Override default per-tier labels (e.g. for localisation). */
   readonly tiers?: ReadonlyArray<TierMetadata>;
   /** Heading rendered above the ladder. */
@@ -139,16 +139,16 @@ const rungBaseStyle: CSSProperties = {
   borderRadius: '0.6rem',
   borderWidth: '1px',
   borderStyle: 'solid',
-  borderColor: 'var(--awaf-border, rgba(15,23,42,0.12))',
-  background: 'var(--awaf-surface, rgba(255,255,255,0.04))',
+  borderColor: 'var(--alphabet-border, rgba(15,23,42,0.12))',
+  background: 'var(--alphabet-surface, rgba(255,255,255,0.04))',
   color: 'inherit',
   cursor: 'pointer',
   font: 'inherit',
 };
 
 const rungActiveStyle: CSSProperties = {
-  borderColor: 'var(--awaf-accent, #4f46e5)',
-  boxShadow: '0 0 0 2px var(--awaf-accent, #4f46e5)',
+  borderColor: 'var(--alphabet-accent, #4f46e5)',
+  boxShadow: '0 0 0 2px var(--alphabet-accent, #4f46e5)',
 };
 
 const rungLockedStyle: CSSProperties = {
@@ -160,7 +160,7 @@ const stepDotStyle: CSSProperties = {
   width: '1.6rem',
   height: '1.6rem',
   borderRadius: '999px',
-  background: 'var(--awaf-accent, #4f46e5)',
+  background: 'var(--alphabet-accent, #4f46e5)',
   color: 'white',
   display: 'inline-flex',
   alignItems: 'center',
@@ -179,7 +179,7 @@ const buttonRowStyle: CSSProperties = {
 const ghostBtn: CSSProperties = {
   padding: '0.45rem 0.9rem',
   borderRadius: '0.5rem',
-  border: '1px solid var(--awaf-border, rgba(15,23,42,0.16))',
+  border: '1px solid var(--alphabet-border, rgba(15,23,42,0.16))',
   background: 'transparent',
   color: 'inherit',
   cursor: 'pointer',
@@ -190,7 +190,7 @@ const ghostBtn: CSSProperties = {
  * Render the consent ladder with all four tiers. Movement honours the
  * monotonic upgrade rule baked into `ConsentTierManager` for reads
  * (downgrades are surfaced as `revoke()` calls), but the local
- * `useAwafConsent` hook accepts arbitrary tier transitions because it is
+ * `useAlphabetConsent` hook accepts arbitrary tier transitions because it is
  * a UI-state mirror, not the security state machine.
  */
 export function ConsentLadder(props: ConsentLadderProps): JSX.Element {
@@ -206,9 +206,9 @@ export function ConsentLadder(props: ConsentLadderProps): JSX.Element {
     onChange,
   } = props;
 
-  const ctx = useAwafContext();
-  const standalone = useAwafConsent({});
-  const consent: UseAwafConsentReturn =
+  const ctx = useAlphabetContext();
+  const standalone = useAlphabetConsent({});
+  const consent: UseAlphabetConsentReturn =
     consentOverride ?? ctx?.consent ?? standalone;
 
   const headingId = useId();
@@ -236,7 +236,7 @@ export function ConsentLadder(props: ConsentLadderProps): JSX.Element {
       aria-labelledby={headingId}
       aria-describedby={descId}
       className={className}
-      data-awaf-consent-ladder
+      data-alphabet-consent-ladder
       style={{ ...wrapperStyle, ...style }}
     >
       <header style={{ display: 'grid', gap: '0.25rem' }}>
@@ -251,7 +251,7 @@ export function ConsentLadder(props: ConsentLadderProps): JSX.Element {
       <ol
         aria-label="Consent ladder"
         style={listStyle}
-        data-awaf-consent-ladder-list
+        data-alphabet-consent-ladder-list
       >
         {ordered.map((meta, index) => {
           if (meta === null) return null;
@@ -267,7 +267,7 @@ export function ConsentLadder(props: ConsentLadderProps): JSX.Element {
                 aria-current={isActive ? 'step' : undefined}
                 aria-disabled={isLocked || undefined}
                 disabled={isLocked}
-                data-awaf-tier={meta.tier}
+                data-alphabet-tier={meta.tier}
                 onClick={() => setTier(meta.tier)}
                 style={{
                   ...rungBaseStyle,
@@ -306,7 +306,7 @@ export function ConsentLadder(props: ConsentLadderProps): JSX.Element {
         {showRevoke ? (
           <button
             type="button"
-            data-awaf-action="revoke"
+            data-alphabet-action="revoke"
             onClick={() => {
               consent.revoke();
               onChange?.('NO_MEMORY');
@@ -319,7 +319,7 @@ export function ConsentLadder(props: ConsentLadderProps): JSX.Element {
         {showReset ? (
           <button
             type="button"
-            data-awaf-action="reset"
+            data-alphabet-action="reset"
             onClick={() => {
               consent.reset();
             }}

@@ -6,23 +6,23 @@
  */
 
 import type {
-  AWAFRequest,
-  AWAFResponse,
+  AlphabetRequest,
+  AlphabetResponse,
   HandshakeRequestPayload,
   HandshakeResult,
-} from '@awaf/core';
+} from '@alphabet/core';
 import {
-  type AWAFError,
+  type AlphabetError,
   type Result,
   ok,
   err,
   createRequestId,
   createSessionId,
-  AWAF_ROUTES,
+  ALPHABET_ROUTES,
   fullRoute,
   normalizeApiBaseUrl,
-} from '@awaf/core';
-import type { VisitorId } from '@awaf/core';
+} from '@alphabet/core';
+import type { VisitorId } from '@alphabet/core';
 
 // ─── HandshakeClient Options ──────────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ export class HandshakeClient {
    * Executes the Context Handshake — sends signals to the server.
    *
    * @param payload - سیگنال‌های passive برای ارسال
-   * @returns Promise<Result<HandshakeResult, AWAFError>>
+   * @returns Promise<Result<HandshakeResult, AlphabetError>>
    *
    * @example
    * const result = await client.execute(payload);
@@ -88,10 +88,10 @@ export class HandshakeClient {
    */
   async execute(
     payload: HandshakeRequestPayload
-  ): Promise<Result<HandshakeResult, AWAFError>> {
+  ): Promise<Result<HandshakeResult, AlphabetError>> {
     const sessionId = createSessionId();
     const request = this.buildRequest(payload, sessionId);
-    const url = `${this.apiBaseUrl}${AWAF_ROUTES.contextHandshake}`;
+    const url = `${this.apiBaseUrl}${ALPHABET_ROUTES.contextHandshake}`;
 
     return this.sendWithRetry(url, JSON.stringify(request), 0);
   }
@@ -101,7 +101,7 @@ export class HandshakeClient {
   private buildRequest(
     payload: HandshakeRequestPayload,
     sessionId: ReturnType<typeof createSessionId>
-  ): AWAFRequest<HandshakeRequestPayload> {
+  ): AlphabetRequest<HandshakeRequestPayload> {
     return {
       protocol: 'API',
       endpoint: fullRoute('contextHandshake'),
@@ -118,7 +118,7 @@ export class HandshakeClient {
     url: string,
     body: string,
     attempt: number
-  ): Promise<Result<HandshakeResult, AWAFError>> {
+  ): Promise<Result<HandshakeResult, AlphabetError>> {
     try {
       const response = await this.fetchWithTimeout(url, body);
 
@@ -134,7 +134,7 @@ export class HandshakeClient {
         });
       }
 
-      const json = await response.json() as AWAFResponse<HandshakeResult>;
+      const json = await response.json() as AlphabetResponse<HandshakeResult>;
 
       // بررسی شکل پاسخ — محافظت در برابر malformed responses
       if (typeof json !== 'object' || json === null || !('success' in json)) {

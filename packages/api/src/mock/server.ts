@@ -1,27 +1,27 @@
 /**
  * @module mock/server
  * @description
- * In-process AWAF mock server.
+ * In-process Alphabet mock server.
  *
- * Implements all 16 AWAF endpoints with **deterministic** responses
+ * Implements all 16 Alphabet endpoints with **deterministic** responses
  * (seeded RNG) and a Fetcher-compatible `dispatch(input, init)` method.
  * No external dependencies. No `globalThis` patching by default — opt
  * into that via {@link installFetchShim} for end-to-end demos.
  *
  * @example
- * import { createMockServer } from '@awaf/api/mock';
- * import { withRetry } from '@awaf/api/transport';
+ * import { createMockServer } from '@alphabet/api/mock';
+ * import { withRetry } from '@alphabet/api/transport';
  *
  * const mock = createMockServer({ seed: 42 });
  * const fetcher = withRetry(mock); // mock implements Fetcher
- * const res = await fetcher.request('/api/awaf/v1/context/handshake', {
+ * const res = await fetcher.request('/api/alphabet/v1/context/handshake', {
  *   method: 'POST',
  *   body: JSON.stringify({ language: 'en' }),
  * });
- * // res.json() returns a deterministic AWAFResponse envelope
+ * // res.json() returns a deterministic AlphabetResponse envelope
  */
 
-import { AWAF_ROUTES, API_VERSION_PREFIX, LEGACY_API_PREFIX } from '@awaf/core';
+import { ALPHABET_ROUTES, API_VERSION_PREFIX, LEGACY_API_PREFIX } from '@alphabet/core';
 import type { Fetcher } from '../transport/fetcher.js';
 import { type SeededRng, createSeededRng } from './seeded-rng.js';
 import {
@@ -79,29 +79,29 @@ function jsonResponse(body: unknown, status = 200, headers: Record<string, strin
 }
 
 /**
- * Resolve the AWAF route key for a given URL path. Tolerates both the
- * canonical `/api/awaf/v1` prefix and the legacy `/api` prefix so the
+ * Resolve the Alphabet route key for a given URL path. Tolerates both the
+ * canonical `/api/alphabet/v1` prefix and the legacy `/api` prefix so the
  * mock matches the same set of paths as `normalizeApiBaseUrl`.
  */
 function resolveRoute(pathname: string): {
-  key: keyof typeof AWAF_ROUTES;
+  key: keyof typeof ALPHABET_ROUTES;
   relative: string;
 } | undefined {
   let relative = pathname;
   if (relative.startsWith(API_VERSION_PREFIX)) {
     relative = relative.slice(API_VERSION_PREFIX.length);
-  } else if (relative.startsWith(`${LEGACY_API_PREFIX}/awaf/v1`)) {
+  } else if (relative.startsWith(`${LEGACY_API_PREFIX}/alphabet/v1`)) {
     // Defensive: nothing should generate this, but accept it.
-    relative = relative.slice(`${LEGACY_API_PREFIX}/awaf/v1`.length);
+    relative = relative.slice(`${LEGACY_API_PREFIX}/alphabet/v1`.length);
   } else if (relative.startsWith(LEGACY_API_PREFIX)) {
     relative = relative.slice(LEGACY_API_PREFIX.length);
   }
   if (relative === '' || !relative.startsWith('/')) {
     relative = `/${relative}`;
   }
-  for (const [key, value] of Object.entries(AWAF_ROUTES)) {
+  for (const [key, value] of Object.entries(ALPHABET_ROUTES)) {
     if (relative === value) {
-      return { key: key as keyof typeof AWAF_ROUTES, relative: value };
+      return { key: key as keyof typeof ALPHABET_ROUTES, relative: value };
     }
   }
   return undefined;
@@ -127,7 +127,7 @@ const sleep = (ms: number): Promise<void> =>
   ms <= 0 ? Promise.resolve() : new Promise<void>((r) => setTimeout(r, ms));
 
 /**
- * Create an in-process AWAF mock server.
+ * Create an in-process Alphabet mock server.
  *
  * The returned handle is a {@link Fetcher} (so it composes with `withRetry`
  * and friends) and also exposes lower-level `dispatch`, `reset`, `callCount`

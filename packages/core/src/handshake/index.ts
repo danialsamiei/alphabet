@@ -23,7 +23,7 @@ export type {
 // ─── Additive subpaths (W2 depth pass) ───────────────────────────────────────
 // Pipeline primitives, context streaming, capability prediction, and the
 // typed layer-selection state machine are also re-exported as nested
-// subpaths from `@awaf/core`. They wrap, never replace, the core handshake
+// subpaths from `@alphabet/core`. They wrap, never replace, the core handshake
 // types above.
 export * as pipeline from './pipeline/index.js';
 export * as stream from './stream/index.js';

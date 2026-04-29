@@ -8,7 +8,7 @@
 
 import type { DeviceClass, CapabilityLayer } from '../types/base.js';
 import type { DetectedSignals } from '../types/visitor.js';
-import { type AWAFError, type Result, ok, err } from '../types/result.js';
+import { type AlphabetError, type Result, ok, err } from '../types/result.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,7 +56,7 @@ export class SignalCollector {
    * جمع‌آوری تمام سیگنال‌های passive مرورگر.
    * Collects all passive browser signals.
    *
-   * @returns Result<DetectedSignals, AWAFError>
+   * @returns Result<DetectedSignals, AlphabetError>
    *
    * @example
    * const result = new SignalCollector().collect();
@@ -64,7 +64,7 @@ export class SignalCollector {
    *   const { language, timezone, deviceClass } = result.data;
    * }
    */
-  collect(): Result<DetectedSignals, AWAFError> {
+  collect(): Result<DetectedSignals, AlphabetError> {
     try {
       const screenWidth = this.readScreenWidth();
       const screenHeight = this.readScreenHeight();

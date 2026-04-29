@@ -1,20 +1,20 @@
 /**
- * @module hooks/useAwafConsent
+ * @module hooks/useAlphabetConsent
  * @description
  * Hook برای مدیریت consent بازدیدکننده — ماشین حالت سه‌حالته
  * (pending → granted → revoked) با ذخیره‌سازی SSR-safe در localStorage.
  *
  * Implements the full consent ladder (`NO_MEMORY` → `ANONYMOUS` →
- * `CONSENTED` → `ENRICHED`) defined in `@awaf/core`. Persistence is
+ * `CONSENTED` → `ENRICHED`) defined in `@alphabet/core`. Persistence is
  * done lazily on the client only; SSR returns a stable initial state.
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import type { ConsentTier, ConsentPurpose } from '@awaf/core';
+import type { ConsentTier, ConsentPurpose } from '@alphabet/core';
 import { isBrowser } from '../runtime/hydration-safe.js';
 
 /** کلید پیش‌فرض ذخیره‌سازی consent در localStorage. */
-export const DEFAULT_CONSENT_STORAGE_KEY = 'awaf:consent:v1';
+export const DEFAULT_CONSENT_STORAGE_KEY = 'alphabet:consent:v1';
 
 /** وضعیت ماشین حالت consent. */
 export type ConsentState = 'pending' | 'granted' | 'revoked';
@@ -31,14 +31,14 @@ export interface ConsentSnapshot {
 }
 
 /** پارامترهای hook. */
-export interface UseAwafConsentOptions {
+export interface UseAlphabetConsentOptions {
   /** کلید localStorage — برای ایزوله کردن چند instance روی یک domain. */
   readonly storageKey?: string;
   /** snapshot اولیه — برای SSR یا hydrate از سرور. */
   readonly initial?: ConsentSnapshot;
   /**
    * اگر `true`، DNT/GPC تشخیص داده‌شده consent را به `NO_MEMORY` قفل می‌کند.
-   * Default `true` per AWAF privacy contract.
+   * Default `true` per Alphabet privacy contract.
    */
   readonly respectPrivacySignals?: boolean;
   /** سیگنال‌های privacy (اگر `respectPrivacySignals=true`). */
@@ -46,7 +46,7 @@ export interface UseAwafConsentOptions {
 }
 
 /** خروجی hook — snapshot + actions. */
-export interface UseAwafConsentReturn extends ConsentSnapshot {
+export interface UseAlphabetConsentReturn extends ConsentSnapshot {
   /** اعطای رضایت با tier جدید. */
   readonly grant: (tier: ConsentTier, purposes?: readonly ConsentPurpose[]) => void;
   /** revoke کامل رضایت (به NO_MEMORY/revoked برمی‌گرداند). */
@@ -109,10 +109,10 @@ function writeStorage(key: string, snapshot: ConsentSnapshot): void {
  * Hook اصلی consent — SSR-safe.
  *
  * @example
- * const { tier, state, grant, revoke } = useAwafConsent();
+ * const { tier, state, grant, revoke } = useAlphabetConsent();
  * if (state === 'pending') return <ConsentBanner onAccept={() => grant('CONSENTED')} />;
  */
-export function useAwafConsent(options: UseAwafConsentOptions = {}): UseAwafConsentReturn {
+export function useAlphabetConsent(options: UseAlphabetConsentOptions = {}): UseAlphabetConsentReturn {
   const {
     storageKey = DEFAULT_CONSENT_STORAGE_KEY,
     initial = PENDING_SNAPSHOT,

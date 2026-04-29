@@ -1,11 +1,11 @@
 /**
- * @module @awaf/protocols/v2/providers/fireworks
+ * @module @alphabet/protocols/v2/providers/fireworks
  * @description
  * Fireworks AI provider adapter — OpenAI-compatible chat completions
  * on `https://api.fireworks.ai/inference/v1`.
  */
 
-import type { AwafProviderAdapter } from '../types.js';
+import type { AlphabetProviderAdapter } from '../types.js';
 import {
   createOpenAiCompatAdapter,
   type OpenAiCompatAdapterOptions,
@@ -20,7 +20,7 @@ export type FireworksProviderOptions = Omit<OpenAiCompatAdapterOptions, 'id' | '
 /** Create a Fireworks provider adapter. */
 export function createFireworksProvider(
   options: FireworksProviderOptions,
-): AwafProviderAdapter {
+): AlphabetProviderAdapter {
   return createOpenAiCompatAdapter({
     id: 'fireworks',
     name: 'Fireworks AI',

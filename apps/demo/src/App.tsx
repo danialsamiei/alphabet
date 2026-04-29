@@ -1,7 +1,7 @@
 /**
  * @file App.tsx
  * @description
- * AWAF demo shell — tabbed experience hosting four sub-experiences:
+ * Alphabet demo shell — tabbed experience hosting four sub-experiences:
  *  1. Layer Switcher (existing immersive demo, polished + crossfade)
  *  2. Consent Ladder visualizer
  *  3. Real-time Context Dashboard
@@ -12,7 +12,7 @@
  */
 
 import { useEffect, useId, useMemo, useState, type CSSProperties } from 'react';
-import { AwafProvider, ConsentBanner } from '@awaf/ui';
+import { AlphabetProvider, ConsentBanner } from '@alphabet/ui';
 import { ConsentLadderExperience } from './experiences/ConsentLadderExperience.js';
 import { ContextDashboardExperience } from './experiences/ContextDashboardExperience.js';
 import { LayerSwitcherExperience } from './experiences/LayerSwitcherExperience.js';
@@ -86,14 +86,14 @@ export function App(): JSX.Element {
     document.documentElement.lang = localeMeta.key;
     document.documentElement.dir = localeMeta.dir;
     if (state.theme === 'auto') {
-      document.documentElement.removeAttribute('data-awaf-theme');
+      document.documentElement.removeAttribute('data-alphabet-theme');
     } else {
-      document.documentElement.setAttribute('data-awaf-theme', state.theme);
+      document.documentElement.setAttribute('data-alphabet-theme', state.theme);
     }
   }, [localeMeta, state.theme]);
 
   return (
-    <AwafProvider
+    <AlphabetProvider
       consent={{
         privacySignals: { dntEnabled: state.dnt, gpcEnabled: state.gpc },
       }}
@@ -104,7 +104,7 @@ export function App(): JSX.Element {
         localeDir={localeMeta.dir}
         localeKey={localeMeta.key}
       />
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }
 
@@ -135,16 +135,16 @@ function DemoShell({
   const tabPanelId = useId();
 
   return (
-    <div className="awaf-shell" dir={localeDir} lang={localeKey}>
+    <div className="alphabet-shell" dir={localeDir} lang={localeKey}>
       <header style={headerStyle}>
-        <h1>AWAF — Adaptive Web Awareness Framework</h1>
-        <p style={{ margin: 0, color: 'var(--awaf-muted)' }}>
-          Live demo of <code>@awaf/ui</code>, <code>@awaf/core</code>, and{' '}
-          <code>@awaf/api</code>'s offline mock server.
+        <h1>Alphabet — The Alphabet of Your Web</h1>
+        <p style={{ margin: 0, color: 'var(--alphabet-muted)' }}>
+          Live demo of <code>@alphabet/ui</code>, <code>@alphabet/core</code>, and{' '}
+          <code>@alphabet/api</code>'s offline mock server.
         </p>
       </header>
 
-      <fieldset className="awaf-toggles">
+      <fieldset className="alphabet-toggles">
         <legend style={{ padding: '0 0.5rem', fontWeight: 600 }}>
           Simulation toggles
         </legend>
@@ -247,13 +247,13 @@ function DemoShell({
         </label>
       </fieldset>
 
-      <div className="awaf-tablist" role="tablist" aria-label="Demo experiences">
+      <div className="alphabet-tablist" role="tablist" aria-label="Demo experiences">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             role="tab"
-            id={`awaf-tab-${tab.id}`}
+            id={`alphabet-tab-${tab.id}`}
             aria-selected={activeTab === tab.id}
             aria-controls={`${tabPanelId}-${tab.id}`}
             tabIndex={activeTab === tab.id ? 0 : -1}
@@ -268,8 +268,8 @@ function DemoShell({
       <div
         role="tabpanel"
         id={`${tabPanelId}-${activeTab}`}
-        aria-labelledby={`awaf-tab-${activeTab}`}
-        className="awaf-tabpanel"
+        aria-labelledby={`alphabet-tab-${activeTab}`}
+        className="alphabet-tabpanel"
         tabIndex={0}
       >
         {activeTab === 'layers' ? (
@@ -287,7 +287,7 @@ function DemoShell({
         {activeTab === 'protocols' ? <ProtocolPlaygroundExperience /> : null}
       </div>
 
-      <p className="awaf-footer-note">
+      <p className="alphabet-footer-note">
         DNT / GPC do <strong>not</strong> downgrade the visual layer — they
         only restrict consent and personalization. Verify it by toggling DNT
         with a high-capability layer active.

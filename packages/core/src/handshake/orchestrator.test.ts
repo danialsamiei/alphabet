@@ -9,11 +9,11 @@ import { HandshakeOrchestrator } from './orchestrator.js';
 import { SignalCollector } from './signal-collector.js';
 import { EnrichmentPipeline } from './enrichment-pipeline.js';
 import { HandshakeDecisionEngine } from './decision-engine.js';
-import { AWAFEventEmitter } from '../events/awaf-events.js';
+import { AlphabetEventEmitter } from '../events/alphabet-events.js';
 import { createSessionId } from '../types/brands.js';
 import type { VisitorId } from '../types/brands.js';
 import type { DetectedSignals } from '../types/visitor.js';
-import { err, ok, type Result, type AWAFError } from '../types/result.js';
+import { err, ok, type Result, type AlphabetError } from '../types/result.js';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ function makeSignals(overrides: Partial<DetectedSignals> = {}): DetectedSignals 
  * method on a fresh instance.
  */
 function stubCollector(
-  result: Result<DetectedSignals, AWAFError>
+  result: Result<DetectedSignals, AlphabetError>
 ): SignalCollector {
   const collector = new SignalCollector();
   vi.spyOn(collector, 'collect').mockReturnValue(result);
@@ -182,7 +182,7 @@ describe('HandshakeOrchestrator.run() — error propagation', () => {
 
 describe('HandshakeOrchestrator.run() — event emission', () => {
   it('emits handshake:complete with sessionId + layer on success', () => {
-    const events = new AWAFEventEmitter();
+    const events = new AlphabetEventEmitter();
     const seen: Array<{ sessionId: string; layer: string }> = [];
     events.on('handshake:complete', (p) => {
       seen.push({ sessionId: p.sessionId, layer: p.layer });
@@ -199,7 +199,7 @@ describe('HandshakeOrchestrator.run() — event emission', () => {
   });
 
   it('emits handshake:error with phase + code on failure', () => {
-    const events = new AWAFEventEmitter();
+    const events = new AlphabetEventEmitter();
     const seen: Array<{ phase: string; code: string }> = [];
     events.on('handshake:error', (p) => {
       seen.push({ phase: p.phase, code: p.code });
@@ -215,7 +215,7 @@ describe('HandshakeOrchestrator.run() — event emission', () => {
   });
 
   it('does not emit handshake:complete when a phase fails', () => {
-    const events = new AWAFEventEmitter();
+    const events = new AlphabetEventEmitter();
     const onComplete = vi.fn();
     events.on('handshake:complete', onComplete);
     const orchestrator = new HandshakeOrchestrator({

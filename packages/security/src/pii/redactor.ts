@@ -11,7 +11,7 @@
  *
  * **Limitations.** This is regex-based and cannot detect free-form names
  * or addresses, locale-specific national-id formats, or PII embedded in
- * binary blobs. It is designed to satisfy the AWAF rule *"no PII in logs
+ * binary blobs. It is designed to satisfy the Alphabet rule *"no PII in logs
  * by default"* — not to act as a full data-loss-prevention (DLP) system.
  * For high-stakes flows, pair with a server-side DLP tool.
  */

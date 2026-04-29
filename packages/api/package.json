@@ -1,7 +1,7 @@
 {
-  "name": "@awaf/api",
+  "name": "@alphabet/api",
   "version": "1.0.0",
-  "description": "HTTP client for the AWAF SDK. Exposes one method per documented endpoint of the /api/awaf/v1 contract, returns Promise<Result<T, AWAFError>>, uses fetch + AbortController, and shares route constants with @awaf/core.",
+  "description": "HTTP client for the Alphabet SDK. Exposes one method per documented endpoint of the /api/alphabet/v1 contract, returns Promise<Result<T, AlphabetError>>, uses fetch + AbortController, and shares route constants with @alphabet/core.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -35,7 +35,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@awaf/core": "workspace:*"
+    "@alphabet/core": "workspace:*"
   },
   "devDependencies": {
     "vite": "^5.0.0",

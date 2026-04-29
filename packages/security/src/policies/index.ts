@@ -11,7 +11,7 @@
  * override them via the options accepted by each guard / detector.
  */
 
-import type { MemoryDomain } from '@awaf/core';
+import type { MemoryDomain } from '@alphabet/core';
 
 // ─── Privacy policy version ──────────────────────────────────────────────────
 
@@ -32,7 +32,7 @@ export const DEFAULT_POLICY_VERSION = '2025-04-01';
  * is always allowed to read its own domain; that invariant is enforced
  * by `MemoryIntegrityGuard`, not encoded here.
  *
- * The defaults below match the AWAF privacy model:
+ * The defaults below match the Alphabet privacy model:
  *  - `general` is readable by every domain (public).
  *  - `visitor` is strictly isolated — no other domain may read it.
  *  - `class_notes`, `ideas`, `social` are readable by `general` only.

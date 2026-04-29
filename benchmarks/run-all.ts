@@ -1,7 +1,7 @@
 /**
  * @file run-all.ts
  * @description
- * Entry point for `pnpm benchmark`. Runs every AWAF microbenchmark suite
+ * Entry point for `pnpm benchmark`. Runs every Alphabet microbenchmark suite
  * sequentially, prints a single combined summary, and sets a non-zero exit
  * code if any declared budget is violated.
  *
@@ -19,7 +19,7 @@ import { runSignalCollectionSuite } from './signal-collection.bench.js';
 async function main(): Promise<void> {
   const startedAt = Date.now();
   // eslint-disable-next-line no-console
-  console.log('AWAF benchmarks — engineering targets, not guaranteed claims.\n');
+  console.log('Alphabet benchmarks — engineering targets, not guaranteed claims.\n');
   await runSignalCollectionSuite();
   await runEnrichmentSuite();
   await runDecisionEngineSuite();

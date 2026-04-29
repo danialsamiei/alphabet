@@ -1,10 +1,10 @@
 /**
- * @module @awaf/protocols/v2/sdk
+ * @module @alphabet/protocols/v2/sdk
  * @description
- * High-level TypeScript SDK for AwafProtocol v2.
+ * High-level TypeScript SDK for AlphabetProtocol v2.
  *
- * `AwafAiClient` wires the four innovations together:
- *   1. Provider fan-out (any `AwafProviderAdapter`, including the
+ * `AlphabetAiClient` wires the four innovations together:
+ *   1. Provider fan-out (any `AlphabetProviderAdapter`, including the
  *      fallback chain).
  *   2. Privacy-preserving prompt engineering — automatic PII
  *      redaction + consent-aware system prelude.
@@ -18,15 +18,15 @@
  * provider's API key beyond the bound adapter's lifetime.
  */
 
-import { ok, err, type Result, type PrivacySignals } from '@awaf/core';
+import { ok, err, type Result, type PrivacySignals } from '@alphabet/core';
 import type {
-  AwafChatMessage,
-  AwafGenerationRequest,
-  AwafGenerationResponse,
-  AwafProviderAdapter,
-  AwafStreamChunk,
+  AlphabetChatMessage,
+  AlphabetGenerationRequest,
+  AlphabetGenerationResponse,
+  AlphabetProviderAdapter,
+  AlphabetStreamChunk,
 } from '../types.js';
-import type { AwafProtocolError } from '../../errors/index.js';
+import type { AlphabetProtocolError } from '../../errors/index.js';
 import { redactPromptPII, injectConsentAwareContext } from '../privacy/index.js';
 import {
   compose,
@@ -41,8 +41,8 @@ import {
 
 // ─── Options ─────────────────────────────────────────────────────────────────
 
-export interface AwafAiClientOptions {
-  readonly provider: AwafProviderAdapter;
+export interface AlphabetAiClientOptions {
+  readonly provider: AlphabetProviderAdapter;
   /** Authoritative privacy signals — must be supplied per-request. */
   readonly defaultPrivacy?: PrivacySignals;
   /** Default token budget if `sampling.tokenBudget` is missing. */
@@ -59,7 +59,7 @@ export interface AwafAiClientOptions {
  * Per-call options consumed by `stream` / `generate`. The `consentProof`
  * is verified server-side before dispatch and surfaced via the response.
  */
-export interface AwafAiCallOptions {
+export interface AlphabetAiCallOptions {
   /** Authoritative privacy signals for this request. */
   readonly privacy?: PrivacySignals;
   readonly consentProof?: {
@@ -74,16 +74,16 @@ export interface AwafAiCallOptions {
 const DEFAULT_PRIVACY: PrivacySignals = { dntEnabled: false, gpcEnabled: false };
 
 /**
- * Apply the AWAF transformations (consent injection → PII redaction
+ * Apply the Alphabet transformations (consent injection → PII redaction
  * → compression). Returns the prepared request, plus diagnostics that
  * callers can log without leaking PII.
  */
 export function prepareRequest(
-  request: AwafGenerationRequest,
-  options: AwafAiClientOptions,
-  callOptions: AwafAiCallOptions,
+  request: AlphabetGenerationRequest,
+  options: AlphabetAiClientOptions,
+  callOptions: AlphabetAiCallOptions,
 ): {
-  readonly request: AwafGenerationRequest;
+  readonly request: AlphabetGenerationRequest;
   readonly diagnostics: {
     readonly redactedCount: number;
     readonly redactedKinds: readonly string[];
@@ -94,7 +94,7 @@ export function prepareRequest(
   const privacy = callOptions.privacy ?? options.defaultPrivacy ?? DEFAULT_PRIVACY;
 
   // Step 1: optional consent-aware prelude.
-  let messages: readonly AwafChatMessage[] = request.messages;
+  let messages: readonly AlphabetChatMessage[] = request.messages;
   if (options.disableConsentInjection !== true) {
     const prelude = injectConsentAwareContext(request.context, { privacy });
     messages = [prelude, ...messages];
@@ -134,15 +134,15 @@ export function prepareRequest(
 // ─── Client ──────────────────────────────────────────────────────────────────
 
 /**
- * High-level AwafProtocol v2 client. Stateless beyond its bound
+ * High-level AlphabetProtocol v2 client. Stateless beyond its bound
  * provider — safe to share across requests in a server runtime.
  */
-export class AwafAiClient {
-  constructor(private readonly options: AwafAiClientOptions) {}
+export class AlphabetAiClient {
+  constructor(private readonly options: AlphabetAiClientOptions) {}
 
   /** Replace the provider — useful for hot-swap during failover tests. */
-  withProvider(provider: AwafProviderAdapter): AwafAiClient {
-    return new AwafAiClient({ ...this.options, provider });
+  withProvider(provider: AlphabetProviderAdapter): AlphabetAiClient {
+    return new AlphabetAiClient({ ...this.options, provider });
   }
 
   /**
@@ -150,9 +150,9 @@ export class AwafAiClient {
    * proof verification fails.
    */
   async *stream(
-    request: AwafGenerationRequest,
-    callOptions: AwafAiCallOptions = {},
-  ): AsyncIterable<AwafStreamChunk> {
+    request: AlphabetGenerationRequest,
+    callOptions: AlphabetAiCallOptions = {},
+  ): AsyncIterable<AlphabetStreamChunk> {
     const proofErr = await this.verifyProof(callOptions);
     if (proofErr !== null) {
       yield { type: 'error', error: proofErr };
@@ -164,9 +164,9 @@ export class AwafAiClient {
 
   /** Non-streaming generation. */
   async generate(
-    request: AwafGenerationRequest,
-    callOptions: AwafAiCallOptions = {},
-  ): Promise<Result<AwafGenerationResponse, AwafProtocolError>> {
+    request: AlphabetGenerationRequest,
+    callOptions: AlphabetAiCallOptions = {},
+  ): Promise<Result<AlphabetGenerationResponse, AlphabetProtocolError>> {
     const proofErr = await this.verifyProof(callOptions);
     if (proofErr !== null) return err(proofErr);
     const { request: prepared } = prepareRequest(request, this.options, callOptions);
@@ -175,8 +175,8 @@ export class AwafAiClient {
 
   /** Returns `null` on success, or the typed error on failure. */
   private async verifyProof(
-    callOptions: AwafAiCallOptions,
-  ): Promise<AwafProtocolError | null> {
+    callOptions: AlphabetAiCallOptions,
+  ): Promise<AlphabetProtocolError | null> {
     const proof = callOptions.consentProof;
     if (proof === undefined) return null;
     const result = await verifyConsentProof({
@@ -189,12 +189,12 @@ export class AwafAiClient {
 }
 
 /** Convenience factory mirroring the rest of the v2 surface. */
-export function createAwafAiClient(options: AwafAiClientOptions): AwafAiClient {
-  return new AwafAiClient(options);
+export function createAlphabetAiClient(options: AlphabetAiClientOptions): AlphabetAiClient {
+  return new AlphabetAiClient(options);
 }
 
 // ─── Re-exports of common types so consumers only need this entry ────────────
 
-export type { AwafProviderAdapter, AwafGenerationRequest, AwafGenerationResponse, AwafStreamChunk };
+export type { AlphabetProviderAdapter, AlphabetGenerationRequest, AlphabetGenerationResponse, AlphabetStreamChunk };
 export { ok, err };
 export type { Result };

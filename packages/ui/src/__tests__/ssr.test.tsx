@@ -35,7 +35,7 @@ describe('SSR safety', () => {
   it('StaticHtmlLayer renders to a string', () => {
     const html = renderToString(<StaticHtmlLayer heading="Static" />);
     expect(html).toContain('Static');
-    expect(html).toContain('data-awaf-layer="STATIC_HTML"');
+    expect(html).toContain('data-alphabet-layer="STATIC_HTML"');
   });
 
   it('Css3DLayer renders to a string without crashing on matchMedia', () => {
@@ -43,12 +43,12 @@ describe('SSR safety', () => {
     // so this must succeed without window/matchMedia.
     const html = renderToString(<Css3DLayer heading="3D" />);
     expect(html).toContain('3D');
-    expect(html).toContain('data-awaf-layer="CSS_3D"');
+    expect(html).toContain('data-alphabet-layer="CSS_3D"');
   });
 
   it('Canvas2DLayer renders to a string without invoking canvas APIs', () => {
     const html = renderToString(<Canvas2DLayer heading="Canvas" />);
     expect(html).toContain('Canvas');
-    expect(html).toContain('data-awaf-layer="CANVAS_2D"');
+    expect(html).toContain('data-alphabet-layer="CANVAS_2D"');
   });
 });

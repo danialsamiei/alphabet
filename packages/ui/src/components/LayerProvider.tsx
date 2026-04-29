@@ -20,7 +20,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { CapabilityLayer } from '@awaf/core';
+import type { CapabilityLayer } from '@alphabet/core';
 import {
   useAdaptiveLayer,
   type UseAdaptiveLayerOptions,

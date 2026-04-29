@@ -1,7 +1,7 @@
 /**
  * @module transport/rate-limit
  * @description
- * Parsers for HTTP rate-limit headers used by AWAF and most modern APIs.
+ * Parsers for HTTP rate-limit headers used by Alphabet and most modern APIs.
  *
  * Supports:
  * - `Retry-After`: both delta-seconds and HTTP-date forms (RFC 7231 §7.1.3).
