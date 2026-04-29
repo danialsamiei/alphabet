@@ -56,3 +56,32 @@ Adjust them in two places:
 
 Increasing a budget is a code-review-required change. Decreasing one is fine
 without ceremony — that's a free improvement.
+
+
+## Budget Policy for apps/danial-demo
+
+`apps/danial-demo` must pass `pnpm size` in CI after `pnpm build`. The check is **blocking** and fails the workflow whenever any budget is exceeded.
+
+### Current practical thresholds
+
+| Budget target | Threshold | Measured via |
+|:--|:--:|:--|
+| Initial JS bundle (`index-*.js`) | **≤ 200 KB** | `size-limit` on `apps/danial-demo/dist/assets/index-*.js` |
+| Largest JS chunk (`*.js`) | **≤ 280 KB** | `size-limit` on `apps/danial-demo/dist/assets/*.js` |
+| Total CSS bundle (`*.css`) | **≤ 45 KB** | `size-limit` on `apps/danial-demo/dist/assets/*.css` |
+
+> If the budget check fails in CI, a follow-up diagnostic can be run with `pnpm bundle:visualize` to inspect heavy modules/chunks.
+
+### Repair playbook when budgets fail
+
+1. Run `pnpm build` then `pnpm size` locally to reproduce.
+2. Run `pnpm bundle:visualize` and inspect `bundle-report/`.
+3. Apply one or more fixes:
+   - Lazy-load heavy experiences/routes using dynamic `import()`.
+   - Move rarely used code behind interaction gates (modal/tab/feature entry).
+   - Replace large dependencies with lighter alternatives or direct utilities.
+   - Deduplicate shared helpers/constants into a single module.
+   - Trim CSS layers and dead selectors; prefer component-scoped styles.
+4. Re-run `pnpm size` until all thresholds pass.
+
+Thresholds are configured in the root `size-limit` config (`.size-limit.json`) and enforced in `.github/workflows/ci.yml`.

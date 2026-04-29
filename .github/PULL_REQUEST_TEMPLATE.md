@@ -44,6 +44,7 @@
 - [ ] `pnpm test` passes (and new behaviour is covered)
 - [ ] `pnpm build` succeeds
 - [ ] `pnpm size` within budgets (and `pnpm size:check-r3f-free` if `@alphabet/ui` changed)
+- [ ] bundle delta checked (compare against base branch / latest main build)
 - [ ] `pnpm openapi:lint` clean (if API contract changed)
 - [ ] No `any` in production code; no PII in logs
 - [ ] Files ≤ 300 lines, no circular deps
