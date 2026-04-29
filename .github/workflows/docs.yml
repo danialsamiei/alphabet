@@ -24,8 +24,6 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
-        working-directory: apps/docs
 
       - name: Build Docs
-        run: pnpm run build
-        working-directory: apps/docs
+        run: pnpm --filter @alphabet/docs build
