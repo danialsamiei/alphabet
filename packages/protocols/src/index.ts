@@ -89,3 +89,11 @@ export type {
   AwafAiResponse,
   AwafAiProviderAdapter,
 } from './ai-sdk/index.js';
+
+// ─── AwafProtocol v2 (streaming + providers + consent proof + pulse v2) ─────
+// v2 is additive; the v1 contract above remains the canonical legacy
+// surface. Consumers wanting streaming AI, built-in providers, the
+// fallback chain, privacy-preserving prompt engineering, predictive
+// capability forecasting, or cryptographic consent proofs should import
+// from `@awaf/protocols/v2`.
+export * as v2 from './v2/index.js';
