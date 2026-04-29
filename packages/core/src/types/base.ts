@@ -1,8 +1,8 @@
 /**
  * @module base
  * @description
- * Enumها، type aliasها، و typeهای پایه AWAF SDK.
- * Base enums, type aliases, and foundational types for AWAF SDK.
+ * Enumها، type aliasها، و typeهای پایه Alphabet SDK.
+ * Base enums, type aliases, and foundational types for Alphabet SDK.
  */
 
 // ─── Consent Tier ─────────────────────────────────────────────────────────────
@@ -69,7 +69,7 @@ export type MemoryDomain =
  * - personal: ارتباط شخصی با صاحب سایت
  * - explore: کاوش بی‌هدف
  *
- * @deprecated Use `DomainIntent` from `@awaf/core` (re-exported from
+ * @deprecated Use `DomainIntent` from `@alphabet/core` (re-exported from
  * `./contracts/intents.js`) for high-level visitor purpose and
  * `SuggestionActionIntent` for UI/action chip intents. `IntentType`
  * historically conflated the two; it is kept as a structural alias for
@@ -114,7 +114,7 @@ export const CAPABILITY_LAYER_LEVEL: Record<CapabilityLayer, number> = {
 // ─── Protocol Type ────────────────────────────────────────────────────────────
 
 /**
- * پروتکل‌های ارتباطی AWAF — ۴ پروتکل استاندارد.
+ * پروتکل‌های ارتباطی Alphabet — ۴ پروتکل استاندارد.
  */
 export type ProtocolType = 'MCP' | 'A2A' | 'QR' | 'API';
 
@@ -142,7 +142,7 @@ export type ConsentPurpose = 'personalization' | 'behavioral_learning' | 'notifi
 // ─── Log Level ────────────────────────────────────────────────────────────────
 
 /**
- * سطوح logging در AWAFLogger.
+ * سطوح logging در AlphabetLogger.
  */
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 

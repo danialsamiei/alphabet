@@ -4,9 +4,9 @@
  * Pure layer selector — انتخاب Adaptive Render Layer از روی قابلیت دستگاه،
  * تنظیمات دسترسی‌پذیری، و سیگنال‌های حریم خصوصی.
  *
- * AWAF concept rename: "UI Degradation" → "Adaptive Render Layers".
+ * Alphabet concept rename: "UI Degradation" → "Adaptive Render Layers".
  * The 5 enum values (R3F_IMMERSIVE, CSS_3D, CANVAS_2D, STATIC_HTML, TEXT_ONLY)
- * are kept stable across `@awaf/core` and `@awaf/ui` for compatibility.
+ * are kept stable across `@alphabet/core` and `@alphabet/ui` for compatibility.
  *
  * **Privacy contract:** DNT/GPC are *not* a reason to drop visual layer.
  * They restrict storage and personalization (handled by consent), not
@@ -14,7 +14,7 @@
  * solely because DNT/GPC is active.
  */
 
-import type { CapabilityLayer } from '@awaf/core';
+import type { CapabilityLayer } from '@alphabet/core';
 
 /**
  * Alias مدرن‌تر برای CapabilityLayer — مفهوم عمومی SDK.

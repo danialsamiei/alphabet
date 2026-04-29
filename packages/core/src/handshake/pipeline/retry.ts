@@ -10,10 +10,10 @@
  *   sleep_n = min(cap, randomBetween(base, sleep_{n-1} * 3))
  *
  * Cancellation is honored at every wait via `AbortSignal`. If the signal
- * fires mid-wait the retry loop returns a `RETRY_ABORTED` AWAFError.
+ * fires mid-wait the retry loop returns a `RETRY_ABORTED` AlphabetError.
  */
 
-import { type AWAFError, type Result, err, ok } from '../../types/result.js';
+import { type AlphabetError, type Result, err, ok } from '../../types/result.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ export interface RetryOptions {
    * تشخیص اینکه آیا یک خطا قابل retry است. پیش‌فرض: همه خطاها retryable.
    * Caller can short-circuit on permanent errors (e.g. validation).
    */
-  readonly isRetryable?: (error: AWAFError) => boolean;
+  readonly isRetryable?: (error: AlphabetError) => boolean;
 }
 
 /** اطلاعات یک تلاش پایان‌یافته. */
@@ -61,7 +61,7 @@ const DEFAULT_MAX_DELAY_MS = 5_000;
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /** اگر signal لغو شده باشد، AbortError مناسب می‌سازد. */
-function abortError(): AWAFError {
+function abortError(): AlphabetError {
   return {
     code: 'RETRY_ABORTED',
     message: 'Retry loop aborted via AbortSignal',
@@ -120,7 +120,7 @@ export function decorrelatedJitter(
 // ─── withRetry ────────────────────────────────────────────────────────────────
 
 /**
- * یک تابع async که `Result<T, AWAFError>` برمی‌گرداند را با سیاست retry
+ * یک تابع async که `Result<T, AlphabetError>` برمی‌گرداند را با سیاست retry
  * decorrelated-jitter اجرا می‌کند.
  *
  * @example
@@ -130,9 +130,9 @@ export function decorrelatedJitter(
  * );
  */
 export async function withRetry<T>(
-  fn: (signal?: AbortSignal) => Promise<Result<T, AWAFError>>,
+  fn: (signal?: AbortSignal) => Promise<Result<T, AlphabetError>>,
   options: RetryOptions = {},
-): Promise<Result<T, AWAFError>> {
+): Promise<Result<T, AlphabetError>> {
   const max = Math.max(1, options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS);
   const base = Math.max(0, options.baseDelayMs ?? DEFAULT_BASE_DELAY_MS);
   const cap = Math.max(base, options.maxDelayMs ?? DEFAULT_MAX_DELAY_MS);
@@ -140,7 +140,7 @@ export async function withRetry<T>(
   const sleep = options.sleep ?? defaultSleep;
   const isRetryable = options.isRetryable ?? ((): boolean => true);
 
-  let lastError: AWAFError = {
+  let lastError: AlphabetError = {
     code: 'RETRY_NO_ATTEMPTS',
     message: 'No attempts were made',
   };

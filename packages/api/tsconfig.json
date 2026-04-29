@@ -6,8 +6,8 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@awaf/core": ["../core/dist/index.d.ts"],
-      "@awaf/core/contracts/runtime": ["../core/dist/contracts/runtime/index.d.ts"]
+      "@alphabet/core": ["../core/dist/index.d.ts"],
+      "@alphabet/core/contracts/runtime": ["../core/dist/contracts/runtime/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

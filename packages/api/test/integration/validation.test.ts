@@ -13,12 +13,12 @@
  * 3. The validation never throws.
  */
 import { describe, it, expect } from 'vitest';
-import { fullRoute } from '@awaf/core';
+import { fullRoute } from '@alphabet/core';
 import {
-  awafResponseSchema,
+  alphabetResponseSchema,
   handshakeResultSchema,
   v,
-} from '@awaf/core/contracts/runtime';
+} from '@alphabet/core/contracts/runtime';
 import { createMockServer } from '../../src/mock/index.js';
 
 describe('runtime validation — well-formed mock responses', () => {
@@ -48,7 +48,7 @@ describe('runtime validation — malformed responses fail without throwing', () 
       },
       meta: { processingTimeMs: 0, respondedAt: '1970-01-01T00:00:00Z' },
     };
-    const schema = awafResponseSchema(handshakeResultSchema);
+    const schema = alphabetResponseSchema(handshakeResultSchema);
     let threw = false;
     let result: ReturnType<typeof schema.validate> | undefined;
     try {
@@ -65,13 +65,13 @@ describe('runtime validation — malformed responses fail without throwing', () 
   });
 
   it('returns Result.error when meta is missing', () => {
-    const schema = awafResponseSchema(v.object({ ok: v.boolean() }));
+    const schema = alphabetResponseSchema(v.object({ ok: v.boolean() }));
     const result = schema.validate({ requestId: 'r', success: true, data: { ok: true } });
     expect(result.success).toBe(false);
   });
 
   it('returns Result.error for type mismatches with a clear path', () => {
-    const schema = awafResponseSchema(v.object({ ok: v.boolean() }));
+    const schema = alphabetResponseSchema(v.object({ ok: v.boolean() }));
     const result = schema.validate({
       requestId: 'r',
       success: true,

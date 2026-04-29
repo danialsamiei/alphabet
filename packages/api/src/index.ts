@@ -1,38 +1,38 @@
 /**
- * @module @awaf/api
+ * @module @alphabet/api
  * @description
- * پکیج API Client — AwafClient (تمام ۱۶ endpoint)، HandshakeClient، و re-exports از @awaf/core.
- * API Client package — AwafClient (all 16 endpoints), HandshakeClient, and re-exports from @awaf/core.
+ * پکیج API Client — AlphabetClient (تمام ۱۶ endpoint)، HandshakeClient، و re-exports از @alphabet/core.
+ * API Client package — AlphabetClient (all 16 endpoints), HandshakeClient, and re-exports from @alphabet/core.
  */
 
-export type { AWAFRequest, AWAFResponse } from '@awaf/core';
+export type { AlphabetRequest, AlphabetResponse } from '@alphabet/core';
 
-// ─── Route Contracts (re-exported from @awaf/core) ───────────────────────────
+// ─── Route Contracts (re-exported from @alphabet/core) ───────────────────────────
 export {
   API_VERSION_PREFIX,
   LEGACY_API_PREFIX,
-  AWAF_ROUTES,
-  AWAF_ROUTE_STATUS,
+  ALPHABET_ROUTES,
+  ALPHABET_ROUTE_STATUS,
   fullRoute,
   joinRoute,
   normalizeApiBaseUrl,
-} from '@awaf/core';
-export type { AwafRouteKey, AwafRoutePath, AwafRouteStatus } from '@awaf/core';
+} from '@alphabet/core';
+export type { AlphabetRouteKey, AlphabetRoutePath, AlphabetRouteStatus } from '@alphabet/core';
 
-// ─── Intent Vocabularies (re-exported from @awaf/core) ───────────────────────
+// ─── Intent Vocabularies (re-exported from @alphabet/core) ───────────────────────
 export {
   DOMAIN_INTENTS,
   SUGGESTION_ACTION_INTENTS,
-} from '@awaf/core';
-export type { DomainIntent, SuggestionActionIntent } from '@awaf/core';
+} from '@alphabet/core';
+export type { DomainIntent, SuggestionActionIntent } from '@alphabet/core';
 
 // ─── Legacy HandshakeClient ───────────────────────────────────────────────────
 export { HandshakeClient } from './handshake-client.js';
 export type { HandshakeClientOptions } from './handshake-client.js';
 
-// ─── Unified AwafClient (all 16 endpoints) ────────────────────────────────────
-export { AwafClient } from './awaf-client.js';
-export type { AwafClientOptions } from './awaf-client.js';
+// ─── Unified AlphabetClient (all 16 endpoints) ────────────────────────────────────
+export { AlphabetClient } from './alphabet-client.js';
+export type { AlphabetClientOptions } from './alphabet-client.js';
 
 // ─── Request / Response Types ─────────────────────────────────────────────────
 export type {

@@ -1,5 +1,5 @@
-# راهنمای مشارکت — AWAF SDK
-# AWAF SDK Contributing Guide
+# راهنمای مشارکت — Alphabet SDK
+# Alphabet SDK Contributing Guide
 
 > **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/awaf`
 > **زبان:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
@@ -57,8 +57,8 @@ git --version    # >= 2.40.0
 
 ```bash
 # Fork مخزن (برای انسان‌ها)
-git clone https://github.com/YOUR_USERNAME/awaf.git
-cd awaf
+git clone https://github.com/YOUR_USERNAME/alphabet.git
+cd alphabet
 
 # نصب وابستگی‌ها
 pnpm install
@@ -178,7 +178,7 @@ feat(memory): implement Tier2ProfileStore with consent validation
 - Validate consent tier before cross-session storage
 - Add source tracking for transparency report
 
-Signed-off-by: AWAF Bot <bot@awaf.dev>
+Signed-off-by: Alphabet Bot <bot@alphabet.dev>
 ```
 
 ```
@@ -188,7 +188,7 @@ When navigator.language is set but Intl.DateTimeFormat
 returns null for timeZone, fallback to UTC with a warning.
 
 Fixes #42
-Signed-off-by: AWAF Bot <bot@awaf.dev>
+Signed-off-by: Alphabet Bot <bot@alphabet.dev>
 ```
 
 ```
@@ -199,7 +199,7 @@ security(threat-03): prevent prompt injection via input sanitization
 - Add test cases for 5 injection vectors
 
 BREAKING CHANGE: postInteract now requires input validation
-Signed-off-by: AWAF Bot <bot@awaf.dev>
+Signed-off-by: Alphabet Bot <bot@alphabet.dev>
 ```
 
 ---
@@ -233,14 +233,14 @@ Signed-off-by: AWAF Bot <bot@awaf.dev>
 ├── src/types/brands.ts         → Brand Types (VisitorId, SessionId, MemoryId)
 ├── src/types/result.ts         → Result<T,E> pattern
 ├── src/types/visitor.ts        → VisitorContext, VisitorConsent, VisitorPreference
-├── src/types/api.ts            → AWAFRequest, AWAFResponse, TokenBudget
+├── src/types/api.ts            → AlphabetRequest, AlphabetResponse, TokenBudget
 ├── src/types/memory.ts         → VisitorMemory, TechnologySignal
 └── src/types/index.ts          → Re-exports
 
 فاز ۲: Infrastructure
-├── src/config/awaf-config.ts   → AWAFConfig class
-├── src/logger/awaf-logger.ts   → AWAFLogger (۴ سطح)
-└── src/events/awaf-events.ts   → AWAFEventEmitter
+├── src/config/alphabet-config.ts   → AlphabetConfig class
+├── src/logger/alphabet-logger.ts   → AlphabetLogger (۴ سطح)
+└── src/events/alphabet-events.ts   → AlphabetEventEmitter
 
 فاز ۳: Signals & Enrichment
 ├── src/signals/SignalCollector.ts
@@ -558,7 +558,7 @@ describe('security', () => {
 - [ ] security review (در صورت security PR)
 
 ## Impact Analysis
-- **Packageهای affected:** @awaf/core, @awaf/api
+- **Packageهای affected:** @alphabet/core, @alphabet/api
 - **API Breaking:** خیر
 - **Privacy Impact:** خیر
 - **Performance Impact:** ناچیز
@@ -600,4 +600,4 @@ describe('security', () => {
 
 ---
 
-*این سند بخشی از مستندات SDK AWAF است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*
+*این سند بخشی از مستندات SDK Alphabet است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*

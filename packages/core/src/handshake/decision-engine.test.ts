@@ -180,12 +180,12 @@ describe('HandshakeDecisionEngine.decide()', () => {
     expect(decision.uiConfig.heroCopy.length).toBeGreaterThan(0);
   });
 
-  it('should include CSS variables with --awaf-layer', () => {
+  it('should include CSS variables with --alphabet-layer', () => {
     const enriched = makeEnriched();
     const decision = engine.decide(enriched);
     expect(decision.uiConfig.cssVariables).toBeDefined();
     if (decision.uiConfig.cssVariables) {
-      expect('--awaf-layer' in decision.uiConfig.cssVariables).toBe(true);
+      expect('--alphabet-layer' in decision.uiConfig.cssVariables).toBe(true);
     }
   });
 
@@ -193,7 +193,7 @@ describe('HandshakeDecisionEngine.decide()', () => {
     const enriched = makeEnriched({ language: 'fa' });
     const decision = engine.decide(enriched);
     if (decision.uiConfig.cssVariables) {
-      expect(decision.uiConfig.cssVariables['--awaf-font-family']).toContain('Vazirmatn');
+      expect(decision.uiConfig.cssVariables['--alphabet-font-family']).toContain('Vazirmatn');
     }
   });
 
@@ -201,7 +201,7 @@ describe('HandshakeDecisionEngine.decide()', () => {
     const enriched = makeEnriched({ language: 'en', timezone: 'America/New_York' });
     const decision = engine.decide(enriched);
     if (decision.uiConfig.cssVariables) {
-      expect(decision.uiConfig.cssVariables['--awaf-font-family']).toContain('Inter');
+      expect(decision.uiConfig.cssVariables['--alphabet-font-family']).toContain('Inter');
     }
   });
 });

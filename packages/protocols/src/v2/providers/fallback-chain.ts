@@ -1,5 +1,5 @@
 /**
- * @module @awaf/protocols/v2/providers/fallback-chain
+ * @module @alphabet/protocols/v2/providers/fallback-chain
  * @description
  * Provider fallback chain — tries adapters in order, advancing to the
  * next one on retryable failures (network errors, HTTP 5xx, 429, or
@@ -9,23 +9,23 @@
  * chain commits to that adapter; subsequent errors propagate as-is so
  * partial output is never dropped silently.
  *
- * The chain itself satisfies `AwafProviderAdapter`, so it can be wrapped
+ * The chain itself satisfies `AlphabetProviderAdapter`, so it can be wrapped
  * by another chain or used anywhere a provider is expected.
  */
 
 import type {
-  AwafGenerationRequest,
-  AwafProviderAdapter,
-  AwafStreamChunk,
+  AlphabetGenerationRequest,
+  AlphabetProviderAdapter,
+  AlphabetStreamChunk,
 } from '../types.js';
 import { collapseStream } from './shared.js';
-import { protocolError, type AwafProtocolError } from '../../errors/index.js';
+import { protocolError, type AlphabetProtocolError } from '../../errors/index.js';
 
 // ─── Options ─────────────────────────────────────────────────────────────────
 
 export interface FallbackChainOptions {
   /** Adapters to try, in order. Must be non-empty. */
-  readonly providers: readonly AwafProviderAdapter[];
+  readonly providers: readonly AlphabetProviderAdapter[];
   /**
    * Per-provider model override. Keys are provider ids; values
    * override `request.model`. Useful when models are named
@@ -37,12 +37,12 @@ export interface FallbackChainOptions {
    * trigger a fallback. Defaults to retrying on transport errors,
    * 5xx, 429, and `ADAPTER_NOT_CONFIGURED`.
    */
-  readonly shouldFallback?: (error: AwafProtocolError) => boolean;
+  readonly shouldFallback?: (error: AlphabetProtocolError) => boolean;
   /** Hook invoked whenever a fallback occurs (observability). */
   readonly onFallback?: (info: {
     readonly fromProviderId: string;
     readonly toProviderId: string | null;
-    readonly error: AwafProtocolError;
+    readonly error: AlphabetProtocolError;
   }) => void;
   /** Optional id for the chain itself. */
   readonly id?: string;
@@ -53,7 +53,7 @@ const RETRYABLE_CODES: ReadonlySet<string> = new Set([
   'CRYPTO_UNAVAILABLE',
 ]);
 
-function defaultShouldFallback(error: AwafProtocolError): boolean {
+function defaultShouldFallback(error: AlphabetProtocolError): boolean {
   const status = (error.details as { status?: number } | undefined)?.status;
   if (typeof status === 'number') {
     if (status >= 500) return true;
@@ -69,23 +69,23 @@ function defaultShouldFallback(error: AwafProtocolError): boolean {
  * Build a provider adapter that delegates to a chain of providers
  * with retry-on-fallback semantics.
  */
-export function createFallbackChain(options: FallbackChainOptions): AwafProviderAdapter {
+export function createFallbackChain(options: FallbackChainOptions): AlphabetProviderAdapter {
   if (options.providers.length === 0) {
     throw new Error('FallbackChain requires at least one provider');
   }
   const chainId = options.id ?? 'fallback-chain';
   const shouldFallback = options.shouldFallback ?? defaultShouldFallback;
 
-  async function* stream(req: AwafGenerationRequest): AsyncIterable<AwafStreamChunk> {
-    let lastError: AwafProtocolError | undefined;
+  async function* stream(req: AlphabetGenerationRequest): AsyncIterable<AlphabetStreamChunk> {
+    let lastError: AlphabetProtocolError | undefined;
     for (let i = 0; i < options.providers.length; i += 1) {
-      const provider = options.providers[i] as AwafProviderAdapter;
+      const provider = options.providers[i] as AlphabetProviderAdapter;
       const next = options.providers[i + 1];
       const model = options.modelByProvider?.[provider.id] ?? req.model;
-      const scopedReq: AwafGenerationRequest = { ...req, model };
+      const scopedReq: AlphabetGenerationRequest = { ...req, model };
 
       let firstChunkSeen = false;
-      let providerError: AwafProtocolError | undefined;
+      let providerError: AlphabetProtocolError | undefined;
       try {
         for await (const c of provider.stream(scopedReq)) {
           if (c.type === 'error' && !firstChunkSeen) {
@@ -140,7 +140,7 @@ export function createFallbackChain(options: FallbackChainOptions): AwafProvider
 
   return {
     id: chainId,
-    name: 'AWAF Fallback Chain',
+    name: 'Alphabet Fallback Chain',
     stream,
     generate: async (req) => collapseStream(chainId, req.model, stream(req), req.structuredOutput !== undefined),
   };

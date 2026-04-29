@@ -1,7 +1,7 @@
 {
-  "name": "@awaf/ui",
+  "name": "@alphabet/ui",
   "version": "1.0.0",
-  "description": "React surface for the AWAF SDK: AwafProvider, AdaptiveSlot (the five Adaptive Render Layers — R3F immersive / CSS 3D / Canvas 2D / static HTML / text-only), ConsentBanner, TransparencyNotice, and hooks. The base bundle is intentionally R3F-free; the immersive layer is loaded lazily only when selected.",
+  "description": "React surface for the Alphabet SDK: AlphabetProvider, AdaptiveSlot (the five Adaptive Render Layers — R3F immersive / CSS 3D / Canvas 2D / static HTML / text-only), ConsentBanner, TransparencyNotice, and hooks. The base bundle is intentionally R3F-free; the immersive layer is loaded lazily only when selected.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -46,8 +46,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@awaf/core": "workspace:*",
-    "@awaf/api": "workspace:*"
+    "@alphabet/core": "workspace:*",
+    "@alphabet/api": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

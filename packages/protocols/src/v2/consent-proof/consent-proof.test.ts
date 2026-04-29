@@ -20,7 +20,7 @@ const validPayload = (): ConsentProofPayload => ({
     memoryDomains: [],
     respectsPrivacySignals: true,
   },
-  audience: 'awaf:demo',
+  audience: 'alphabet:demo',
   issuedAt: Date.now(),
   expiresAt: Date.now() + 60_000,
   keyId: 'k1',
@@ -36,7 +36,7 @@ describe('consent proof', () => {
     const verified = await verifyConsentProof({
       token: signed.data,
       publicKey,
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
     });
     expect(verified.success).toBe(true);
     if (verified.success) {
@@ -52,7 +52,7 @@ describe('consent proof', () => {
     const verified = await verifyConsentProof({
       token: signed.data,
       publicKey,
-      expectedAudience: 'awaf:other',
+      expectedAudience: 'alphabet:other',
     });
     expect(verified.success).toBe(false);
     if (!verified.success) expect(verified.error.code).toBe('AUDIENCE_MISMATCH');
@@ -70,7 +70,7 @@ describe('consent proof', () => {
     const verified = await verifyConsentProof({
       token: signed.data,
       publicKey,
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
       clockSkewMs: 1_000,
     });
     expect(verified.success).toBe(false);
@@ -88,7 +88,7 @@ describe('consent proof', () => {
     const verified = await verifyConsentProof({
       token: tampered,
       publicKey,
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
     });
     expect(verified.success).toBe(false);
     if (!verified.success) {
@@ -101,7 +101,7 @@ describe('consent proof', () => {
     const verified = await verifyConsentProof({
       token: 'not.a.real.token',
       publicKey,
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
     });
     expect(verified.success).toBe(false);
     if (!verified.success) expect(verified.error.code).toBe('PAYLOAD_TAMPERED');
@@ -115,7 +115,7 @@ describe('consent proof', () => {
     const verified = await verifyConsentProof({
       token: signed.data,
       publicKey: b.publicKey,
-      expectedAudience: 'awaf:demo',
+      expectedAudience: 'alphabet:demo',
     });
     expect(verified.success).toBe(false);
     if (!verified.success) expect(verified.error.code).toBe('PAYLOAD_TAMPERED');

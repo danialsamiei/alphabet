@@ -1,8 +1,8 @@
 /**
- * @module @awaf/protocols/normalizers
+ * @module @alphabet/protocols/normalizers
  * @description
  * Pure helper functions that convert raw protocol input into normalized
- * AWAF contract objects, and validate consent/memory permissions.
+ * Alphabet contract objects, and validate consent/memory permissions.
  *
  * These are the canonical implementations: every adapter must use them
  * rather than re-implementing the consent ladder locally.
@@ -21,16 +21,16 @@ import {
   type MemoryDomain,
   type PrivacySignals,
   type Result,
-} from '@awaf/core';
+} from '@alphabet/core';
 import {
   protocolError,
-  type AwafProtocolError,
+  type AlphabetProtocolError,
 } from '../errors/index.js';
 import type {
-  AwafConsentOperation,
-  AwafConsentScope,
-  AwafMemoryPermission,
-  AwafToolContext,
+  AlphabetConsentOperation,
+  AlphabetConsentScope,
+  AlphabetMemoryPermission,
+  AlphabetToolContext,
 } from '../contract.js';
 
 // ─── Consent Scope ───────────────────────────────────────────────────────────
@@ -43,11 +43,11 @@ import type {
 export function makeConsentScope(
   tier: ConsentTier,
   options: {
-    operations?: readonly AwafConsentOperation[];
+    operations?: readonly AlphabetConsentOperation[];
     memoryDomains?: readonly MemoryDomain[];
     respectsPrivacySignals?: boolean;
   } = {}
-): AwafConsentScope {
+): AlphabetConsentScope {
   return {
     tier,
     operations: options.operations ?? [],
@@ -66,9 +66,9 @@ export function makeConsentScope(
  * the server-side consent manager.
  */
 export function validateConsentScope(
-  scope: AwafConsentScope,
+  scope: AlphabetConsentScope,
   authoritative: { tier: ConsentTier; privacy: PrivacySignals }
-): Result<AwafConsentScope, AwafProtocolError> {
+): Result<AlphabetConsentScope, AlphabetProtocolError> {
   const { tier, privacy } = authoritative;
 
   // If the caller does not respect DNT/GPC, refuse anything beyond
@@ -91,7 +91,7 @@ export function validateConsentScope(
   for (const op of scope.operations) {
     switch (op) {
       case 'read_context':
-        // Always allowed — context exposed via AwafToolContext is
+        // Always allowed — context exposed via AlphabetToolContext is
         // already PII-free by construction.
         break;
       case 'read_memory':
@@ -174,7 +174,7 @@ const ADMIN_WRITE_ONLY_DOMAINS: ReadonlySet<MemoryDomain> = new Set<MemoryDomain
 export function evaluateMemoryPermission(
   domain: MemoryDomain,
   authoritative: { tier: ConsentTier; privacy: PrivacySignals }
-): AwafMemoryPermission {
+): AlphabetMemoryPermission {
   const { tier, privacy } = authoritative;
 
   // DNT/GPC forces read-only context with no memory access at all.
@@ -213,7 +213,7 @@ export function evaluateMemoryPermission(
     : CONSENT_TIER_LEVEL[tier] >=
       (requiresEnriched ? CONSENT_TIER_LEVEL.CONSENTED : CONSENT_TIER_LEVEL.ANONYMOUS);
 
-  const permission: AwafMemoryPermission = {
+  const permission: AlphabetMemoryPermission = {
     domain,
     canRead,
     canWrite,
@@ -231,7 +231,7 @@ export function evaluateMemoryPermission(
 /**
  * Patterns that strongly indicate Personally Identifiable Information.
  * Used as a defensive last line of defense — adapters should not be
- * passing PII into AwafToolContext in the first place.
+ * passing PII into AlphabetToolContext in the first place.
  */
 const PII_PATTERNS: readonly RegExp[] = [
   /[\w.+-]+@[\w-]+\.[\w.-]+/i,                 // email
@@ -254,11 +254,11 @@ export function looksLikePII(value: string): boolean {
  * adapters before exposing context to external agents (MCP, A2A).
  */
 export function ensureNoPIIInContext(
-  context: AwafToolContext
-): Result<AwafToolContext, AwafProtocolError> {
+  context: AlphabetToolContext
+): Result<AlphabetToolContext, AlphabetProtocolError> {
   // Only string fields are checked; ConsentTier / boolean / layer are
   // fixed enums and cannot contain PII.
-  const stringFields: ReadonlyArray<readonly [keyof AwafToolContext, string | undefined]> = [
+  const stringFields: ReadonlyArray<readonly [keyof AlphabetToolContext, string | undefined]> = [
     ['visitorId', context.visitorId],
     ['sessionId', context.sessionId],
     ['locale', context.locale],

@@ -1,25 +1,25 @@
 /**
- * useAwafConsent — state machine + persistence + privacy signal lock.
+ * useAlphabetConsent — state machine + persistence + privacy signal lock.
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { useAwafConsent, DEFAULT_CONSENT_STORAGE_KEY } from './useAwafConsent.js';
+import { useAlphabetConsent, DEFAULT_CONSENT_STORAGE_KEY } from './useAlphabetConsent.js';
 
-describe('useAwafConsent', () => {
+describe('useAlphabetConsent', () => {
   beforeEach(() => {
     window.localStorage.clear();
   });
 
   it('starts in pending state with NO_MEMORY tier', () => {
-    const { result } = renderHook(() => useAwafConsent());
+    const { result } = renderHook(() => useAlphabetConsent());
     expect(result.current.state).toBe('pending');
     expect(result.current.tier).toBe('NO_MEMORY');
     expect(result.current.purposes).toEqual([]);
   });
 
   it('grant() upgrades to CONSENTED and persists to localStorage', () => {
-    const { result } = renderHook(() => useAwafConsent());
+    const { result } = renderHook(() => useAlphabetConsent());
     act(() => result.current.grant('CONSENTED', ['personalization']));
     expect(result.current.state).toBe('granted');
     expect(result.current.tier).toBe('CONSENTED');
@@ -31,7 +31,7 @@ describe('useAwafConsent', () => {
   });
 
   it('revoke() resets to NO_MEMORY/revoked', () => {
-    const { result } = renderHook(() => useAwafConsent());
+    const { result } = renderHook(() => useAlphabetConsent());
     act(() => result.current.grant('CONSENTED'));
     act(() => result.current.revoke());
     expect(result.current.state).toBe('revoked');
@@ -40,7 +40,7 @@ describe('useAwafConsent', () => {
   });
 
   it('reset() returns to pending', () => {
-    const { result } = renderHook(() => useAwafConsent());
+    const { result } = renderHook(() => useAlphabetConsent());
     act(() => result.current.grant('CONSENTED'));
     act(() => result.current.reset());
     expect(result.current.state).toBe('pending');
@@ -55,7 +55,7 @@ describe('useAwafConsent', () => {
       updatedAt: '2025-01-01T00:00:00.000Z',
     };
     window.localStorage.setItem(DEFAULT_CONSENT_STORAGE_KEY, JSON.stringify(snapshot));
-    const { result } = renderHook(() => useAwafConsent());
+    const { result } = renderHook(() => useAlphabetConsent());
     expect(result.current.tier).toBe('ENRICHED');
     expect(result.current.state).toBe('granted');
     expect(result.current.purposes).toContain('behavioral_learning');
@@ -63,7 +63,7 @@ describe('useAwafConsent', () => {
 
   it('locks to NO_MEMORY when DNT or GPC is active', () => {
     const { result } = renderHook(() =>
-      useAwafConsent({ privacySignals: { dntEnabled: true, gpcEnabled: false } })
+      useAlphabetConsent({ privacySignals: { dntEnabled: true, gpcEnabled: false } })
     );
     expect(result.current.lockedByPrivacySignal).toBe(true);
     expect(result.current.tier).toBe('NO_MEMORY');
@@ -74,9 +74,9 @@ describe('useAwafConsent', () => {
   });
 
   it('uses isolated storageKey per options', () => {
-    const { result } = renderHook(() => useAwafConsent({ storageKey: 'awaf:custom' }));
+    const { result } = renderHook(() => useAlphabetConsent({ storageKey: 'alphabet:custom' }));
     act(() => result.current.grant('ANONYMOUS'));
-    expect(window.localStorage.getItem('awaf:custom')).not.toBeNull();
+    expect(window.localStorage.getItem('alphabet:custom')).not.toBeNull();
     expect(window.localStorage.getItem(DEFAULT_CONSENT_STORAGE_KEY)).toBeNull();
   });
 });

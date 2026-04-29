@@ -1,14 +1,14 @@
 /**
  * @file sdk.test.ts
- * @description End-to-end test of the AwafAiClient — exercises the full
+ * @description End-to-end test of the AlphabetAiClient — exercises the full
  * pipeline (consent injection → PII redaction → compression → provider).
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { AwafAiClient, prepareRequest } from './index.js';
-import type { AwafGenerationRequest, AwafProviderAdapter, AwafStreamChunk } from '../types.js';
+import { AlphabetAiClient, prepareRequest } from './index.js';
+import type { AlphabetGenerationRequest, AlphabetProviderAdapter, AlphabetStreamChunk } from '../types.js';
 
-const REQ_BASE: Omit<AwafGenerationRequest, 'messages'> = {
+const REQ_BASE: Omit<AlphabetGenerationRequest, 'messages'> = {
   model: 'm',
   context: {
     visitorId: 'v',
@@ -22,15 +22,15 @@ const REQ_BASE: Omit<AwafGenerationRequest, 'messages'> = {
 };
 
 function captureProvider(): {
-  adapter: AwafProviderAdapter;
-  lastRequest: () => AwafGenerationRequest | undefined;
+  adapter: AlphabetProviderAdapter;
+  lastRequest: () => AlphabetGenerationRequest | undefined;
 } {
-  let last: AwafGenerationRequest | undefined;
-  const adapter: AwafProviderAdapter = {
+  let last: AlphabetGenerationRequest | undefined;
+  const adapter: AlphabetProviderAdapter = {
     id: 'mock',
     name: 'mock',
     // eslint-disable-next-line @typescript-eslint/require-await
-    stream: async function* (req): AsyncIterable<AwafStreamChunk> {
+    stream: async function* (req): AsyncIterable<AlphabetStreamChunk> {
       last = req;
       yield { type: 'text-delta', text: 'ok' };
       yield { type: 'finish', reason: 'stop' };
@@ -88,10 +88,10 @@ describe('prepareRequest', () => {
   });
 });
 
-describe('AwafAiClient', () => {
+describe('AlphabetAiClient', () => {
   it('generates via the underlying provider', async () => {
     const { adapter, lastRequest } = captureProvider();
-    const client = new AwafAiClient({ provider: adapter });
+    const client = new AlphabetAiClient({ provider: adapter });
     const r = await client.generate({
       ...REQ_BASE,
       messages: [{ role: 'user', content: 'hi' }],
@@ -102,7 +102,7 @@ describe('AwafAiClient', () => {
 
   it('streams chunks from the provider', async () => {
     const { adapter } = captureProvider();
-    const client = new AwafAiClient({ provider: adapter });
+    const client = new AlphabetAiClient({ provider: adapter });
     const out: string[] = [];
     for await (const c of client.stream({ ...REQ_BASE, messages: [{ role: 'user', content: 'hi' }] })) {
       if (c.type === 'text-delta') out.push(c.text);
@@ -112,7 +112,7 @@ describe('AwafAiClient', () => {
 
   it('refuses dispatch when consent proof verification fails', async () => {
     const { adapter, lastRequest } = captureProvider();
-    const client = new AwafAiClient({ provider: adapter });
+    const client = new AlphabetAiClient({ provider: adapter });
     const kp = (await crypto.subtle.generateKey(
       { name: 'ECDSA', namedCurve: 'P-256' },
       true,
@@ -124,7 +124,7 @@ describe('AwafAiClient', () => {
         consentProof: {
           token: 'bogus.token',
           publicKey: kp.publicKey,
-          expectedAudience: 'awaf:demo',
+          expectedAudience: 'alphabet:demo',
         },
       },
     );
@@ -134,7 +134,7 @@ describe('AwafAiClient', () => {
 
   it('respects disablePiiRedaction', () => {
     const { adapter } = captureProvider();
-    const client = new AwafAiClient({ provider: adapter, disablePiiRedaction: true });
+    const client = new AlphabetAiClient({ provider: adapter, disablePiiRedaction: true });
     const onChunk = vi.fn();
     return (async () => {
       for await (const c of client.stream({

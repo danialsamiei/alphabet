@@ -1,11 +1,11 @@
 /**
- * @module @awaf/protocols/v2/providers/openai
+ * @module @alphabet/protocols/v2/providers/openai
  * @description
  * OpenAI provider adapter — wraps the shared OpenAI-compatible adapter
  * with OpenAI's defaults.
  */
 
-import type { AwafProviderAdapter } from '../types.js';
+import type { AlphabetProviderAdapter } from '../types.js';
 import {
   createOpenAiCompatAdapter,
   type OpenAiCompatAdapterOptions,
@@ -18,7 +18,7 @@ export type OpenAiProviderOptions = Omit<OpenAiCompatAdapterOptions, 'id' | 'nam
 };
 
 /** Create an OpenAI provider adapter. */
-export function createOpenAiProvider(options: OpenAiProviderOptions): AwafProviderAdapter {
+export function createOpenAiProvider(options: OpenAiProviderOptions): AlphabetProviderAdapter {
   return createOpenAiCompatAdapter({
     id: 'openai',
     name: 'OpenAI',

@@ -10,22 +10,22 @@
  *
  * The orchestrator is dependency-injection friendly (collector / pipeline /
  * engine can all be replaced for tests) and never throws — every failure
- * path is reported via `Result<HandshakeOutcome, AWAFError>`.
+ * path is reported via `Result<HandshakeOutcome, AlphabetError>`.
  *
  * **Privacy contract.** The orchestrator forwards `allowPreciseGeo` to the
  * enrichment pipeline only when the caller has *already* verified consent.
  * It never decides on consent itself; that is `ConsentTierManager`'s job.
  *
- * **Events.** When an `AWAFEventEmitter` is supplied, the orchestrator emits
+ * **Events.** When an `AlphabetEventEmitter` is supplied, the orchestrator emits
  * `handshake:complete` on success and `handshake:error` on failure with the
  * failing phase name. No payload contains PII.
  */
 
-import type { AWAFEventEmitter } from '../events/awaf-events.js';
+import type { AlphabetEventEmitter } from '../events/alphabet-events.js';
 import type { DetectedSignals, EnrichedContext } from '../types/visitor.js';
 import type { HandshakeDecision } from '../types/api.js';
 import type { VisitorId, SessionId } from '../types/brands.js';
-import { type AWAFError, type Result, ok, err } from '../types/result.js';
+import { type AlphabetError, type Result, ok, err } from '../types/result.js';
 import { SignalCollector, type SignalCollectorOptions } from './signal-collector.js';
 import { EnrichmentPipeline } from './enrichment-pipeline.js';
 import { HandshakeDecisionEngine } from './decision-engine.js';
@@ -35,7 +35,7 @@ import { HandshakeDecisionEngine } from './decision-engine.js';
 /**
  * فاز جاری handshake — برای گزارش خطا.
  * The phase that produced an error, used in `handshake:error` events and
- * `AWAFError.details.phase`.
+ * `AlphabetError.details.phase`.
  */
 export type HandshakePhase = 'collect' | 'enrich' | 'decide';
 
@@ -82,7 +82,7 @@ export interface HandshakeOrchestratorOptions {
   /** override HandshakeDecisionEngine — برای DI و تست */
   readonly engine?: HandshakeDecisionEngine;
   /** event emitter برای انتشار `handshake:complete` / `handshake:error` */
-  readonly events?: AWAFEventEmitter;
+  readonly events?: AlphabetEventEmitter;
   /** ساعت قابل تعویض (برای deterministic tests) — پیش‌فرض `Date.now` */
   readonly now?: () => number;
 }
@@ -104,8 +104,8 @@ export interface HandshakeOrchestratorOptions {
  * }
  *
  * @example
- * // With event emitter (e.g. wired into the AWAF event hub):
- * const events = new AWAFEventEmitter();
+ * // With event emitter (e.g. wired into the Alphabet event hub):
+ * const events = new AlphabetEventEmitter();
  * events.on('handshake:complete', (p) => track('handshake.ok', p));
  * events.on('handshake:error', (p) => track('handshake.fail', p));
  * new HandshakeOrchestrator({ events }).run();
@@ -113,7 +113,7 @@ export interface HandshakeOrchestratorOptions {
 export class HandshakeOrchestrator {
   private readonly pipeline: EnrichmentPipeline;
   private readonly engine: HandshakeDecisionEngine;
-  private readonly events: AWAFEventEmitter | undefined;
+  private readonly events: AlphabetEventEmitter | undefined;
   private readonly defaultCollector: SignalCollector | undefined;
   private readonly now: () => number;
 
@@ -131,9 +131,9 @@ export class HandshakeOrchestrator {
    * `Result.err` with `details.phase` set to the failing phase.
    *
    * @param options - گزینه‌های اجرا
-   * @returns Result<HandshakeOutcome, AWAFError>
+   * @returns Result<HandshakeOutcome, AlphabetError>
    */
-  run(options: HandshakeRunOptions = {}): Result<HandshakeOutcome, AWAFError> {
+  run(options: HandshakeRunOptions = {}): Result<HandshakeOutcome, AlphabetError> {
     const startedAt = this.now();
 
     // ─── Phase 1: collect ────────────────────────────────────────────────
@@ -194,11 +194,11 @@ export class HandshakeOrchestrator {
 
   private fail(
     phase: HandshakePhase,
-    cause: AWAFError
-  ): Result<HandshakeOutcome, AWAFError> {
+    cause: AlphabetError
+  ): Result<HandshakeOutcome, AlphabetError> {
     const details: Record<string, unknown> = { phase };
     if (cause.details !== undefined) details['cause'] = cause.details;
-    const error: AWAFError = {
+    const error: AlphabetError = {
       code: cause.code,
       message: cause.message,
       details,

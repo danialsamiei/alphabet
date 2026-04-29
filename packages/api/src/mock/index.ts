@@ -1,8 +1,8 @@
 /**
  * @module mock
  * @description
- * In-process mock server for `@awaf/api`. Provides deterministic responses
- * for all 16 AWAF endpoints with no external dependencies.
+ * In-process mock server for `@alphabet/api`. Provides deterministic responses
+ * for all 16 Alphabet endpoints with no external dependencies.
  *
  * @see ./server.ts for the public surface.
  */

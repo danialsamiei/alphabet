@@ -121,7 +121,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 }
 .ds-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-/* ─── Adaptive slot wrappers (showcase AWAF) ─── */
+/* ─── Adaptive slot wrappers (showcase Alphabet) ─── */
 .ds-adaptive { max-width: var(--ds-max); margin: 0 auto; }
 .ds-adaptive-css3d, .ds-adaptive-canvas {
   border: 1px dashed var(--ds-border);

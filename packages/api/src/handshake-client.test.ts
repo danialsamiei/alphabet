@@ -5,8 +5,8 @@
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { HandshakeClient } from './handshake-client.js';
-import type { HandshakeRequestPayload, AWAFResponse, HandshakeResult, ResponseMeta } from '@awaf/core';
-import type { VisitorId, SessionId, RequestId } from '@awaf/core';
+import type { HandshakeRequestPayload, AlphabetResponse, HandshakeResult, ResponseMeta } from '@alphabet/core';
+import type { VisitorId, SessionId, RequestId } from '@alphabet/core';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -54,7 +54,7 @@ const MOCK_META: ResponseMeta = {
 };
 
 function mockFetchSuccess(result: HandshakeResult): void {
-  const response: AWAFResponse<HandshakeResult> = {
+  const response: AlphabetResponse<HandshakeResult> = {
     requestId: MOCK_REQUEST_ID,
     success: true,
     data: result,
@@ -156,7 +156,7 @@ describe('HandshakeClient.execute()', () => {
           success: true,
           data: MOCK_RESULT,
           meta: MOCK_META,
-        } satisfies AWAFResponse<HandshakeResult>),
+        } satisfies AlphabetResponse<HandshakeResult>),
       })
     );
 
@@ -186,7 +186,7 @@ describe('HandshakeClient.execute()', () => {
         success: false,
         error: { code: 'CUSTOM_ERROR', message: 'Invalid' },
         meta: MOCK_META,
-      } satisfies AWAFResponse<HandshakeResult>),
+      } satisfies AlphabetResponse<HandshakeResult>),
     }));
 
     const client = new HandshakeClient(BASE_OPTIONS);
@@ -208,33 +208,33 @@ describe('HandshakeClient.execute()', () => {
     expect(url).toBe('http://localhost:3000/api/context/handshake');
   });
 
-  it('appends /api/awaf/v1 when apiBaseUrl has no prefix', async () => {
+  it('appends /api/alphabet/v1 when apiBaseUrl has no prefix', async () => {
     mockFetchSuccess(MOCK_RESULT);
     const client = new HandshakeClient({ ...BASE_OPTIONS, apiBaseUrl: 'http://localhost:3000' });
     await client.execute(MOCK_PAYLOAD);
 
     const fetchMock = vi.mocked(fetch);
     const [url] = fetchMock.mock.calls[0] as [string];
-    expect(url).toBe('http://localhost:3000/api/awaf/v1/context/handshake');
+    expect(url).toBe('http://localhost:3000/api/alphabet/v1/context/handshake');
   });
 
-  it('appends /api/awaf/v1 when apiBaseUrl is bare with trailing slash', async () => {
+  it('appends /api/alphabet/v1 when apiBaseUrl is bare with trailing slash', async () => {
     mockFetchSuccess(MOCK_RESULT);
     const client = new HandshakeClient({ ...BASE_OPTIONS, apiBaseUrl: 'http://localhost:3000/' });
     await client.execute(MOCK_PAYLOAD);
 
     const fetchMock = vi.mocked(fetch);
     const [url] = fetchMock.mock.calls[0] as [string];
-    expect(url).toBe('http://localhost:3000/api/awaf/v1/context/handshake');
+    expect(url).toBe('http://localhost:3000/api/alphabet/v1/context/handshake');
   });
 
-  it('leaves a fully-qualified /api/awaf/v1 base alone', async () => {
+  it('leaves a fully-qualified /api/alphabet/v1 base alone', async () => {
     mockFetchSuccess(MOCK_RESULT);
-    const client = new HandshakeClient({ ...BASE_OPTIONS, apiBaseUrl: 'http://localhost:3000/api/awaf/v1' });
+    const client = new HandshakeClient({ ...BASE_OPTIONS, apiBaseUrl: 'http://localhost:3000/api/alphabet/v1' });
     await client.execute(MOCK_PAYLOAD);
 
     const fetchMock = vi.mocked(fetch);
     const [url] = fetchMock.mock.calls[0] as [string];
-    expect(url).toBe('http://localhost:3000/api/awaf/v1/context/handshake');
+    expect(url).toBe('http://localhost:3000/api/alphabet/v1/context/handshake');
   });
 });

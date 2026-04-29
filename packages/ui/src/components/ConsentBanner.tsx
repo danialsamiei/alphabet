@@ -9,12 +9,12 @@
  */
 
 import { useId, type CSSProperties, type ReactNode } from 'react';
-import type { ConsentTier } from '@awaf/core';
-import { useAwafContext } from './AwafProvider.js';
+import type { ConsentTier } from '@alphabet/core';
+import { useAlphabetContext } from './AlphabetProvider.js';
 import {
-  useAwafConsent,
-  type UseAwafConsentReturn,
-} from '../hooks/useAwafConsent.js';
+  useAlphabetConsent,
+  type UseAlphabetConsentReturn,
+} from '../hooks/useAlphabetConsent.js';
 
 export interface ConsentBannerProps {
   /** تیتر بنر — پیش‌فرض انگلیسی. */
@@ -32,7 +32,7 @@ export interface ConsentBannerProps {
   /** آیا دکمه enriched نمایش داده شود. */
   readonly showEnriched?: boolean;
   /** override روی consent state — مفید برای استفاده standalone. */
-  readonly consent?: UseAwafConsentReturn;
+  readonly consent?: UseAlphabetConsentReturn;
   /** className اختیاری. */
   readonly className?: string;
   /** style override. */
@@ -82,7 +82,7 @@ const acceptStyle: CSSProperties = {
 export function ConsentBanner(props: ConsentBannerProps): JSX.Element | null {
   const {
     title = 'Your privacy choices',
-    description = 'AWAF can adapt this experience using anonymous browser signals only, or remember your preferences across visits if you consent.',
+    description = 'Alphabet can adapt this experience using anonymous browser signals only, or remember your preferences across visits if you consent.',
     acceptLabel = 'Accept',
     rejectLabel = 'Reject',
     enrichedLabel = 'Enable personalization',
@@ -94,9 +94,9 @@ export function ConsentBanner(props: ConsentBannerProps): JSX.Element | null {
     onChange,
   } = props;
 
-  const ctx = useAwafContext();
-  const standalone = useAwafConsent({});
-  const consent: UseAwafConsentReturn = consentOverride ?? ctx?.consent ?? standalone;
+  const ctx = useAlphabetContext();
+  const standalone = useAlphabetConsent({});
+  const consent: UseAlphabetConsentReturn = consentOverride ?? ctx?.consent ?? standalone;
   const headingId = useId();
   const descId = useId();
 
@@ -122,7 +122,7 @@ export function ConsentBanner(props: ConsentBannerProps): JSX.Element | null {
       aria-modal="false"
       aria-labelledby={headingId}
       aria-describedby={descId}
-      data-awaf-consent-banner
+      data-alphabet-consent-banner
       className={className}
       style={{ ...baseStyle, ...style }}
     >
@@ -133,14 +133,14 @@ export function ConsentBanner(props: ConsentBannerProps): JSX.Element | null {
         {description}
       </p>
       <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        <button type="button" onClick={accept} style={acceptStyle} data-awaf-action="accept">
+        <button type="button" onClick={accept} style={acceptStyle} data-alphabet-action="accept">
           {acceptLabel}
         </button>
-        <button type="button" onClick={reject} style={buttonStyle} data-awaf-action="reject">
+        <button type="button" onClick={reject} style={buttonStyle} data-alphabet-action="reject">
           {rejectLabel}
         </button>
         {showEnriched ? (
-          <button type="button" onClick={enriched} style={buttonStyle} data-awaf-action="enriched">
+          <button type="button" onClick={enriched} style={buttonStyle} data-alphabet-action="enriched">
             {enrichedLabel}
           </button>
         ) : null}

@@ -58,7 +58,7 @@ jobs:
       - name: Bundle size — size-limit
         run: pnpm size --json > size-report.json || pnpm size
 
-      - name: Bundle size — base @awaf/ui must stay R3F-free
+      - name: Bundle size — base @alphabet/ui must stay R3F-free
         run: pnpm size:check-r3f-free
 
       - name: OpenAPI spec validation

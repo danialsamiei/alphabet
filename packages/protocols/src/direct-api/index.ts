@@ -1,8 +1,8 @@
 /**
- * @module @awaf/protocols/direct-api
+ * @module @alphabet/protocols/direct-api
  * @description
  * Direct API adapter — converts incoming REST-like JSON payloads into
- * normalized `AwafProtocolRequest` objects, validates consent, and
+ * normalized `AlphabetProtocolRequest` objects, validates consent, and
  * produces normalized responses.
  *
  * The adapter is intentionally framework-agnostic: it does not depend on
@@ -11,33 +11,33 @@
  * authoritative consent state.
  */
 
-import { ok, err, type PrivacySignals, type Result } from '@awaf/core';
+import { ok, err, type PrivacySignals, type Result } from '@alphabet/core';
 import {
   protocolError,
-  type AwafProtocolError,
+  type AlphabetProtocolError,
 } from '../errors/index.js';
 import {
   ensureNoPIIInContext,
   validateConsentScope,
 } from '../normalizers/index.js';
 import type {
-  AwafProtocolRequest,
-  AwafProtocolResponse,
-  AwafToolContext,
-  AwafConsentScope,
+  AlphabetProtocolRequest,
+  AlphabetProtocolResponse,
+  AlphabetToolContext,
+  AlphabetConsentScope,
 } from '../contract.js';
 
 // ─── Input Shape ─────────────────────────────────────────────────────────────
 
 /**
  * Raw REST-like request body accepted by the Direct API adapter. This
- * mirrors the AWAF API envelope but accepts `unknown` payloads so that
+ * mirrors the Alphabet API envelope but accepts `unknown` payloads so that
  * the adapter can be reused across all 16 endpoints.
  */
 export interface DirectApiRequestBody<TPayload = unknown> {
   readonly operation: string;
-  readonly context: AwafToolContext;
-  readonly consent: AwafConsentScope;
+  readonly context: AlphabetToolContext;
+  readonly consent: AlphabetConsentScope;
   readonly payload: TPayload;
   readonly correlationId?: string;
 }
@@ -47,7 +47,7 @@ export interface DirectApiRequestBody<TPayload = unknown> {
  * always trusts this over the `context.consentTier` claimed by the client.
  */
 export interface AuthoritativeConsentState {
-  readonly tier: AwafConsentScope['tier'];
+  readonly tier: AlphabetConsentScope['tier'];
   readonly privacy: PrivacySignals;
 }
 
@@ -58,13 +58,13 @@ export interface AuthoritativeConsentState {
  */
 export class DirectApiAdapter {
   /**
-   * Convert a parsed REST body into a normalized `AwafProtocolRequest`.
+   * Convert a parsed REST body into a normalized `AlphabetProtocolRequest`.
    * Validates structure, consent scope, and PII-shape of the context.
    */
   normalizeRequest<TPayload>(
     body: DirectApiRequestBody<TPayload>,
     authoritative: AuthoritativeConsentState
-  ): Result<AwafProtocolRequest<TPayload>, AwafProtocolError> {
+  ): Result<AlphabetProtocolRequest<TPayload>, AlphabetProtocolError> {
     if (!body || typeof body !== 'object') {
       return err(
         protocolError('INVALID_PROTOCOL_REQUEST', 'Request body must be an object')
@@ -87,7 +87,7 @@ export class DirectApiAdapter {
     }
 
     // Override the client-claimed tier with the authoritative value.
-    const consent: AwafConsentScope = {
+    const consent: AlphabetConsentScope = {
       ...body.consent,
       tier: authoritative.tier,
     };
@@ -95,7 +95,7 @@ export class DirectApiAdapter {
     const consentResult = validateConsentScope(consent, authoritative);
     if (!consentResult.success) return consentResult;
 
-    const sanitizedContext: AwafToolContext = {
+    const sanitizedContext: AlphabetToolContext = {
       ...body.context,
       consentTier: authoritative.tier,
       privacyRestricted:
@@ -124,10 +124,10 @@ export class DirectApiAdapter {
    * Build a normalized success response for an already-handled request.
    */
   successResponse<TData>(
-    request: Pick<AwafProtocolRequest, 'correlationId' | 'protocol' | 'operation'>,
+    request: Pick<AlphabetProtocolRequest, 'correlationId' | 'protocol' | 'operation'>,
     data: TData,
     processingTimeMs: number
-  ): AwafProtocolResponse<TData> {
+  ): AlphabetProtocolResponse<TData> {
     return {
       correlationId: request.correlationId,
       protocol: request.protocol,
@@ -142,10 +142,10 @@ export class DirectApiAdapter {
    * Build a normalized error response.
    */
   errorResponse<TData = never>(
-    request: Pick<AwafProtocolRequest, 'correlationId' | 'protocol' | 'operation'>,
-    error: AwafProtocolError,
+    request: Pick<AlphabetProtocolRequest, 'correlationId' | 'protocol' | 'operation'>,
+    error: AlphabetProtocolError,
     processingTimeMs: number
-  ): AwafProtocolResponse<TData> {
+  ): AlphabetProtocolResponse<TData> {
     return {
       correlationId: request.correlationId,
       protocol: request.protocol,

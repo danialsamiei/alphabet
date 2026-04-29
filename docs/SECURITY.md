@@ -1,5 +1,5 @@
-# معماری امنیت — AWAF SDK
-# AWAF SDK Security Architecture
+# معماری امنیت — Alphabet SDK
+# Alphabet SDK Security Architecture
 
 > **نسخه:** 1.0.0 | **طبقه‌بندی:** Security-Critical
 > **استاندارد مرجع:** NIST AI 100-1, GDPR Art. 17, CCPA, ePrivacy Directive
@@ -26,7 +26,7 @@
 
 ### ۱.۱ Statement امنیتی
 
-> "AWAF SDK با اصل **Privacy-by-Design** و **Security-by-Design** طراحی شده است. هیچ data ای بدون explicit consent جمع‌آوری نمی‌شود، هیچ data ای بدون anonymization aggregate نمی‌شود، و هیچ data ای بدون audit trail حذف نمی‌شود."
+> "Alphabet SDK با اصل **Privacy-by-Design** و **Security-by-Design** طراحی شده است. هیچ data ای بدون explicit consent جمع‌آوری نمی‌شود، هیچ data ای بدون anonymization aggregate نمی‌شود، و هیچ data ای بدون audit trail حذف نمی‌شود."
 
 ### ۱.۲ نمودار معماری امنیت
 
@@ -79,7 +79,7 @@
 const prompt = `User said: ${userInput}`;  // ⚠️ Prompt injection risk
 
 // AFTER (secure):
-import { sanitizeInput } from '@awaf/security';
+import { sanitizeInput } from '@alphabet/security';
 const safeInput = sanitizeInput(userInput);  // ✅ Escaped + validated
 const prompt = `User said: ${safeInput}`;
 ```
@@ -180,7 +180,7 @@ canWrite(fromDomain: MemoryDomain, toDomain: MemoryDomain): boolean {
 **اقدامات:**
 - `pnpm install --frozen-lockfile` در CI
 - Audit: `pnpm audit` در pipeline
-- Zero runtime dependency در `@awaf/core`
+- Zero runtime dependency در `@alphabet/core`
 
 ---
 
@@ -295,7 +295,7 @@ Visitor
 
 ### ۴.۱ نقشه NIST AI RMF (Risk Management Framework)
 
-| NIST AI 100-1 Function | AWAF Implementation | فایل/ماژول |
+| NIST AI 100-1 Function | Alphabet Implementation | فایل/ماژول |
 |-----------------------|-------------------|------------|
 | **GOVERN** | Consent management system + audit trail | `ConsentTierManager.ts` |
 | **MAP** | Threat model with 8 categories + risk scoring | `security/src/threats/` |
@@ -306,7 +306,7 @@ Visitor
 
 ```
 GOVERN  ──────────────────────────────────────────────────
-  ├── Map-1.1: Context establishment  →  AWAFConfig class
+  ├── Map-1.1: Context establishment  →  AlphabetConfig class
   ├── Map-1.2: Categorize AI system   →  UILayer enum (1-5)
   ├── Govern-1.1: Legal compliance    →  GDPR/CCPA alignment
   └── Govern-1.2: Risk management     →  Threat register (8 categories)
@@ -327,14 +327,14 @@ MANAGE  ────────────────────────
   └── Manage-4.3: Risk communication  →  Transparency report
 ```
 
-### ۴.۳ Control Mapping NIST → AWAF
+### ۴.۳ Control Mapping NIST → Alphabet
 
-| NIST Control | AWAF Control | پیاده‌سازی |
+| NIST Control | Alphabet Control | پیاده‌سازی |
 |-------------|-------------|------------|
 | AI RMF GOVERN 1.1 | Consent Policy | `ConsentTierManager` |
 | AI RMF GOVERN 1.2 | Legal Mapping | `GDPR Art. 17 implementation` |
 | AI RMF GOVERN 2.1 | Risk Tolerance | Threat severity thresholds |
-| AI RMF MAP 1.1 | System Context | `AWAFConfig` + env vars |
+| AI RMF MAP 1.1 | System Context | `AlphabetConfig` + env vars |
 | AI RMF MAP 1.2 | AI System Category | `UILayer` + `CapabilityLayer` |
 | AI RMF MAP 2.1 | Risk Identification | 8 threat categories |
 | AI RMF MEASURE 1.1 | Metrics Selection | Coverage + k-anonymity + latency |
@@ -499,7 +499,7 @@ social ──► NO cross-read (isolated)
 // Endpoint: DELETE /api/visitor/memory
 export async function eraseVisitorMemory(
   request: EraseMemoryRequest
-): Promise<Result<EraseMemoryResponse, AWAFError>> {
+): Promise<Result<EraseMemoryResponse, AlphabetError>> {
   // ۱. احراز هویت
   const auth = await authenticate(request.visitorId, request.sessionId);
   if (!auth.success) return err(AUTH_ERROR);
@@ -586,7 +586,7 @@ export async function eraseVisitorMemory(
 
 ### ۸.۱ Do Not Track (DNT) Signal
 
-| سیگنال | مقدار | رفتار AWAF |
+| سیگنال | مقدار | رفتار Alphabet |
 |--------|-------|------------|
 | `navigator.doNotTrack` | `'1'` | Auto-downgrade به Tier 0 |
 | `navigator.doNotTrack` | `'0'` | Normal behavior |
@@ -594,7 +594,7 @@ export async function eraseVisitorMemory(
 
 ### ۸.۲ Global Privacy Control (GPC)
 
-| سیگنال | مقدار | رفتار AWAF |
+| سیگنال | مقدار | رفتار Alphabet |
 |--------|-------|------------|
 | `navigator.globalPrivacyControl` | `true` | Auto-downgrade به Tier 0 |
 | `navigator.globalPrivacyControl` | `false` | Normal behavior |
@@ -767,4 +767,4 @@ Entry 3: CONSENT_REVOKED
 
 ---
 
-*این سند بخشی از مستندات SDK AWAF است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*
+*این سند بخشی از مستندات SDK Alphabet است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*

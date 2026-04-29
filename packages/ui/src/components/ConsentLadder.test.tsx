@@ -4,7 +4,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useAwafConsent } from '../hooks/useAwafConsent.js';
+import { useAlphabetConsent } from '../hooks/useAlphabetConsent.js';
 import { ConsentLadder } from './ConsentLadder.js';
 
 function Harness({
@@ -14,7 +14,7 @@ function Harness({
   readonly dnt?: boolean;
   readonly onChange?: (tier: string) => void;
 }): JSX.Element {
-  const consent = useAwafConsent({
+  const consent = useAlphabetConsent({
     privacySignals: { dntEnabled: dnt },
   });
   return (
@@ -38,17 +38,17 @@ describe('ConsentLadder', () => {
   it('renders all four tiers as buttons in order', () => {
     render(<Harness />);
     const list = screen.getByRole('list', { name: /consent ladder/i });
-    const buttons = list.querySelectorAll('button[data-awaf-tier]');
+    const buttons = list.querySelectorAll('button[data-alphabet-tier]');
     expect(buttons).toHaveLength(4);
-    expect(buttons[0]?.getAttribute('data-awaf-tier')).toBe('NO_MEMORY');
-    expect(buttons[3]?.getAttribute('data-awaf-tier')).toBe('ENRICHED');
+    expect(buttons[0]?.getAttribute('data-alphabet-tier')).toBe('NO_MEMORY');
+    expect(buttons[3]?.getAttribute('data-alphabet-tier')).toBe('ENRICHED');
   });
 
   it('grants the chosen tier when a rung is clicked', () => {
     const onChange = vi.fn();
     render(<Harness onChange={onChange} />);
     const consented = document.querySelector(
-      'button[data-awaf-tier="CONSENTED"]',
+      'button[data-alphabet-tier="CONSENTED"]',
     ) as HTMLButtonElement;
     fireEvent.click(consented);
     expect(onChange).toHaveBeenCalledWith('CONSENTED');
@@ -61,13 +61,13 @@ describe('ConsentLadder', () => {
     render(<Harness />);
     fireEvent.click(
       document.querySelector(
-        'button[data-awaf-tier="ENRICHED"]',
+        'button[data-alphabet-tier="ENRICHED"]',
       ) as HTMLButtonElement,
     );
     expect(screen.getByTestId('tier').textContent).toBe('ENRICHED');
     fireEvent.click(
       document.querySelector(
-        'button[data-awaf-tier="NO_MEMORY"]',
+        'button[data-alphabet-tier="NO_MEMORY"]',
       ) as HTMLButtonElement,
     );
     expect(screen.getByTestId('state').textContent).toBe('revoked');
@@ -77,7 +77,7 @@ describe('ConsentLadder', () => {
   it('locks every tier above NO_MEMORY when DNT is active', () => {
     render(<Harness dnt />);
     const consented = document.querySelector(
-      'button[data-awaf-tier="CONSENTED"]',
+      'button[data-alphabet-tier="CONSENTED"]',
     ) as HTMLButtonElement;
     expect(consented.disabled).toBe(true);
     expect(consented).toHaveAttribute('aria-disabled', 'true');
@@ -85,7 +85,7 @@ describe('ConsentLadder', () => {
     // Click is a no-op when locked.
     expect(screen.getByTestId('tier').textContent).toBe('NO_MEMORY');
     const ladder = document.querySelector(
-      '[data-awaf-consent-ladder]',
+      '[data-alphabet-consent-ladder]',
     ) as HTMLElement;
     expect(ladder.querySelector('[role="status"]')?.textContent).toMatch(
       /DNT or GPC/i,
@@ -96,7 +96,7 @@ describe('ConsentLadder', () => {
     render(<Harness />);
     fireEvent.click(
       document.querySelector(
-        'button[data-awaf-tier="CONSENTED"]',
+        'button[data-alphabet-tier="CONSENTED"]',
       ) as HTMLButtonElement,
     );
     fireEvent.click(screen.getByRole('button', { name: /revoke all/i }));
@@ -107,7 +107,7 @@ describe('ConsentLadder', () => {
     render(<Harness />);
     fireEvent.click(
       document.querySelector(
-        'button[data-awaf-tier="ENRICHED"]',
+        'button[data-alphabet-tier="ENRICHED"]',
       ) as HTMLButtonElement,
     );
     fireEvent.click(screen.getByRole('button', { name: /reset/i }));

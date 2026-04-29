@@ -6,11 +6,11 @@
 import { describe, it, expect } from 'vitest';
 import { DirectApiAdapter, type DirectApiRequestBody } from './index.js';
 import { makeConsentScope } from '../normalizers/index.js';
-import type { AwafToolContext } from '../contract.js';
+import type { AlphabetToolContext } from '../contract.js';
 
 const adapter = new DirectApiAdapter();
 
-const baseContext: AwafToolContext = {
+const baseContext: AlphabetToolContext = {
   visitorId: 'v-abc12345',
   sessionId: 'sess-1',
   consentTier: 'ANONYMOUS',
@@ -19,7 +19,7 @@ const baseContext: AwafToolContext = {
 };
 
 describe('DirectApiAdapter.normalizeRequest', () => {
-  it('produces a normalized AwafProtocolRequest for a valid body', () => {
+  it('produces a normalized AlphabetProtocolRequest for a valid body', () => {
     const body: DirectApiRequestBody = {
       operation: 'context.handshake',
       context: baseContext,

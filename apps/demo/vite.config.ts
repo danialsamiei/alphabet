@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 
 /**
- * Vite config for the AWAF demo app.
+ * Vite config for the Alphabet demo app.
  *
  * Aliases point at the package source so `pnpm dev` works without a
  * prior `pnpm build`. The production `pnpm build` script runs `tsc`
@@ -15,14 +15,14 @@ export default defineConfig({
   resolve: {
     alias: [
       // Order matters: subpaths must come before the bare package alias so
-      // that `@awaf/api/mock` does not get rewritten to
+      // that `@alphabet/api/mock` does not get rewritten to
       // `<src/index.ts>/mock`.
-      { find: '@awaf/api/mock', replacement: resolve(__dirname, '../../packages/api/src/mock/index.ts') },
-      { find: '@awaf/api/transport', replacement: resolve(__dirname, '../../packages/api/src/transport/index.ts') },
-      { find: '@awaf/ui/styles/tokens.css', replacement: resolve(__dirname, '../../packages/ui/styles/tokens.css') },
-      { find: '@awaf/ui', replacement: resolve(__dirname, '../../packages/ui/src/index.ts') },
-      { find: '@awaf/core', replacement: resolve(__dirname, '../../packages/core/src/index.ts') },
-      { find: '@awaf/api', replacement: resolve(__dirname, '../../packages/api/src/index.ts') },
+      { find: '@alphabet/api/mock', replacement: resolve(__dirname, '../../packages/api/src/mock/index.ts') },
+      { find: '@alphabet/api/transport', replacement: resolve(__dirname, '../../packages/api/src/transport/index.ts') },
+      { find: '@alphabet/ui/styles/tokens.css', replacement: resolve(__dirname, '../../packages/ui/styles/tokens.css') },
+      { find: '@alphabet/ui', replacement: resolve(__dirname, '../../packages/ui/src/index.ts') },
+      { find: '@alphabet/core', replacement: resolve(__dirname, '../../packages/core/src/index.ts') },
+      { find: '@alphabet/api', replacement: resolve(__dirname, '../../packages/api/src/index.ts') },
     ],
   },
   build: {

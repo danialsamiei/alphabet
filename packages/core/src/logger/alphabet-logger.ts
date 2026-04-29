@@ -1,8 +1,8 @@
 /**
  * @module logger
  * @description
- * AWAFLogger — سیستم logging چهارسطحی با structured output و JSON sink.
- * AWAFLogger — four-level structured logging with optional JSON sink.
+ * AlphabetLogger — سیستم logging چهارسطحی با structured output و JSON sink.
+ * AlphabetLogger — four-level structured logging with optional JSON sink.
  */
 
 import type { LogLevel } from '../types/base.js';
@@ -29,9 +29,9 @@ export interface LogEntry {
 // ─── Logger Options ───────────────────────────────────────────────────────────
 
 /**
- * گزینه‌های راه‌اندازی AWAFLogger.
+ * گزینه‌های راه‌اندازی AlphabetLogger.
  */
-export interface AWAFLoggerOptions {
+export interface AlphabetLoggerOptions {
   /** حداقل سطح log که نمایش داده می‌شود */
   readonly minLevel: LogLevel;
   /** آیا خروجی JSON باشد (برای production) */
@@ -42,21 +42,21 @@ export interface AWAFLoggerOptions {
   readonly sink?: (entry: LogEntry) => void;
 }
 
-// ─── AWAFLogger Class ─────────────────────────────────────────────────────────
+// ─── AlphabetLogger Class ─────────────────────────────────────────────────────────
 
 /**
- * Logger structured چهارسطحی AWAF SDK.
+ * Logger structured چهارسطحی Alphabet SDK.
  * No PII should ever be passed to any log method.
  *
  * @example
- * const logger = new AWAFLogger({ minLevel: 'debug', jsonOutput: false, module: 'HandshakeClient' });
+ * const logger = new AlphabetLogger({ minLevel: 'debug', jsonOutput: false, module: 'HandshakeClient' });
  * logger.info('Handshake started', { sessionId: 'sess-abc' });
  * logger.error('Connection failed', { code: 'NETWORK_ERROR' });
  */
-export class AWAFLogger {
-  private readonly opts: Readonly<AWAFLoggerOptions>;
+export class AlphabetLogger {
+  private readonly opts: Readonly<AlphabetLoggerOptions>;
 
-  constructor(options: Partial<AWAFLoggerOptions> = {}) {
+  constructor(options: Partial<AlphabetLoggerOptions> = {}) {
     const frozen: {
       minLevel: LogLevel;
       jsonOutput: boolean;
@@ -68,23 +68,23 @@ export class AWAFLogger {
     };
     if (options.module !== undefined) frozen.module = options.module;
     if (options.sink !== undefined) frozen.sink = options.sink;
-    this.opts = Object.freeze(frozen) as Readonly<AWAFLoggerOptions>;
+    this.opts = Object.freeze(frozen) as Readonly<AlphabetLoggerOptions>;
   }
 
   /**
    * ساخت logger با نام module جدید (child logger).
    *
    * @param moduleName - نام module
-   * @returns AWAFLogger جدید با module مشخص
+   * @returns AlphabetLogger جدید با module مشخص
    */
-  child(moduleName: string): AWAFLogger {
+  child(moduleName: string): AlphabetLogger {
     const childOpts: { minLevel: LogLevel; jsonOutput: boolean; module: string; sink?: (entry: LogEntry) => void } = {
       minLevel: this.opts.minLevel,
       jsonOutput: this.opts.jsonOutput,
       module: moduleName,
     };
     if (this.opts.sink !== undefined) childOpts.sink = this.opts.sink;
-    return new AWAFLogger(childOpts);
+    return new AlphabetLogger(childOpts);
   }
 
   /**
@@ -153,7 +153,7 @@ export class AWAFLogger {
       return;
     }
 
-    const prefix = this.opts.module ? `[${this.opts.module}]` : '[AWAF]';
+    const prefix = this.opts.module ? `[${this.opts.module}]` : '[Alphabet]';
     const contextStr = context ? ` ${JSON.stringify(context)}` : '';
     const formatted = `${entry.timestamp} ${level.toUpperCase().padEnd(5)} ${prefix} ${message}${contextStr}`;
 

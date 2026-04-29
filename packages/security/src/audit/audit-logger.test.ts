@@ -1,16 +1,16 @@
 /**
  * @file audit-logger.test.ts
- * @description Tests for AWAFAuditLogger — sink wiring, PII redaction by
+ * @description Tests for AlphabetAuditLogger — sink wiring, PII redaction by
  * default, and per-category event shape.
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { AWAFAuditLogger, InMemoryAuditSink } from './audit-logger.js';
+import { AlphabetAuditLogger, InMemoryAuditSink } from './audit-logger.js';
 
-describe('AWAFAuditLogger — sink wiring', () => {
+describe('AlphabetAuditLogger — sink wiring', () => {
   it('forwards events to the configured sink', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write });
+    const logger = new AlphabetAuditLogger({ sink: sink.write });
     logger.consentChanged({
       previousState: 'pending',
       nextState: 'granted',
@@ -24,7 +24,7 @@ describe('AWAFAuditLogger — sink wiring', () => {
   });
 
   it('does not throw when the sink throws', () => {
-    const logger = new AWAFAuditLogger({
+    const logger = new AlphabetAuditLogger({
       sink: () => {
         throw new Error('boom');
       },
@@ -40,7 +40,7 @@ describe('AWAFAuditLogger — sink wiring', () => {
 
   it('uses defaultCorrelationId when none is supplied', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write, defaultCorrelationId: 'req-1' });
+    const logger = new AlphabetAuditLogger({ sink: sink.write, defaultCorrelationId: 'req-1' });
     logger.policyVersionChanged({
       previousVersion: '2025-01-01',
       nextVersion: '2025-04-01',
@@ -51,7 +51,7 @@ describe('AWAFAuditLogger — sink wiring', () => {
 
   it('lets explicit correlationId override the default', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write, defaultCorrelationId: 'default-id' });
+    const logger = new AlphabetAuditLogger({ sink: sink.write, defaultCorrelationId: 'default-id' });
     logger.consentChanged(
       {
         previousState: 'pending',
@@ -65,10 +65,10 @@ describe('AWAFAuditLogger — sink wiring', () => {
   });
 });
 
-describe('AWAFAuditLogger — PII redaction', () => {
+describe('AlphabetAuditLogger — PII redaction', () => {
   it('redacts emails in event data by default', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write });
+    const logger = new AlphabetAuditLogger({ sink: sink.write });
     logger.outputRejected({
       kind: 'html',
       errorCode: 'CONTAINS_PII',
@@ -84,7 +84,7 @@ describe('AWAFAuditLogger — PII redaction', () => {
 
   it('does not redact when redactPII=false', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write, redactPII: false });
+    const logger = new AlphabetAuditLogger({ sink: sink.write, redactPII: false });
     logger.outputRejected({
       kind: 'html',
       errorCode: 'CONTAINS_PII',
@@ -98,10 +98,10 @@ describe('AWAFAuditLogger — PII redaction', () => {
   });
 });
 
-describe('AWAFAuditLogger — severity by category', () => {
+describe('AlphabetAuditLogger — severity by category', () => {
   it('emits prompt_risk_detected with severity matching the level', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write });
+    const logger = new AlphabetAuditLogger({ sink: sink.write });
     logger.promptRiskDetected({ level: 'high', score: 0.9, action: 'block', patterns: ['ignore_previous'] });
     logger.promptRiskDetected({ level: 'low', score: 0.0, action: 'allow', patterns: [] });
     const events = sink.snapshot();
@@ -111,7 +111,7 @@ describe('AWAFAuditLogger — severity by category', () => {
 
   it('emits memory_write_blocked with severity warning', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write });
+    const logger = new AlphabetAuditLogger({ sink: sink.write });
     logger.memoryWriteBlocked({
       domain: 'visitor',
       consentTier: 'NO_MEMORY',
@@ -125,7 +125,7 @@ describe('AWAFAuditLogger — severity by category', () => {
 describe('InMemoryAuditSink', () => {
   it('respects the bufferLimit option', () => {
     const sink = new InMemoryAuditSink({ bufferLimit: 2 });
-    const logger = new AWAFAuditLogger({ sink: sink.write });
+    const logger = new AlphabetAuditLogger({ sink: sink.write });
     for (let i = 0; i < 5; i += 1) {
       logger.consentChanged({
         previousState: 'pending',
@@ -140,7 +140,7 @@ describe('InMemoryAuditSink', () => {
 
   it('byCategory filters correctly', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write });
+    const logger = new AlphabetAuditLogger({ sink: sink.write });
     logger.consentChanged({
       previousState: 'pending',
       nextState: 'granted',
@@ -155,7 +155,7 @@ describe('InMemoryAuditSink', () => {
 
   it('clear() empties the buffer', () => {
     const sink = new InMemoryAuditSink();
-    const logger = new AWAFAuditLogger({ sink: sink.write });
+    const logger = new AlphabetAuditLogger({ sink: sink.write });
     logger.consentChanged({
       previousState: 'pending',
       nextState: 'granted',
@@ -167,10 +167,10 @@ describe('InMemoryAuditSink', () => {
   });
 });
 
-describe('AWAFAuditLogger — function sinks', () => {
+describe('AlphabetAuditLogger — function sinks', () => {
   it('accepts a plain function sink', () => {
     const fn = vi.fn();
-    const logger = new AWAFAuditLogger({ sink: fn });
+    const logger = new AlphabetAuditLogger({ sink: fn });
     logger.consentChanged({
       previousState: 'pending',
       nextState: 'granted',

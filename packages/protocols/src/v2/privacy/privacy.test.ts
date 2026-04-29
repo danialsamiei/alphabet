@@ -9,8 +9,8 @@ import {
   redactPromptPII,
   injectConsentAwareContext,
 } from './index.js';
-import type { AwafChatMessage } from '../types.js';
-import type { AwafToolContext } from '../../contract.js';
+import type { AlphabetChatMessage } from '../types.js';
+import type { AlphabetToolContext } from '../../contract.js';
 
 describe('redactPromptString', () => {
   it('redacts email addresses', () => {
@@ -41,7 +41,7 @@ describe('redactPromptString', () => {
 
 describe('redactPromptPII', () => {
   it('aggregates redaction across messages', () => {
-    const msgs: AwafChatMessage[] = [
+    const msgs: AlphabetChatMessage[] = [
       { role: 'user', content: 'email: a@b.co' },
       { role: 'assistant', content: 'phone: +1 415 555 2671' },
     ];
@@ -51,14 +51,14 @@ describe('redactPromptPII', () => {
     expect(r.messages[0]?.content).toContain('[email]');
   });
   it('preserves message references when nothing changes', () => {
-    const msgs: AwafChatMessage[] = [{ role: 'user', content: 'hello' }];
+    const msgs: AlphabetChatMessage[] = [{ role: 'user', content: 'hello' }];
     const r = redactPromptPII(msgs);
     expect(r.messages[0]).toBe(msgs[0]);
   });
 });
 
 describe('injectConsentAwareContext', () => {
-  const baseContext: AwafToolContext = {
+  const baseContext: AlphabetToolContext = {
     visitorId: 'vst_abc',
     sessionId: 'sess_xyz',
     consentTier: 'CONSENTED',
@@ -86,7 +86,7 @@ describe('injectConsentAwareContext', () => {
   });
 
   it('omits personalization when privacyRestricted is true', () => {
-    const ctx: AwafToolContext = { ...baseContext, privacyRestricted: true };
+    const ctx: AlphabetToolContext = { ...baseContext, privacyRestricted: true };
     const sys = injectConsentAwareContext(ctx, {
       privacy: { dntEnabled: false, gpcEnabled: false },
     });

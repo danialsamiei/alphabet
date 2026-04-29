@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 /**
  * Vite config for the Danial Samiei personal site.
  *
- * - Aliases AWAF packages to source so `pnpm dev` works without a
+ * - Aliases Alphabet packages to source so `pnpm dev` works without a
  *   prior monorepo build (matches `apps/demo` convention).
  * - Proxies `/api/assistant` to the local Node proxy
  *   (`server.mjs`, default :8787) which holds the GITHUB_TOKEN
@@ -15,8 +15,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@awaf/ui': resolve(__dirname, '../../packages/ui/src/index.ts'),
-      '@awaf/core': resolve(__dirname, '../../packages/core/src/index.ts'),
+      '@alphabet/ui': resolve(__dirname, '../../packages/ui/src/index.ts'),
+      '@alphabet/core': resolve(__dirname, '../../packages/core/src/index.ts'),
     },
   },
   server: {

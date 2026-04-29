@@ -1,5 +1,5 @@
 <!--
-  Thanks for contributing to AWAF!
+  Thanks for contributing to Alphabet!
   Please fill in this template — it speeds up review significantly.
 -->
 
@@ -17,11 +17,11 @@
 
 ## Affected packages
 
-- [ ] `@awaf/core`
-- [ ] `@awaf/api`
-- [ ] `@awaf/ui`
-- [ ] `@awaf/protocols`
-- [ ] `@awaf/security`
+- [ ] `@alphabet/core`
+- [ ] `@alphabet/api`
+- [ ] `@alphabet/ui`
+- [ ] `@alphabet/protocols`
+- [ ] `@alphabet/security`
 - [ ] `apps/demo` / `apps/danial-site`
 - [ ] tooling / CI / docs
 
@@ -43,7 +43,7 @@
 - [ ] `pnpm typecheck` clean
 - [ ] `pnpm test` passes (and new behaviour is covered)
 - [ ] `pnpm build` succeeds
-- [ ] `pnpm size` within budgets (and `pnpm size:check-r3f-free` if `@awaf/ui` changed)
+- [ ] `pnpm size` within budgets (and `pnpm size:check-r3f-free` if `@alphabet/ui` changed)
 - [ ] `pnpm openapi:lint` clean (if API contract changed)
 - [ ] No `any` in production code; no PII in logs
 - [ ] Files ≤ 300 lines, no circular deps
@@ -60,7 +60,7 @@
 ## AI agent attribution (if applicable)
 
 <!--
-  AWAF accepts AI-agent contributions. Per `docs/CONTRIBUTING.md`, tag the PR
+  Alphabet accepts AI-agent contributions. Per `docs/CONTRIBUTING.md`, tag the PR
   title prefix with the agent name, e.g. `[KIMI]`, `[COPILOT]`, `[CLAUDE]`.
   Note here which agent wrote / co-wrote the change.
 -->

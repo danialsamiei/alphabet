@@ -1,5 +1,5 @@
 /**
- * @module @awaf/protocols/v2/providers/shared
+ * @module @alphabet/protocols/v2/providers/shared
  * @description
  * Shared helpers used by every built-in provider adapter — fetch
  * wrapper, SSE parser, OpenAI-compatible streaming chunk decoder, and
@@ -7,17 +7,17 @@
  */
 
 import type {
-  AwafGenerationRequest,
-  AwafGenerationResponse,
-  AwafProviderAdapter,
-  AwafStreamChunk,
-  AwafToolCall,
-  AwafFinishReason,
-  AwafUsage,
+  AlphabetGenerationRequest,
+  AlphabetGenerationResponse,
+  AlphabetProviderAdapter,
+  AlphabetStreamChunk,
+  AlphabetToolCall,
+  AlphabetFinishReason,
+  AlphabetUsage,
 } from '../types.js';
-import type { Result } from '@awaf/core';
-import { ok, err } from '@awaf/core';
-import { protocolError, type AwafProtocolError } from '../../errors/index.js';
+import type { Result } from '@alphabet/core';
+import { ok, err } from '@alphabet/core';
+import { protocolError, type AlphabetProtocolError } from '../../errors/index.js';
 
 // ─── Fetch wiring ────────────────────────────────────────────────────────────
 
@@ -70,11 +70,11 @@ export function getFetch(options: ProviderClientOptions): FetchLike {
   return globalThis.fetch.bind(globalThis);
 }
 
-/** Convert a non-2xx Response to a typed AwafProtocolError. */
+/** Convert a non-2xx Response to a typed AlphabetProtocolError. */
 export async function responseError(
   res: Response,
   providerId: string,
-): Promise<AwafProtocolError> {
+): Promise<AlphabetProtocolError> {
   let body: string;
   try {
     body = await res.text();
@@ -142,22 +142,22 @@ function parseSseEvent(block: string): { event: string | null; data: string } | 
 // ─── Stream collapse ─────────────────────────────────────────────────────────
 
 /**
- * Collapse a stream of `AwafStreamChunk` into an `AwafGenerationResponse`.
+ * Collapse a stream of `AlphabetStreamChunk` into an `AlphabetGenerationResponse`.
  * Used by every provider's default `generate()` implementation.
  */
 export async function collapseStream(
   providerId: string,
   model: string,
-  iter: AsyncIterable<AwafStreamChunk>,
+  iter: AsyncIterable<AlphabetStreamChunk>,
   structured: boolean,
-): Promise<Result<AwafGenerationResponse, AwafProtocolError>> {
+): Promise<Result<AlphabetGenerationResponse, AlphabetProtocolError>> {
   let text = '';
   let structuredText = '';
-  const toolCalls: AwafToolCall[] = [];
+  const toolCalls: AlphabetToolCall[] = [];
   const partial = new Map<string, { name?: string; argsBuf: string }>();
-  let usage: AwafUsage | undefined;
-  let finishReason: AwafFinishReason = 'stop';
-  let lastError: AwafProtocolError | undefined;
+  let usage: AlphabetUsage | undefined;
+  let finishReason: AlphabetFinishReason = 'stop';
+  let lastError: AlphabetProtocolError | undefined;
 
   for await (const c of iter) {
     switch (c.type) {
@@ -228,10 +228,10 @@ export async function collapseStream(
  * may override if they prefer their non-streaming endpoint.
  */
 export function defaultGenerate(
-  adapter: Pick<AwafProviderAdapter, 'id' | 'stream'>,
+  adapter: Pick<AlphabetProviderAdapter, 'id' | 'stream'>,
 ): (
-  request: AwafGenerationRequest,
-) => Promise<Result<AwafGenerationResponse, AwafProtocolError>> {
+  request: AlphabetGenerationRequest,
+) => Promise<Result<AlphabetGenerationResponse, AlphabetProtocolError>> {
   return async (request) =>
     collapseStream(
       adapter.id,

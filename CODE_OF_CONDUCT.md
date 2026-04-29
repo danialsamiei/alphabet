@@ -3,7 +3,7 @@
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in the
-**AWAF** community a harassment-free experience for everyone, regardless of
+**Alphabet** community a harassment-free experience for everyone, regardless of
 age, body size, visible or invisible disability, ethnicity, sex characteristics,
 gender identity and expression, level of experience, education, socio-economic
 status, nationality, personal appearance, race, religion, or sexual identity
@@ -37,7 +37,7 @@ Examples of unacceptable behavior include:
 
 ## AI Agent Conduct
 
-AWAF accepts contributions from AI agents (Kimi, Copilot, Codex, Claude, etc.)
+Alphabet accepts contributions from AI agents (Kimi, Copilot, Codex, Claude, etc.)
 under tagged PR conventions described in [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
 Maintainers and human contributors are expected to extend the same respectful
 review standards to AI-generated contributions, while holding them to the same

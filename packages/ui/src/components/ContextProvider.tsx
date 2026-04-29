@@ -1,13 +1,13 @@
 /**
  * @module components/ContextProvider
  * @description
- * `ContextProvider` — runs the AWAF Context Handshake at mount and
+ * `ContextProvider` — runs the Alphabet Context Handshake at mount and
  * exposes a **live event stream** of phase / decision / signal-update /
  * error events to descendants, alongside the resolved decision.
  *
- * Built directly on `@awaf/core/handshake` (`SignalCollector`,
+ * Built directly on `@alphabet/core/handshake` (`SignalCollector`,
  * `EnrichmentPipeline`, `HandshakeDecisionEngine`) and the
- * `createContextStream` primitive from `@awaf/core/handshake/stream`.
+ * `createContextStream` primitive from `@alphabet/core/handshake/stream`.
  * The full enriched context is *never* placed on the stream — only
  * PII-free derived values, per the privacy contract documented in
  * `context-stream.ts`.
@@ -30,13 +30,13 @@ import {
   EnrichmentPipeline,
   HandshakeDecisionEngine,
   stream,
-} from '@awaf/core';
+} from '@alphabet/core';
 import type {
   HandshakeDecision,
   DetectedSignals,
   EnrichedContext,
   VisitorId,
-} from '@awaf/core';
+} from '@alphabet/core';
 
 type ContextStreamEvent = ReturnType<
   typeof stream.createContextStream
@@ -44,7 +44,7 @@ type ContextStreamEvent = ReturnType<
   ? E
   : never;
 type ContextStreamHandle = ReturnType<typeof stream.createContextStream>;
-// Local alias — the type is structural, defined in @awaf/core/handshake/stream.
+// Local alias — the type is structural, defined in @alphabet/core/handshake/stream.
 type SignalSnapshot = Extract<
   ContextStreamEvent,
   { readonly type: 'signal-update' }

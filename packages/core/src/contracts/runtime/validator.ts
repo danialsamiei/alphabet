@@ -1,7 +1,7 @@
 /**
  * @module contracts/runtime/validator
  * @description
- * Runtime validation primitives for the AWAF API boundary.
+ * Runtime validation primitives for the Alphabet API boundary.
  *
  * The {@link Validator} interface is the abstract contract: every validator
  * takes an `unknown` input and returns a `Result<T, ValidationError>`. The
@@ -13,7 +13,7 @@
  * consumers can opt in via dynamic import without forcing zod onto everyone.
  *
  * @example
- * import { v, validateOrError } from '@awaf/core/contracts/runtime';
+ * import { v, validateOrError } from '@alphabet/core/contracts/runtime';
  *
  * const userSchema = v.object({
  *   id: v.string(),
@@ -27,15 +27,15 @@
  * }
  */
 
-import type { AWAFError, Result } from '../../types/result.js';
+import type { AlphabetError, Result } from '../../types/result.js';
 import { err, ok } from '../../types/result.js';
 
 // ─── ValidationError ──────────────────────────────────────────────────────────
 
 /**
- * Structured validation failure. Extends {@link AWAFError} so that callers
- * already returning `Result<T, AWAFError>` do not need to widen their error
- * union — a validation failure is just one more `AWAFError` variant with a
+ * Structured validation failure. Extends {@link AlphabetError} so that callers
+ * already returning `Result<T, AlphabetError>` do not need to widen their error
+ * union — a validation failure is just one more `AlphabetError` variant with a
  * stable `code: 'VALIDATION_ERROR'`.
  *
  * The `path` array points at the offending field; e.g. for input
@@ -45,7 +45,7 @@ import { err, ok } from '../../types/result.js';
  * themselves — they describe shapes (e.g. `'number'`, `'object'`). This is
  * intentional: validation messages must never leak PII.
  */
-export interface ValidationError extends AWAFError {
+export interface ValidationError extends AlphabetError {
   readonly code: 'VALIDATION_ERROR';
   readonly message: string;
   readonly details: {

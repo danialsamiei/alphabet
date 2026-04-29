@@ -1,5 +1,5 @@
 {
-  "name": "@awaf/demo",
+  "name": "@alphabet/demo",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,11 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@awaf/core": "workspace:*",
-    "@awaf/api": "workspace:*",
-    "@awaf/ui": "workspace:*",
-    "@awaf/protocols": "workspace:*",
-    "@awaf/security": "workspace:*",
+    "@alphabet/core": "workspace:*",
+    "@alphabet/api": "workspace:*",
+    "@alphabet/ui": "workspace:*",
+    "@alphabet/protocols": "workspace:*",
+    "@alphabet/security": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

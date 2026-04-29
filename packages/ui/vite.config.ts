@@ -17,8 +17,8 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
-        '@awaf/core',
-        '@awaf/api',
+        '@alphabet/core',
+        '@alphabet/api',
         'react',
         'react-dom',
         'react/jsx-runtime',

@@ -1,5 +1,5 @@
 /**
- * @module hooks/useAwafHandshake
+ * @module hooks/useAlphabetHandshake
  * @description
  * Hook برای اجرای یا مصرف نتیجه Context Handshake.
  *
@@ -16,13 +16,13 @@ import {
   SignalCollector,
   EnrichmentPipeline,
   HandshakeDecisionEngine,
-} from '@awaf/core';
+} from '@alphabet/core';
 import type {
   HandshakeDecision,
   DetectedSignals,
   EnrichedContext,
   VisitorId,
-} from '@awaf/core';
+} from '@alphabet/core';
 import { isBrowser } from '../runtime/hydration-safe.js';
 import { mark } from '../runtime/performance-marks.js';
 
@@ -30,7 +30,7 @@ import { mark } from '../runtime/performance-marks.js';
 export type HandshakeStatus = 'idle' | 'running' | 'ready' | 'error';
 
 /** خروجی hook. */
-export interface UseAwafHandshakeReturn {
+export interface UseAlphabetHandshakeReturn {
   readonly status: HandshakeStatus;
   readonly decision: HandshakeDecision | null;
   readonly signals: DetectedSignals | null;
@@ -41,7 +41,7 @@ export interface UseAwafHandshakeReturn {
 }
 
 /** ورودی hook. */
-export interface UseAwafHandshakeOptions {
+export interface UseAlphabetHandshakeOptions {
   /**
    * snapshot از پیش محاسبه‌شده — اگر مقدار داشت، hook همان را
    * منتشر می‌کند و هیچ detection محلی انجام نمی‌دهد.
@@ -65,15 +65,15 @@ const PLACEHOLDER_VISITOR: VisitorId = 'v-anonymous-ssr' as VisitorId;
  *
  * @example
  * // Auto mode
- * const { decision, status } = useAwafHandshake();
+ * const { decision, status } = useAlphabetHandshake();
  *
  * @example
  * // Consume mode (SSR-safe: server runs handshake, client hydrates).
- * const { decision } = useAwafHandshake({ decision: serverDecision });
+ * const { decision } = useAlphabetHandshake({ decision: serverDecision });
  */
-export function useAwafHandshake(
-  options: UseAwafHandshakeOptions = {}
-): UseAwafHandshakeReturn {
+export function useAlphabetHandshake(
+  options: UseAlphabetHandshakeOptions = {}
+): UseAlphabetHandshakeReturn {
   const { decision: external, visitorId, collectorOverrides, skipAutoRun = false } = options;
 
   const [decision, setDecision] = useState<HandshakeDecision | null>(external ?? null);

@@ -22,7 +22,7 @@ import {
   TransparencyNotice,
   useLayer,
   type AdaptiveLayer,
-} from '@awaf/ui';
+} from '@alphabet/ui';
 
 const LAYERS: ReadonlyArray<AdaptiveLayer> = [
   'R3F_IMMERSIVE',
@@ -140,19 +140,19 @@ function LayerSwitcherInner(props: LayerSwitcherProps): JSX.Element {
   );
 
   return (
-    <div className="awaf-experience">
-      <p className="awaf-muted-text" style={{ marginTop: 0 }}>
-        Current layer: <span className="awaf-current-layer">{layer}</span> ·
+    <div className="alphabet-experience">
+      <p className="alphabet-muted-text" style={{ marginTop: 0 }}>
+        Current layer: <span className="alphabet-current-layer">{layer}</span> ·
         Reason: <code>{reasonCode}</code>
         {override !== undefined ? ' (overridden)' : ''}
       </p>
 
-      <div className="awaf-layer-buttons" role="group" aria-label="Force layer">
+      <div className="alphabet-layer-buttons" role="group" aria-label="Force layer">
         {LAYERS.map((l) => (
           <button
             key={l}
             type="button"
-            className="awaf-pill-btn"
+            className="alphabet-pill-btn"
             data-active={override === l ? 'true' : 'false'}
             onClick={() => setOverride(l)}
           >
@@ -161,7 +161,7 @@ function LayerSwitcherInner(props: LayerSwitcherProps): JSX.Element {
         ))}
         <button
           type="button"
-          className="awaf-pill-btn"
+          className="alphabet-pill-btn"
           data-active={override === undefined ? 'true' : 'false'}
           onClick={() => setOverride(undefined)}
         >
@@ -173,7 +173,7 @@ function LayerSwitcherInner(props: LayerSwitcherProps): JSX.Element {
 
       <section
         aria-label="Adaptive render output"
-        className="awaf-render-host awaf-crossfade"
+        className="alphabet-render-host alphabet-crossfade"
         // Re-key on layer to retrigger the CSS fade animation.
         key={layer + (override ?? '')}
         dir={props.localeDir}

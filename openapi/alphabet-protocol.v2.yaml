@@ -1,34 +1,34 @@
 openapi: 3.1.0
 info:
-  title: AwafProtocol v2 — AI Integration Layer
+  title: AlphabetProtocol v2 — AI Integration Layer
   version: 2.0.0
   description: |
-    AwafProtocol v2 is the streaming-first, provider-agnostic AI surface
-    of AWAF. It is **additive** to v1 (`openapi/awaf.v1.yaml`) — every
+    AlphabetProtocol v2 is the streaming-first, provider-agnostic AI surface
+    of Alphabet. It is **additive** to v1 (`openapi/alphabet.v1.yaml`) — every
     v1 route continues to work unchanged.
 
     The spec covers four endpoint families that map directly onto the
-    `@awaf/protocols/v2` TypeScript SDK:
+    `@alphabet/protocols/v2` TypeScript SDK:
 
-      • `POST /api/awaf/v2/ai/generate`   — non-streaming completion
-      • `POST /api/awaf/v2/ai/stream`     — streaming completion (SSE)
-      • `POST /api/awaf/v2/consent/proof/sign`   — server-side signing
-      • `POST /api/awaf/v2/consent/proof/verify` — server-side verification
-      • `POST /api/awaf/v2/pulse/forecast` — proactive layer downgrade hints
+      • `POST /api/alphabet/v2/ai/generate`   — non-streaming completion
+      • `POST /api/alphabet/v2/ai/stream`     — streaming completion (SSE)
+      • `POST /api/alphabet/v2/consent/proof/sign`   — server-side signing
+      • `POST /api/alphabet/v2/consent/proof/verify` — server-side verification
+      • `POST /api/alphabet/v2/pulse/forecast` — proactive layer downgrade hints
 
-    All requests carry the visitor's `AwafToolContext` so the server can
+    All requests carry the visitor's `AlphabetToolContext` so the server can
     perform consent-aware system-prelude injection and PII redaction
     *before* dispatching to a provider. Privacy-restricted requests
     (DNT/GPC) are honoured automatically.
   contact:
-    name: AWAF
+    name: Alphabet
     url: https://github.com/danialsamiei/awaf
   license:
     name: Apache-2.0
 
 servers:
   - url: https://api.example.com
-    description: Production AWAF deployment
+    description: Production Alphabet deployment
   - url: http://localhost:3000
     description: Local development
 
@@ -48,7 +48,7 @@ components:
       type: http
       scheme: bearer
       description: |
-        Bearer token issued by the AWAF runtime (HttpOnly cookie session
+        Bearer token issued by the Alphabet runtime (HttpOnly cookie session
         bridged into a short-lived JWT for upstream AI provider calls).
 
   schemas:
@@ -56,13 +56,13 @@ components:
     ConsentTier:
       type: string
       enum: [NO_MEMORY, ANONYMOUS, CONSENTED, ENRICHED]
-      description: AWAF consent ladder tier.
+      description: Alphabet consent ladder tier.
 
     CapabilityLayer:
       type: string
       enum: [R3F_IMMERSIVE, CSS_3D, CANVAS_2D, STATIC_HTML, TEXT_ONLY]
 
-    AwafToolContext:
+    AlphabetToolContext:
       type: object
       required: [visitorId, sessionId, consentTier, privacyRestricted]
       additionalProperties: false
@@ -81,7 +81,7 @@ components:
           type: boolean
           description: Whether DNT/GPC is currently active.
 
-    AwafConsentScope:
+    AlphabetConsentScope:
       type: object
       required: [tier, operations, memoryDomains, respectsPrivacySignals]
       additionalProperties: false
@@ -99,11 +99,11 @@ components:
             enum: [general, site_specific, visitor, class_notes, ideas, social, tech_pulse]
         respectsPrivacySignals: { type: boolean }
 
-    AwafChatRole:
+    AlphabetChatRole:
       type: string
       enum: [system, user, assistant, tool]
 
-    AwafToolCall:
+    AlphabetToolCall:
       type: object
       required: [id, name, arguments]
       additionalProperties: false
@@ -114,23 +114,23 @@ components:
           type: string
           description: JSON-encoded arguments string (matches OpenAI semantics).
 
-    AwafChatMessage:
+    AlphabetChatMessage:
       type: object
       required: [role, content]
       additionalProperties: false
       properties:
-        role: { $ref: '#/components/schemas/AwafChatRole' }
+        role: { $ref: '#/components/schemas/AlphabetChatRole' }
         content: { type: string }
         toolCallId: { type: string }
         name: { type: string }
         toolCalls:
           type: array
-          items: { $ref: '#/components/schemas/AwafToolCall' }
+          items: { $ref: '#/components/schemas/AlphabetToolCall' }
         priority:
           type: integer
           description: Lower priority messages are dropped first by compression.
 
-    AwafToolDefinition:
+    AlphabetToolDefinition:
       type: object
       required: [name, description, parameters]
       additionalProperties: false
@@ -141,7 +141,7 @@ components:
           type: object
           description: JSON Schema (subset).
 
-    AwafStructuredOutputSpec:
+    AlphabetStructuredOutputSpec:
       type: object
       required: [mode]
       additionalProperties: false
@@ -150,7 +150,7 @@ components:
         name: { type: string }
         schema: { type: object }
 
-    AwafSampling:
+    AlphabetSampling:
       type: object
       additionalProperties: false
       properties:
@@ -168,7 +168,7 @@ components:
             `composeCompression` until this budget is met before
             dispatching to a provider.
 
-    AwafGenerationRequest:
+    AlphabetGenerationRequest:
       type: object
       required: [model, messages, context]
       additionalProperties: false
@@ -177,10 +177,10 @@ components:
         messages:
           type: array
           minItems: 1
-          items: { $ref: '#/components/schemas/AwafChatMessage' }
+          items: { $ref: '#/components/schemas/AlphabetChatMessage' }
         tools:
           type: array
-          items: { $ref: '#/components/schemas/AwafToolDefinition' }
+          items: { $ref: '#/components/schemas/AlphabetToolDefinition' }
         toolChoice:
           oneOf:
             - type: string
@@ -189,18 +189,18 @@ components:
               required: [name]
               properties:
                 name: { type: string }
-        structuredOutput: { $ref: '#/components/schemas/AwafStructuredOutputSpec' }
-        sampling: { $ref: '#/components/schemas/AwafSampling' }
-        context: { $ref: '#/components/schemas/AwafToolContext' }
+        structuredOutput: { $ref: '#/components/schemas/AlphabetStructuredOutputSpec' }
+        sampling: { $ref: '#/components/schemas/AlphabetSampling' }
+        context: { $ref: '#/components/schemas/AlphabetToolContext' }
         consentProof:
           type: string
           description: Optional `ConsentProofToken` (`payload.signature`).
 
-    AwafFinishReason:
+    AlphabetFinishReason:
       type: string
       enum: [stop, length, tool_call, content_filter, error]
 
-    AwafUsage:
+    AlphabetUsage:
       type: object
       additionalProperties: false
       properties:
@@ -208,7 +208,7 @@ components:
         completionTokens: { type: integer }
         totalTokens: { type: integer }
 
-    AwafGenerationResponse:
+    AlphabetGenerationResponse:
       type: object
       required: [text, toolCalls, finishReason, model, providerId]
       additionalProperties: false
@@ -216,11 +216,11 @@ components:
         text: { type: string }
         toolCalls:
           type: array
-          items: { $ref: '#/components/schemas/AwafToolCall' }
+          items: { $ref: '#/components/schemas/AlphabetToolCall' }
         structured:
           description: Parsed JSON value when `structuredOutput` was requested.
-        finishReason: { $ref: '#/components/schemas/AwafFinishReason' }
-        usage: { $ref: '#/components/schemas/AwafUsage' }
+        finishReason: { $ref: '#/components/schemas/AlphabetFinishReason' }
+        usage: { $ref: '#/components/schemas/AlphabetUsage' }
         model: { type: string }
         providerId: { type: string }
         diagnostics:
@@ -234,7 +234,7 @@ components:
             tokensBeforeCompression: { type: integer }
             tokensAfterCompression: { type: integer }
 
-    AwafStreamChunk:
+    AlphabetStreamChunk:
       oneOf:
         - type: object
           required: [type, text]
@@ -250,7 +250,7 @@ components:
           required: [type, toolCall]
           properties:
             type: { type: string, enum: [tool-call] }
-            toolCall: { $ref: '#/components/schemas/AwafToolCall' }
+            toolCall: { $ref: '#/components/schemas/AlphabetToolCall' }
         - type: object
           required: [type, id, argumentsDelta]
           properties:
@@ -262,20 +262,20 @@ components:
           required: [type, usage]
           properties:
             type: { type: string, enum: [usage] }
-            usage: { $ref: '#/components/schemas/AwafUsage' }
+            usage: { $ref: '#/components/schemas/AlphabetUsage' }
         - type: object
           required: [type, reason]
           properties:
             type: { type: string, enum: [finish] }
-            reason: { $ref: '#/components/schemas/AwafFinishReason' }
-            usage: { $ref: '#/components/schemas/AwafUsage' }
+            reason: { $ref: '#/components/schemas/AlphabetFinishReason' }
+            usage: { $ref: '#/components/schemas/AlphabetUsage' }
         - type: object
           required: [type, error]
           properties:
             type: { type: string, enum: [error] }
-            error: { $ref: '#/components/schemas/AwafProtocolError' }
+            error: { $ref: '#/components/schemas/AlphabetProtocolError' }
 
-    AwafProtocolError:
+    AlphabetProtocolError:
       type: object
       required: [code, message]
       additionalProperties: false
@@ -309,7 +309,7 @@ components:
       properties:
         v: { type: string, enum: [v2] }
         visitorId: { type: string }
-        scope: { $ref: '#/components/schemas/AwafConsentScope' }
+        scope: { $ref: '#/components/schemas/AlphabetConsentScope' }
         audience: { type: string }
         issuedAt: { type: integer, description: Epoch ms }
         expiresAt: { type: integer, description: Epoch ms }
@@ -358,19 +358,19 @@ components:
 
 paths:
 
-  /api/awaf/v2/ai/generate:
+  /api/alphabet/v2/ai/generate:
     post:
       tags: [ai]
       operationId: generate
       summary: Non-streaming AI generation.
       description: |
-        Runs the full AwafProtocol v2 pipeline server-side
+        Runs the full AlphabetProtocol v2 pipeline server-side
         (consent-proof verification → consent-aware prelude → PII
         redaction → context compression → provider) and returns the
         collapsed generation. Equivalent to:
 
         ```ts
-        const client = new AwafAiClient({ provider });
+        const client = new AlphabetAiClient({ provider });
         const r = await client.generate(req);
         ```
       security:
@@ -379,27 +379,27 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/AwafGenerationRequest' }
+            schema: { $ref: '#/components/schemas/AlphabetGenerationRequest' }
       responses:
         '200':
           description: Successful generation.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/AwafGenerationResponse' }
+              schema: { $ref: '#/components/schemas/AlphabetGenerationResponse' }
         '400':
           description: Validation, consent, or crypto error.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+              schema: { $ref: '#/components/schemas/AlphabetProtocolError' }
 
-  /api/awaf/v2/ai/stream:
+  /api/alphabet/v2/ai/stream:
     post:
       tags: [ai]
       operationId: stream
       summary: Streaming AI generation (SSE).
       description: |
-        Streams `AwafStreamChunk` events as Server-Sent Events. Each
-        SSE `data:` line is a JSON-encoded `AwafStreamChunk`. The
+        Streams `AlphabetStreamChunk` events as Server-Sent Events. Each
+        SSE `data:` line is a JSON-encoded `AlphabetStreamChunk`. The
         stream terminates with a `finish` chunk on success or an
         `error` chunk on failure.
       security:
@@ -408,20 +408,20 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/AwafGenerationRequest' }
+            schema: { $ref: '#/components/schemas/AlphabetGenerationRequest' }
       responses:
         '200':
-          description: SSE stream of `AwafStreamChunk` events.
+          description: SSE stream of `AlphabetStreamChunk` events.
           content:
             text/event-stream:
-              schema: { $ref: '#/components/schemas/AwafStreamChunk' }
+              schema: { $ref: '#/components/schemas/AlphabetStreamChunk' }
         '400':
           description: Validation or consent error before streaming starts.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+              schema: { $ref: '#/components/schemas/AlphabetProtocolError' }
 
-  /api/awaf/v2/consent/proof/sign:
+  /api/alphabet/v2/consent/proof/sign:
     post:
       tags: [consent-proof]
       operationId: signConsentProof
@@ -452,9 +452,9 @@ paths:
           description: Validation or signing error.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+              schema: { $ref: '#/components/schemas/AlphabetProtocolError' }
 
-  /api/awaf/v2/consent/proof/verify:
+  /api/alphabet/v2/consent/proof/verify:
     post:
       tags: [consent-proof]
       operationId: verifyConsentProof
@@ -484,9 +484,9 @@ paths:
           description: Verification failed (audience, expiry, or signature).
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+              schema: { $ref: '#/components/schemas/AlphabetProtocolError' }
 
-  /api/awaf/v2/pulse/forecast:
+  /api/alphabet/v2/pulse/forecast:
     post:
       tags: [pulse]
       operationId: pulseForecast
@@ -498,7 +498,7 @@ paths:
         Submits a window of `PulseSnapshot` observations and returns
         ordered `LayerForecastHint` entries (preemptive downgrade,
         pause animation, or no-change). The server uses
-        `ProactiveLayerForecaster` from `@awaf/protocols/v2/pulse`.
+        `ProactiveLayerForecaster` from `@alphabet/protocols/v2/pulse`.
       requestBody:
         required: true
         content:
@@ -533,4 +533,4 @@ paths:
           description: Invalid snapshot payload.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+              schema: { $ref: '#/components/schemas/AlphabetProtocolError' }

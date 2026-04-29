@@ -1,12 +1,12 @@
 /**
  * @module contracts/intents
  * @description
- * Two distinct intent vocabularies in AWAF, kept separate so that "what
+ * Two distinct intent vocabularies in Alphabet, kept separate so that "what
  * is the visitor here for?" (DomainIntent) does not get mixed with
  * "which UI affordance did the visitor click?" (SuggestionActionIntent).
  *
  * Historical note: the original `IntentType` exported from
- * `@awaf/core/types/base` mixed these two concepts. It is preserved as
+ * `@alphabet/core/types/base` mixed these two concepts. It is preserved as
  * a deprecated alias for backwards compatibility — new code should use
  * {@link DomainIntent} for high-level visitor purpose and
  * {@link SuggestionActionIntent} for UI suggestion chips.

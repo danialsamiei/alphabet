@@ -1,8 +1,8 @@
 /**
  * @module types/index
  * @description
- * barrel export برای تمام typeهای @awaf/core.
- * Re-exports all types from the @awaf/core package.
+ * barrel export برای تمام typeهای @alphabet/core.
+ * Re-exports all types from the @alphabet/core package.
  */
 
 export * from './result.js';

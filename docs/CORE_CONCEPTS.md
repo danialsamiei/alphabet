@@ -1,12 +1,12 @@
 # Core concepts
 
-AWAF is built around four small ideas. This document describes each one
+Alphabet is built around four small ideas. This document describes each one
 in enough depth to read the source code, write integrations, and review
 PRs against the SDK.
 
-> **Naming.** AWAF expands to **Adaptive Web Awareness Framework**. The
+> **Naming.** Alphabet expands to **Alphabet**. The
 > brand origin is **الفبا (Alefba)**, the Persian word for *alphabet* —
-> the elementary letters from which any language is built. AWAF treats
+> the elementary letters from which any language is built. Alphabet treats
 > *language*, *direction*, *device*, *network*, and *consent* as letters
 > of an alphabet that the page assembles itself from at runtime.
 
@@ -16,7 +16,7 @@ PRs against the SDK.
 
 The Context Handshake is a **pure, pipelined transformation** from
 passive browser signals to a UI configuration. It is implemented in
-`@awaf/core/handshake` and runs entirely on the client (or on the edge,
+`@alphabet/core/handshake` and runs entirely on the client (or on the edge,
 if you prefer to do it server-side at request time — the code is
 dependency-free and edge-safe).
 
@@ -54,7 +54,7 @@ flowchart LR
 ### Phases (lifecycle)
 
 The full lifecycle is a six-phase state machine
-(`HandshakeState` in `@awaf/core/types`):
+(`HandshakeState` in `@alphabet/core/types`):
 
 1. `detect` — `SignalCollector.collect()` reads passive signals.
 2. `enrich` — `EnrichmentPipeline.enrich(signals, geoSeed)` derives
@@ -62,16 +62,16 @@ The full lifecycle is a six-phase state machine
 3. `decide` — `HandshakeDecisionEngine.decide(enriched)` returns a
    `HandshakeDecision` containing `uiConfig` and `privacyMode`.
 4. `display` — render the chosen layer (currently driven by
-   `@awaf/ui`'s `AdaptiveSlot`).
+   `@alphabet/ui`'s `AdaptiveSlot`).
 5. `consent` — present a consent banner if required by jurisdiction or
    policy version. Implemented as the `ConsentBanner` component in
-   `@awaf/ui` and the `ConsentTierManager` state machine in
-   `@awaf/security`.
+   `@alphabet/ui` and the `ConsentTierManager` state machine in
+   `@alphabet/security`.
 6. `morph` — re-render with elevated permissions if the visitor grants
    or upgrades consent.
 
 Phases 1–3 are shipped today as pure code with full unit-test coverage.
-Phases 4–6 ship as React surface in `@awaf/ui`; an end-to-end
+Phases 4–6 ship as React surface in `@alphabet/ui`; an end-to-end
 `HandshakeOrchestrator` that drives the whole lifecycle in one call is
 on the roadmap (see `docs/ROADMAP.md`, Phase 2).
 
@@ -89,7 +89,7 @@ on the roadmap (see `docs/ROADMAP.md`, Phase 2).
   `matchMedia('(prefers-contrast: more)')`,
   `matchMedia('(prefers-color-scheme: dark)')`
 
-Things AWAF does **not** read: cookies, IndexedDB, localStorage, third-party
+Things Alphabet does **not** read: cookies, IndexedDB, localStorage, third-party
 iframes, IP address, canvas/WebGL fingerprints, font enumeration, audio
 context probes.
 
@@ -113,7 +113,7 @@ interface HandshakeDecision {
 
 ## 2. Consent ladder
 
-AWAF defines **four monotonic consent tiers**, ordered by what each one
+Alphabet defines **four monotonic consent tiers**, ordered by what each one
 permits:
 
 | Tier         | Memory | Personalization | Analytics (k-anon) | Precise geo |
@@ -130,16 +130,16 @@ Two rules make this a *ladder*, not a free-form set of flags:
    downgrade. Downgrades are explicit (`revoke`, `reset`, or
    `downgradeOnPrivacySignal`) and always emit an audit event.
 2. **DNT/GPC always wins.** If `navigator.doNotTrack === '1'` or
-   `navigator.globalPrivacyControl === true`, AWAF forces the *runtime*
+   `navigator.globalPrivacyControl === true`, Alphabet forces the *runtime*
    privacy mode to Tier 0 even if the visitor previously granted a
    higher tier. The stored consent record is preserved; only the
    effective permissions are downgraded.
 
-The state machine lives in `@awaf/security/ConsentTierManager` and the
-permission helpers in `@awaf/core/privacy`:
+The state machine lives in `@alphabet/security/ConsentTierManager` and the
+permission helpers in `@alphabet/core/privacy`:
 
 ```ts
-import { canStoreMemory, canPersonalize, canUseAnalytics, canUsePreciseGeo } from '@awaf/core';
+import { canStoreMemory, canPersonalize, canUseAnalytics, canUsePreciseGeo } from '@alphabet/core';
 
 if (canStoreMemory(tier, signals)) {
   // safe to write to VisitorMemory
@@ -155,7 +155,7 @@ See [`docs/PRIVACY_MODEL.md`](./PRIVACY_MODEL.md) for the full model.
 
 ## 3. Adaptive Render Layers
 
-AWAF renders one of **five fidelity layers**, chosen from real device
+Alphabet renders one of **five fidelity layers**, chosen from real device
 capability and accessibility preferences:
 
 | Layer          | Renderer                       | Picked when… |
@@ -172,7 +172,7 @@ Three rules make this trustworthy:
    visitor with GPC enabled and a capable device still sees the
    immersive layer; they just don't get tracked.
 2. **The base bundle is R3F-free.** The immersive layer is loaded
-   lazily by `AdaptiveSlot` from `@awaf/ui/layers/r3f` only when
+   lazily by `AdaptiveSlot` from `@alphabet/ui/layers/r3f` only when
    selected. There is a CI check (`pnpm size:check-r3f-free`) that
    asserts the base bundle does not transitively import
    `@react-three/fiber` or `three`.
@@ -191,7 +191,7 @@ the full capability matrix and accessibility rules.
 ### Layer-selection state machine
 
 The decision rules are exposed as a **typed transition table** (data, not
-XState) under `@awaf/core/handshake/state-machine`. This gives us
+XState) under `@alphabet/core/handshake/state-machine`. This gives us
 TypeScript exhaustiveness via `assertNever`, parity-tested behavior
 against `SignalCollector.detectLayer`, and a Mermaid renderer used to
 keep this diagram and the runtime in lock-step:
@@ -219,12 +219,12 @@ replace**, the core `SignalCollector` / `EnrichmentPipeline` /
 cancellation, retries, tracing, and live capability prediction without
 adding any runtime dependency.
 
-### `@awaf/core` `pipeline` — `Step<I, O>`
+### `@alphabet/core` `pipeline` — `Step<I, O>`
 
 A small composable effect type:
 
 ```ts
-import { pipeline } from '@awaf/core';
+import { pipeline } from '@alphabet/core';
 const { defineStep, compose, parallel, withRetry, TraceCollector, makeStepContext } = pipeline;
 
 const fetchSignals = defineStep('fetchSignals', async (_input, _ctx) => ok(signals));
@@ -250,13 +250,13 @@ console.log(tracer.snapshot()?.root); // nested span tree, durations, outcomes
   and `outcome ∈ {ok, error, cancelled}`. Spans only carry caller-supplied
   PII-free attributes.
 
-### `@awaf/core` `stream` — `createContextStream`
+### `@alphabet/core` `stream` — `createContextStream`
 
 A live, PII-free stream of context events on the platform
 `ReadableStream` API — no RxJS:
 
 ```ts
-import { stream } from '@awaf/core';
+import { stream } from '@alphabet/core';
 const { createContextStream, toAsyncIterable } = stream;
 
 const { stream: rs, controller } = createContextStream({ highWaterMark: 16 });
@@ -272,12 +272,12 @@ back-pressure via `highWaterMark`, and never emits raw `EnrichedContext`
 — only the layer/locale/direction/`restricted` flag the UI actually
 needs.
 
-### `@awaf/core` `predictor` — `CapabilityPredictor`
+### `@alphabet/core` `predictor` — `CapabilityPredictor`
 
 A heuristic + EWMA predictor for "what's the next likely layer?":
 
 ```ts
-import { predictor } from '@awaf/core';
+import { predictor } from '@alphabet/core';
 const p = new predictor.CapabilityPredictor();
 p.observe({ at: Date.now(), currentLayer: 'R3F_IMMERSIVE', networkType: '4g', batteryLevel: 0.7 });
 p.observe({ at: Date.now(), currentLayer: 'R3F_IMMERSIVE', networkType: '3g', batteryLevel: 0.6 });
@@ -298,7 +298,7 @@ model weights, no fetch calls.**
 
 A `vitest bench` suite under `packages/core/src/handshake/*.bench.ts`
 measures the pure-CPU portion of the pipeline. Run with
-`pnpm -F @awaf/core bench`. Indicative numbers on CI hardware:
+`pnpm -F @alphabet/core bench`. Indicative numbers on CI hardware:
 
 | Stage                                | Mean    | Throughput |
 |--------------------------------------|---------|------------|
@@ -316,14 +316,14 @@ is dominated by browser-side I/O which we don't model here.
 
 ## 4. AI-ready, provider-neutral protocols
 
-AWAF treats LLMs as *one* possible consumer of the visitor context, not
+Alphabet treats LLMs as *one* possible consumer of the visitor context, not
 as the centre of the SDK. The protocol layer
-(`@awaf/protocols`) defines a single normalized contract and exposes it
+(`@alphabet/protocols`) defines a single normalized contract and exposes it
 over multiple transports.
 
 ```
 ┌─────────────────────────────────────────────┐
-│  AwafProtocolRequest / AwafProtocolResponse │
+│  AlphabetProtocolRequest / AlphabetProtocolResponse │
 │            (the normalized contract)        │
 └─────────────────────────────────────────────┘
         ▲          ▲          ▲           ▲
@@ -335,13 +335,13 @@ over multiple transports.
 
 Three rules make this provider-neutral:
 
-1. **No model client in the runtime.** `@awaf/protocols` does not import
+1. **No model client in the runtime.** `@alphabet/protocols` does not import
    OpenAI, Anthropic, or Vercel AI SDK. Provider integrations are
-   exposed as the optional `AwafAiProviderAdapter` contract that
+   exposed as the optional `AlphabetAiProviderAdapter` contract that
    consumers implement themselves.
 2. **Consent is enforced at the boundary.** Every adapter calls
    `validateConsentScope` and `evaluateMemoryPermission` (the canonical
-   implementations of the AWAF consent ladder) before exposing memory
+   implementations of the Alphabet consent ladder) before exposing memory
    or personalization to a model.
 3. **QR handoff is encrypted by default.** Payloads are AES-GCM
    encrypted, audience-bound, expire in 60 seconds by default, and are
@@ -377,6 +377,6 @@ See [`docs/PROTOCOLS.md`](./PROTOCOLS.md) and
    └──────────────┘
 ```
 
-A useful one-liner: **AWAF turns "what does this browser tell me?"
+A useful one-liner: **Alphabet turns "what does this browser tell me?"
 into a typed UI configuration, a typed consent posture, and a typed
 protocol envelope — and then gets out of your way.**

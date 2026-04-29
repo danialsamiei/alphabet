@@ -32,7 +32,7 @@ const defaultStyle: CSSProperties = {
  * یا مرورگرهایی که Canvas ندارند.
  */
 export function StaticHtmlLayer({
-  heading = 'AWAF',
+  heading = 'Alphabet',
   description,
   children,
   direction = 'ltr',
@@ -42,11 +42,11 @@ export function StaticHtmlLayer({
   const merged: CSSProperties = { ...defaultStyle, ...style };
   return (
     <section
-      data-awaf-layer="STATIC_HTML"
+      data-alphabet-layer="STATIC_HTML"
       dir={direction}
       {...(locale !== undefined ? { lang: locale } : {})}
       style={merged}
-      aria-label="AWAF static layer"
+      aria-label="Alphabet static layer"
     >
       <header>
         <h1 style={{ margin: 0 }}>{heading}</h1>
@@ -56,7 +56,7 @@ export function StaticHtmlLayer({
       </header>
       <main role="main">{children}</main>
       <footer style={{ fontSize: '0.85em', opacity: 0.7 }}>
-        AWAF static HTML layer
+        Alphabet static HTML layer
       </footer>
     </section>
   );

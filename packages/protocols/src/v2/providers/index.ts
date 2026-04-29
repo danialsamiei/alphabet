@@ -1,7 +1,7 @@
 /**
- * @module @awaf/protocols/v2/providers
+ * @module @alphabet/protocols/v2/providers
  * @description
- * Barrel export for built-in AwafProtocol v2 providers.
+ * Barrel export for built-in AlphabetProtocol v2 providers.
  *
  * Provider list:
  *   • OpenAI       (`createOpenAiProvider`)
@@ -12,7 +12,7 @@
  *   • Fireworks AI (`createFireworksProvider`)
  *   • Fallback chain composed of any of the above
  *
- * All adapters share the contract from `../types.ts` (`AwafProviderAdapter`)
+ * All adapters share the contract from `../types.ts` (`AlphabetProviderAdapter`)
  * and never bundle a vendor SDK as a dep — they rely on `globalThis.fetch`.
  */
 

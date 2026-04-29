@@ -1,11 +1,11 @@
 /**
  * @module brands
  * @description
- * Brand Types برای جلوگیری از اشتباه گذاشتن شناسه‌های همشکل در AWAF SDK.
+ * Brand Types برای جلوگیری از اشتباه گذاشتن شناسه‌های همشکل در Alphabet SDK.
  * Branded Types prevent type confusion (e.g., mixing VisitorId with SessionId).
  */
 
-import { type AWAFError, err, ok, type Result } from './result.js';
+import { type AlphabetError, err, ok, type Result } from './result.js';
 
 // ─── پایه Brand ───────────────────────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ type Brand<B> = { readonly [__brand]: B };
  */
 export type Branded<T, B> = T & Brand<B>;
 
-// ─── Brand Types اصلی AWAF ────────────────────────────────────────────────────
+// ─── Brand Types اصلی Alphabet ────────────────────────────────────────────────────
 
 /** شناسه بازدیدکننده — با prefix `v-` یا `anon-` */
 export type VisitorId = Branded<string, 'VisitorId'>;
@@ -51,13 +51,13 @@ export type AuditLogId = Branded<string, 'AuditLogId'>;
  * ساخت VisitorId با validation.
  *
  * @param raw - رشته خام
- * @returns Result<VisitorId, AWAFError>
+ * @returns Result<VisitorId, AlphabetError>
  *
  * @example
  * const result = createVisitorId('v-abc12345');
  * if (result.success) console.log(result.data); // VisitorId
  */
-export function createVisitorId(raw: string): Result<VisitorId, AWAFError> {
+export function createVisitorId(raw: string): Result<VisitorId, AlphabetError> {
   if (!raw || raw.length < 8) {
     return err({ code: 'INVALID_VISITOR_ID', message: 'Visitor ID must be at least 8 characters' });
   }

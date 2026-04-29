@@ -8,8 +8,8 @@
     "jsx": "react-jsx",
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "paths": {
-      "@awaf/core": ["../core/dist/index.d.ts"],
-      "@awaf/api": ["../api/dist/index.d.ts"]
+      "@alphabet/core": ["../core/dist/index.d.ts"],
+      "@alphabet/api": ["../api/dist/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

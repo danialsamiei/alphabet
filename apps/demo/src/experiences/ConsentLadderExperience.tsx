@@ -7,10 +7,10 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ConsentLadder,
-  useAwafContext,
+  useAlphabetContext,
   type ConsentLadderProps,
-} from '@awaf/ui';
-import type { ConsentTier } from '@awaf/core';
+} from '@alphabet/ui';
+import type { ConsentTier } from '@alphabet/core';
 
 interface LogEntry {
   readonly id: number;
@@ -21,9 +21,9 @@ interface LogEntry {
 }
 
 export function ConsentLadderExperience(): JSX.Element {
-  const ctx = useAwafContext();
+  const ctx = useAlphabetContext();
   if (ctx === null) {
-    throw new Error('ConsentLadderExperience must be inside an AwafProvider');
+    throw new Error('ConsentLadderExperience must be inside an AlphabetProvider');
   }
   const { consent } = ctx;
 
@@ -58,30 +58,30 @@ export function ConsentLadderExperience(): JSX.Element {
   };
 
   return (
-    <div className="awaf-experience awaf-grid-2">
-      <div className="awaf-card">
+    <div className="alphabet-experience alphabet-grid-2">
+      <div className="alphabet-card">
         <ConsentLadder consent={consent} showReset onChange={onChange} />
       </div>
 
-      <aside className="awaf-card" aria-label="Consent transition log">
-        <h3 className="awaf-card-heading">Live event log</h3>
-        <p className="awaf-muted-text">
-          Every tier change emitted by <code>useAwafConsent</code> appears
+      <aside className="alphabet-card" aria-label="Consent transition log">
+        <h3 className="alphabet-card-heading">Live event log</h3>
+        <p className="alphabet-muted-text">
+          Every tier change emitted by <code>useAlphabetConsent</code> appears
           here, newest first.
         </p>
         {log.length === 0 ? (
-          <p className="awaf-muted-text awaf-empty">
+          <p className="alphabet-muted-text alphabet-empty">
             No transitions yet — pick a rung to begin.
           </p>
         ) : (
-          <ol className="awaf-log">
+          <ol className="alphabet-log">
             {log.map((entry) => (
               <li key={entry.id}>
-                <span className="awaf-log-time">{entry.timestamp}</span>
-                <span className="awaf-log-tier" data-tier={entry.tier}>
+                <span className="alphabet-log-time">{entry.timestamp}</span>
+                <span className="alphabet-log-tier" data-tier={entry.tier}>
                   {entry.tier}
                 </span>
-                <span className="awaf-log-note">{entry.note}</span>
+                <span className="alphabet-log-note">{entry.note}</span>
               </li>
             ))}
           </ol>

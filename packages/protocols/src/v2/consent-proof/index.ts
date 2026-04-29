@@ -1,5 +1,5 @@
 /**
- * @module @awaf/protocols/v2/consent-proof
+ * @module @alphabet/protocols/v2/consent-proof
  * @description
  * Cryptographic Consent Proof — a server-verifiable, signed attestation
  * that a visitor has granted a specific consent tier at a specific
@@ -29,20 +29,20 @@
  *     servers SHOULD also nonce-bind via `audience` if needed.
  */
 
-import { ok, err, type Result } from '@awaf/core';
-import { protocolError, type AwafProtocolError } from '../../errors/index.js';
-import type { AwafConsentScope } from '../../contract.js';
+import { ok, err, type Result } from '@alphabet/core';
+import { protocolError, type AlphabetProtocolError } from '../../errors/index.js';
+import type { AlphabetConsentScope } from '../../contract.js';
 
 // ─── Public types ────────────────────────────────────────────────────────────
 
 /** Signed payload covered by the consent proof. */
 export interface ConsentProofPayload {
-  /** AWAF protocol version — currently 'v2'. */
+  /** Alphabet protocol version — currently 'v2'. */
   readonly v: 'v2';
   /** Visitor identifier (no PII). */
   readonly visitorId: string;
   /** Consent scope claimed at the moment of proof issuance. */
-  readonly scope: AwafConsentScope;
+  readonly scope: AlphabetConsentScope;
   /** Audience — verifier must match this exactly. */
   readonly audience: string;
   /** Issuance timestamp (epoch ms). */
@@ -144,7 +144,7 @@ export async function generateConsentProofKeyPair(): Promise<CryptoKeyPair> {
 /** Sign a consent payload and produce a compact token. */
 export async function signConsentProof(
   options: SignConsentProofOptions,
-): Promise<Result<ConsentProofToken, AwafProtocolError>> {
+): Promise<Result<ConsentProofToken, AlphabetProtocolError>> {
   let subtle: SubtleCrypto;
   try {
     subtle = getSubtle();
@@ -173,7 +173,7 @@ const TOKEN_RE = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
 /** Verify a consent proof token and return the validated payload. */
 export async function verifyConsentProof(
   options: VerifyConsentProofOptions,
-): Promise<Result<ConsentProofPayload, AwafProtocolError>> {
+): Promise<Result<ConsentProofPayload, AlphabetProtocolError>> {
   if (!TOKEN_RE.test(options.token)) {
     return err(protocolError('PAYLOAD_TAMPERED', 'Malformed consent proof token'));
   }

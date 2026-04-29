@@ -10,7 +10,7 @@
  */
 
 import { useMemo } from 'react';
-import { ContextProvider, useContextStream } from '@awaf/ui';
+import { ContextProvider, useContextStream } from '@alphabet/ui';
 
 export function ContextDashboardExperience(): JSX.Element {
   return (
@@ -32,14 +32,14 @@ function ContextDashboardInner(): JSX.Element {
   }, [events]);
 
   return (
-    <div className="awaf-experience awaf-grid-3">
-      <section className="awaf-card" aria-label="Decision">
-        <h3 className="awaf-card-heading">Decision</h3>
-        <dl className="awaf-dl">
+    <div className="alphabet-experience alphabet-grid-3">
+      <section className="alphabet-card" aria-label="Decision">
+        <h3 className="alphabet-card-heading">Decision</h3>
+        <dl className="alphabet-dl">
           <div>
             <dt>Status</dt>
             <dd>
-              <span className="awaf-pill" data-status={status}>
+              <span className="alphabet-pill" data-status={status}>
                 {status}
               </span>
             </dd>
@@ -76,18 +76,18 @@ function ContextDashboardInner(): JSX.Element {
           </div>
         </dl>
         {error !== null ? (
-          <p className="awaf-error" role="alert">
+          <p className="alphabet-error" role="alert">
             {error}
           </p>
         ) : null}
       </section>
 
-      <section className="awaf-card" aria-label="Signals">
-        <h3 className="awaf-card-heading">Reactive signals</h3>
+      <section className="alphabet-card" aria-label="Signals">
+        <h3 className="alphabet-card-heading">Reactive signals</h3>
         {snapshot === null ? (
-          <p className="awaf-muted-text awaf-empty">Awaiting first signal…</p>
+          <p className="alphabet-muted-text alphabet-empty">Awaiting first signal…</p>
         ) : (
-          <ul className="awaf-signal-list">
+          <ul className="alphabet-signal-list">
             {snapshot.networkType !== undefined ? (
               <li>
                 <span>Network</span>
@@ -108,22 +108,22 @@ function ContextDashboardInner(): JSX.Element {
             ) : null}
           </ul>
         )}
-        <p className="awaf-muted-text">
+        <p className="alphabet-muted-text">
           Try toggling tab visibility or reduced motion in your OS to see
           live updates flow through the stream.
         </p>
       </section>
 
-      <section className="awaf-card" aria-label="Pipeline timeline">
-        <h3 className="awaf-card-heading">Pipeline timeline</h3>
+      <section className="alphabet-card" aria-label="Pipeline timeline">
+        <h3 className="alphabet-card-heading">Pipeline timeline</h3>
         {phaseTimings.length === 0 ? (
-          <p className="awaf-muted-text awaf-empty">Pipeline running…</p>
+          <p className="alphabet-muted-text alphabet-empty">Pipeline running…</p>
         ) : (
-          <ol className="awaf-timeline">
+          <ol className="alphabet-timeline">
             {phaseTimings.map((t, i) => (
               <li key={`${t.phase}-${i}`}>
-                <span className="awaf-timeline-phase">{t.phase}</span>
-                <span className="awaf-timeline-duration">
+                <span className="alphabet-timeline-phase">{t.phase}</span>
+                <span className="alphabet-timeline-duration">
                   {t.durationMs.toFixed(2)} ms
                 </span>
               </li>
@@ -132,7 +132,7 @@ function ContextDashboardInner(): JSX.Element {
         )}
         <details>
           <summary>Raw event stream ({events.length})</summary>
-          <pre className="awaf-pre">
+          <pre className="alphabet-pre">
             {events
               .slice(-12)
               .map(

@@ -1,19 +1,19 @@
 /**
  * @module config
  * @description
- * کلاس AWAFConfig — مدیریت پیکربندی SDK از environment variables و defaults.
- * AWAFConfig class — manages SDK configuration from environment variables and defaults.
+ * کلاس AlphabetConfig — مدیریت پیکربندی SDK از environment variables و defaults.
+ * AlphabetConfig class — manages SDK configuration from environment variables and defaults.
  */
 
 import type { ConsentTier, LogLevel, CapabilityLayer, TokenTier } from '../types/base.js';
-import { type AWAFError, type Result, ok, err } from '../types/result.js';
+import { type AlphabetError, type Result, ok, err } from '../types/result.js';
 
 // ─── Config Interface ─────────────────────────────────────────────────────────
 
 /**
- * پیکربندی کامل AWAF SDK.
+ * پیکربندی کامل Alphabet SDK.
  */
-export interface AWAFConfigOptions {
+export interface AlphabetConfigOptions {
   /** آدرس پایه API — مثال: "http://localhost:3000/api" */
   readonly apiBaseUrl: string;
   /** timeout درخواست‌ها (میلی‌ثانیه) — پیش‌فرض: 5000 */
@@ -37,13 +37,13 @@ export interface AWAFConfigOptions {
 }
 
 /** partial برای override پیکربندی — بدون readonly برای ساختن incremental */
-export type AWAFConfigOverrides = {
-  -readonly [K in keyof AWAFConfigOptions]?: AWAFConfigOptions[K];
+export type AlphabetConfigOverrides = {
+  -readonly [K in keyof AlphabetConfigOptions]?: AlphabetConfigOptions[K];
 };
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 
-const DEFAULTS: AWAFConfigOptions = {
+const DEFAULTS: AlphabetConfigOptions = {
   apiBaseUrl: 'http://localhost:3000/api',
   timeoutMs: 5000,
   maxRetries: 3,
@@ -55,83 +55,83 @@ const DEFAULTS: AWAFConfigOptions = {
   defaultLanguage: 'fa',
 } as const;
 
-// ─── AWAFConfig Class ─────────────────────────────────────────────────────────
+// ─── AlphabetConfig Class ─────────────────────────────────────────────────────────
 
 /**
- * کلاس مدیریت پیکربندی AWAF SDK.
- * Reads from environment variables (AWAF_*) and merges with defaults.
+ * کلاس مدیریت پیکربندی Alphabet SDK.
+ * Reads from environment variables (Alphabet_*) and merges with defaults.
  *
  * @example
- * const config = AWAFConfig.fromEnv();
+ * const config = AlphabetConfig.fromEnv();
  * if (!config.success) {
  *   console.error(config.error.message);
  *   process.exit(1);
  * }
  * const { apiBaseUrl, timeoutMs } = config.data.options;
  */
-export class AWAFConfig {
-  private readonly _options: Readonly<AWAFConfigOptions>;
+export class AlphabetConfig {
+  private readonly _options: Readonly<AlphabetConfigOptions>;
 
-  private constructor(options: AWAFConfigOptions) {
+  private constructor(options: AlphabetConfigOptions) {
     this._options = Object.freeze({ ...options });
   }
 
   /** دسترسی به تمام options */
-  get options(): Readonly<AWAFConfigOptions> {
+  get options(): Readonly<AlphabetConfigOptions> {
     return this._options;
   }
 
   /**
-   * ساخت AWAFConfig از environment variables.
-   * Reads AWAF_* environment variables with fallback to defaults.
+   * ساخت AlphabetConfig از environment variables.
+   * Reads Alphabet_* environment variables with fallback to defaults.
    *
    * @param overrides - override دستی options
-   * @returns Result<AWAFConfig, AWAFError>
+   * @returns Result<AlphabetConfig, AlphabetError>
    *
    * @example
-   * const result = AWAFConfig.fromEnv({ logLevel: 'debug' });
+   * const result = AlphabetConfig.fromEnv({ logLevel: 'debug' });
    */
-  static fromEnv(overrides?: AWAFConfigOverrides): Result<AWAFConfig, AWAFError> {
-    const env = AWAFConfig.readEnv();
-    const merged: AWAFConfigOptions = {
+  static fromEnv(overrides?: AlphabetConfigOverrides): Result<AlphabetConfig, AlphabetError> {
+    const env = AlphabetConfig.readEnv();
+    const merged: AlphabetConfigOptions = {
       ...DEFAULTS,
       ...env,
       ...overrides,
     };
 
-    const validationResult = AWAFConfig.validate(merged);
+    const validationResult = AlphabetConfig.validate(merged);
     if (!validationResult.success) {
       return validationResult;
     }
 
-    return ok(new AWAFConfig(merged));
+    return ok(new AlphabetConfig(merged));
   }
 
   /**
-   * ساخت AWAFConfig از options صریح (بدون خواندن environment).
+   * ساخت AlphabetConfig از options صریح (بدون خواندن environment).
    *
    * @param options - options کامل
-   * @returns Result<AWAFConfig, AWAFError>
+   * @returns Result<AlphabetConfig, AlphabetError>
    */
-  static fromOptions(options: Partial<AWAFConfigOptions>): Result<AWAFConfig, AWAFError> {
-    const merged: AWAFConfigOptions = {
+  static fromOptions(options: Partial<AlphabetConfigOptions>): Result<AlphabetConfig, AlphabetError> {
+    const merged: AlphabetConfigOptions = {
       ...DEFAULTS,
       ...options,
     };
 
-    const validationResult = AWAFConfig.validate(merged);
+    const validationResult = AlphabetConfig.validate(merged);
     if (!validationResult.success) {
       return validationResult;
     }
 
-    return ok(new AWAFConfig(merged));
+    return ok(new AlphabetConfig(merged));
   }
 
   /**
-   * خواندن environment variables AWAF_*.
+   * خواندن environment variables Alphabet_*.
    * Works in both Node.js and browser environments.
    */
-  private static readEnv(): AWAFConfigOverrides {
+  private static readEnv(): AlphabetConfigOverrides {
     // در browser environment، process.env ممکن است وجود نداشته باشد
     const getEnv = (key: string): string | undefined => {
       try {
@@ -143,38 +143,38 @@ export class AWAFConfig {
       }
     };
 
-    const overrides: AWAFConfigOverrides = {};
+    const overrides: AlphabetConfigOverrides = {};
 
-    const apiBaseUrl = getEnv('AWAF_API_BASE_URL');
+    const apiBaseUrl = getEnv('ALPHABET_API_BASE_URL');
     if (apiBaseUrl) overrides['apiBaseUrl'] = apiBaseUrl;
 
-    const timeoutMs = getEnv('AWAF_TIMEOUT_MS');
+    const timeoutMs = getEnv('ALPHABET_TIMEOUT_MS');
     if (timeoutMs) overrides['timeoutMs'] = parseInt(timeoutMs, 10);
 
-    const maxRetries = getEnv('AWAF_MAX_RETRIES');
+    const maxRetries = getEnv('ALPHABET_MAX_RETRIES');
     if (maxRetries) overrides['maxRetries'] = parseInt(maxRetries, 10);
 
-    const defaultConsentTier = getEnv('AWAF_DEFAULT_CONSENT_TIER');
+    const defaultConsentTier = getEnv('ALPHABET_DEFAULT_CONSENT_TIER');
     if (defaultConsentTier) {
       overrides['defaultConsentTier'] = defaultConsentTier as ConsentTier;
     }
 
-    const logLevel = getEnv('AWAF_LOG_LEVEL');
+    const logLevel = getEnv('ALPHABET_LOG_LEVEL');
     if (logLevel) overrides['logLevel'] = logLevel as LogLevel;
 
-    const enableTelemetry = getEnv('AWAF_ENABLE_TELEMETRY');
+    const enableTelemetry = getEnv('ALPHABET_ENABLE_TELEMETRY');
     if (enableTelemetry) overrides['enableTelemetry'] = enableTelemetry === 'true';
 
-    const tokenTier = getEnv('AWAF_TOKEN_TIER');
+    const tokenTier = getEnv('ALPHABET_TOKEN_TIER');
     if (tokenTier) overrides['tokenTier'] = tokenTier as TokenTier;
 
-    const defaultCountry = getEnv('AWAF_DEFAULT_COUNTRY');
+    const defaultCountry = getEnv('ALPHABET_DEFAULT_COUNTRY');
     if (defaultCountry) overrides['defaultCountry'] = defaultCountry;
 
-    const defaultLanguage = getEnv('AWAF_DEFAULT_LANGUAGE');
+    const defaultLanguage = getEnv('ALPHABET_DEFAULT_LANGUAGE');
     if (defaultLanguage) overrides['defaultLanguage'] = defaultLanguage;
 
-    const forceUILayer = getEnv('AWAF_FORCE_UI_LAYER');
+    const forceUILayer = getEnv('ALPHABET_FORCE_UI_LAYER');
     if (forceUILayer) overrides['forceUILayer'] = forceUILayer as CapabilityLayer;
 
     return overrides;
@@ -183,7 +183,7 @@ export class AWAFConfig {
   /**
    * اعتبارسنجی options.
    */
-  private static validate(options: AWAFConfigOptions): Result<true, AWAFError> {
+  private static validate(options: AlphabetConfigOptions): Result<true, AlphabetError> {
     if (!options.apiBaseUrl || typeof options.apiBaseUrl !== 'string') {
       return err({ code: 'INVALID_API_BASE_URL', message: 'apiBaseUrl must be a non-empty string' });
     }

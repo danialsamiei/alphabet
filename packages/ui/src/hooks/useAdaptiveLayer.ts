@@ -6,19 +6,19 @@
  */
 
 import { useMemo } from 'react';
-import type { CapabilityLayer } from '@awaf/core';
+import type { CapabilityLayer } from '@alphabet/core';
 import {
   selectAdaptiveLayer,
   type AdaptiveLayerInput,
   type AdaptiveLayerResult,
 } from '../runtime/layer-selector.js';
 import { isBrowser, useMediaQuery } from '../runtime/hydration-safe.js';
-import { useAwafHandshake, type UseAwafHandshakeReturn } from './useAwafHandshake.js';
+import { useAlphabetHandshake, type UseAlphabetHandshakeReturn } from './useAlphabetHandshake.js';
 
 /** ورودی اختیاری برای override کردن inputهای layer-selector. */
 export interface UseAdaptiveLayerOptions {
   /** override نتیجه handshake (consume mode). */
-  readonly handshake?: UseAwafHandshakeReturn;
+  readonly handshake?: UseAlphabetHandshakeReturn;
   /** Override برای `forceLayer` — برنامه می‌تواند یک layer را اجبار کند. */
   readonly forceLayer?: CapabilityLayer;
   /** Override برای `forceTextOnly` (مثلاً detection screen reader). */
@@ -67,9 +67,9 @@ export function useAdaptiveLayer(options: UseAdaptiveLayerOptions = {}): UseAdap
 
   // اگر handshake خارجی پاس داده شده، از آن استفاده می‌کنیم؛ در غیر این
   // صورت hook خودش handshake را اجرا می‌کند. توجه: hooks همیشه باید در
-  // top level فراخوانی شوند، پس useAwafHandshake همیشه call می‌شود اما
+  // top level فراخوانی شوند، پس useAlphabetHandshake همیشه call می‌شود اما
   // وقتی external موجود است، حالت skip را روشن می‌کنیم.
-  const internal = useAwafHandshake({ skipAutoRun: external !== undefined });
+  const internal = useAlphabetHandshake({ skipAutoRun: external !== undefined });
   const handshake = external ?? internal;
 
   const reactiveReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', false);

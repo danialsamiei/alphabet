@@ -1,31 +1,31 @@
 /**
- * @module @awaf/protocols/ai-sdk
+ * @module @alphabet/protocols/ai-sdk
  * @description
  * Optional AI SDK adapter interface — designed to be compatible with
  * Vercel AI SDK and similar provider abstractions, but without requiring
  * any of them as a runtime dependency.
  *
- * AWAF intentionally does **not** become an LLM provider SDK. This module
+ * Alphabet intentionally does **not** become an LLM provider SDK. This module
  * is a thin contract: callers can plug their own provider in by
- * implementing `AwafAiProviderAdapter` and pass the result through the
- * normalized AWAF context.
+ * implementing `AlphabetAiProviderAdapter` and pass the result through the
+ * normalized Alphabet context.
  *
  * If a consumer decides to use Vercel AI SDK, they can add it as a peer
  * dependency in their own application; this package never imports it.
  */
 
-import type { Result } from '@awaf/core';
-import type { AwafToolContext } from '../contract.js';
-import type { AwafProtocolError } from '../errors/index.js';
+import type { Result } from '@alphabet/core';
+import type { AlphabetToolContext } from '../contract.js';
+import type { AlphabetProtocolError } from '../errors/index.js';
 
 /**
- * Normalized AI request as understood by AWAF. Provider-agnostic. The
+ * Normalized AI request as understood by Alphabet. Provider-agnostic. The
  * adapter is responsible for translating this into whichever shape the
  * underlying SDK expects.
  */
-export interface AwafAiRequest {
+export interface AlphabetAiRequest {
   /** PII-free visitor context for adaptive behaviour. */
-  readonly context: AwafToolContext;
+  readonly context: AlphabetToolContext;
   /** Free-form prompt — caller is responsible for redacting PII. */
   readonly prompt: string;
   /** Optional system instructions. */
@@ -35,7 +35,7 @@ export interface AwafAiRequest {
 }
 
 /** Normalized AI response. */
-export interface AwafAiResponse {
+export interface AlphabetAiResponse {
   readonly text: string;
   /** Tokens consumed by the underlying provider, if known. */
   readonly tokensUsed?: number;
@@ -46,9 +46,9 @@ export interface AwafAiResponse {
  * SDK, OpenAI SDK, Anthropic SDK, etc. They must:
  *   • Never log PII.
  *   • Honour `context.privacyRestricted` (no behavioural personalization).
- *   • Return errors via the AWAF `Result` pattern.
+ *   • Return errors via the Alphabet `Result` pattern.
  */
-export interface AwafAiProviderAdapter {
+export interface AlphabetAiProviderAdapter {
   readonly id: string;
-  generate(request: AwafAiRequest): Promise<Result<AwafAiResponse, AwafProtocolError>>;
+  generate(request: AlphabetAiRequest): Promise<Result<AlphabetAiResponse, AlphabetProtocolError>>;
 }

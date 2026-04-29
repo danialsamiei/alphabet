@@ -1,10 +1,10 @@
-# مرجع کامل API — AWAF SDK
-# AWAF SDK API Reference
+# مرجع کامل API — Alphabet SDK
+# Alphabet SDK API Reference
 
 > **نسخه:** 1.0.0 | **تاریخ:** 2026-04-27
-> **Base URL:** `$AWAF_API_BASE_URL` (default: `http://localhost:3000`)
-> **Canonical version prefix:** `/api/awaf/v1` (single source of truth: `packages/core/src/contracts/routes.ts`, OpenAPI: [`openapi/awaf.v1.yaml`](../openapi/awaf.v1.yaml))
-> **Legacy `/api` mount:** still accepted by `@awaf/api` clients via `normalizeApiBaseUrl()`, but **deprecated** — migrate to `/api/awaf/v1`.
+> **Base URL:** `$ALPHABET_API_BASE_URL` (default: `http://localhost:3000`)
+> **Canonical version prefix:** `/api/alphabet/v1` (single source of truth: `packages/core/src/contracts/routes.ts`, OpenAPI: [`openapi/alphabet.v1.yaml`](../openapi/alphabet.v1.yaml))
+> **Legacy `/api` mount:** still accepted by `@alphabet/api` clients via `normalizeApiBaseUrl()`, but **deprecated** — migrate to `/api/alphabet/v1`.
 > **پروتکل:** HTTPS در production، HTTP در development
 > **فرمت:** JSON با Content-Type: application/json
 > **زبان:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
@@ -13,26 +13,26 @@
 
 ## فهرست Endpointها
 
-> Naming note: "AWAF Pulse" is the new product name for what was historically called *Technology Pulse*; "Consent-Aware Memory" replaces *Memory Mesh*. URL paths are unchanged.
+> Naming note: "Alphabet Pulse" is the new product name for what was historically called *Technology Pulse*; "Consent-Aware Memory" replaces *Memory Mesh*. URL paths are unchanged.
 
 | # | گروه | Endpoint | Method | مسیر |
 |---|------|----------|--------|------|
-| ۱ | **Context Handshake** | Handshake | `POST` | `/api/awaf/v1/context/handshake` |
-| ۲ | **Context Handshake** | Consent | `POST` | `/api/awaf/v1/context/consent` |
-| ۳ | **Context Handshake** | Preference | `POST` | `/api/awaf/v1/context/preference` |
-| ۴ | **Visitor Interaction** | Interact | `POST` | `/api/awaf/v1/interact` |
-| ۵ | **Visitor Interaction** | Voice Transcribe | `POST` | `/api/awaf/v1/voice/transcribe` |
-| ۶ | **Visitor Interaction** | Suggestions | `GET` | `/api/awaf/v1/suggestions` |
-| ۷ | **AWAF Pulse** | Pulse List | `GET` | `/api/awaf/v1/technology-pulse` |
-| ۸ | **AWAF Pulse** | Pulse Brief | `POST` | `/api/awaf/v1/technology-pulse/brief` |
-| ۹ | **Consent-Aware Memory** | Store Memory | `POST` | `/api/awaf/v1/visitor/memory` |
-| ۱۰ | **Consent-Aware Memory** | Retrieve Memory | `GET` | `/api/awaf/v1/visitor/memory` |
-| ۱۱ | **Consent-Aware Memory** | Erase Memory | `DELETE` | `/api/awaf/v1/visitor/memory` |
-| ۱۲ | **OpenClaw Mesh** | Query | `POST` | `/api/awaf/v1/claw/query` |
-| ۱۳ | **OpenClaw Mesh** | Ingest | `POST` | `/api/awaf/v1/claw/ingest` |
-| ۱۴ | **OpenClaw Mesh** | Admin Audit | `POST` | `/api/awaf/v1/claw/admin/audit` |
-| ۱۵ | **Admin** | Visitor Insights | `GET` | `/api/awaf/v1/admin/visitor-insights` |
-| ۱۶ | **Admin** | Pulse Sources | `GET` | `/api/awaf/v1/admin/technology-pulse/sources` |
+| ۱ | **Context Handshake** | Handshake | `POST` | `/api/alphabet/v1/context/handshake` |
+| ۲ | **Context Handshake** | Consent | `POST` | `/api/alphabet/v1/context/consent` |
+| ۳ | **Context Handshake** | Preference | `POST` | `/api/alphabet/v1/context/preference` |
+| ۴ | **Visitor Interaction** | Interact | `POST` | `/api/alphabet/v1/interact` |
+| ۵ | **Visitor Interaction** | Voice Transcribe | `POST` | `/api/alphabet/v1/voice/transcribe` |
+| ۶ | **Visitor Interaction** | Suggestions | `GET` | `/api/alphabet/v1/suggestions` |
+| ۷ | **Alphabet Pulse** | Pulse List | `GET` | `/api/alphabet/v1/technology-pulse` |
+| ۸ | **Alphabet Pulse** | Pulse Brief | `POST` | `/api/alphabet/v1/technology-pulse/brief` |
+| ۹ | **Consent-Aware Memory** | Store Memory | `POST` | `/api/alphabet/v1/visitor/memory` |
+| ۱۰ | **Consent-Aware Memory** | Retrieve Memory | `GET` | `/api/alphabet/v1/visitor/memory` |
+| ۱۱ | **Consent-Aware Memory** | Erase Memory | `DELETE` | `/api/alphabet/v1/visitor/memory` |
+| ۱۲ | **OpenClaw Mesh** | Query | `POST` | `/api/alphabet/v1/claw/query` |
+| ۱۳ | **OpenClaw Mesh** | Ingest | `POST` | `/api/alphabet/v1/claw/ingest` |
+| ۱۴ | **OpenClaw Mesh** | Admin Audit | `POST` | `/api/alphabet/v1/claw/admin/audit` |
+| ۱۵ | **Admin** | Visitor Insights | `GET` | `/api/alphabet/v1/admin/visitor-insights` |
+| ۱۶ | **Admin** | Pulse Sources | `GET` | `/api/alphabet/v1/admin/technology-pulse/sources` |
 
 ---
 
@@ -41,7 +41,7 @@
 ### ساختار خطا
 
 ```typescript
-interface AWAFError {
+interface AlphabetError {
   code: string;              // کد خطای machine-readable
   message: string;           // پیام خطای human-readable
   details?: Record<string, unknown>;
@@ -176,7 +176,7 @@ interface HandshakeResponse {
 #### Example Usage
 
 ```typescript
-import { postHandshake, type HandshakeRequest } from '@awaf/api';
+import { postHandshake, type HandshakeRequest } from '@alphabet/api';
 
 const request: HandshakeRequest = {
   requestId: crypto.randomUUID(),
@@ -270,7 +270,7 @@ interface ConsentResponse {
 #### Example Usage
 
 ```typescript
-import { postConsent } from '@awaf/api';
+import { postConsent } from '@alphabet/api';
 
 // Grant consent to ANONYMOUS tier
 const result = await postConsent({
@@ -356,7 +356,7 @@ interface PreferenceResponse {
 #### Example Usage
 
 ```typescript
-import { postPreference } from '@awaf/api';
+import { postPreference } from '@alphabet/api';
 
 const result = await postPreference({
   visitorId: 'anon-7f8a9b2c',
@@ -431,7 +431,7 @@ interface InteractResponse {
 ```typescript
 interface InteractStreamEvent {
   type: 'token' | 'suggestion' | 'reference' | 'done' | 'error';
-  data: string | SuggestionOption | { title: string; url: string } | AWAFError;
+  data: string | SuggestionOption | { title: string; url: string } | AlphabetError;
 }
 ```
 
@@ -448,7 +448,7 @@ interface InteractStreamEvent {
 #### Example Usage (Non-Streaming)
 
 ```typescript
-import { postInteract } from '@awaf/api';
+import { postInteract } from '@alphabet/api';
 
 const result = await postInteract({
   visitorId: 'anon-7f8a9b2c',
@@ -468,7 +468,7 @@ if (result.success) {
 #### Example Usage (Streaming)
 
 ```typescript
-import { streamInteract } from '@awaf/api';
+import { streamInteract } from '@alphabet/api';
 
 const stream = streamInteract({
   visitorId: 'anon-7f8a9b2c',
@@ -490,7 +490,7 @@ for await (const event of stream) {
       console.log('\n[Stream complete]');
       break;
     case 'error':
-      console.error('\n[Error:', (event.data as AWAFError).message, ']');
+      console.error('\n[Error:', (event.data as AlphabetError).message, ']');
       break;
   }
 }
@@ -550,7 +550,7 @@ interface VoiceTranscribeResponse {
 #### Example Usage
 
 ```typescript
-import { postVoiceTranscribe } from '@awaf/api';
+import { postVoiceTranscribe } from '@alphabet/api';
 
 const audioFile = document.getElementById('audio-input').files[0];
 
@@ -625,7 +625,7 @@ interface SuggestionOption {
 #### Example Usage
 
 ```typescript
-import { getSuggestions } from '@awaf/api';
+import { getSuggestions } from '@alphabet/api';
 
 const result = await getSuggestions({
   visitorId: 'anon-7f8a9b2c',
@@ -714,7 +714,7 @@ interface TechnologySignal {
 #### Example Usage
 
 ```typescript
-import { getTechnologyPulse } from '@awaf/api';
+import { getTechnologyPulse } from '@alphabet/api';
 
 const result = await getTechnologyPulse({
   category: 'AI',
@@ -787,7 +787,7 @@ interface TechnologyPulseBriefResponse {
 #### Example Usage
 
 ```typescript
-import { postTechnologyPulseBrief } from '@awaf/api';
+import { postTechnologyPulseBrief } from '@alphabet/api';
 
 const result = await postTechnologyPulseBrief({
   visitorId: 'anon-7f8a9b2c',
@@ -864,7 +864,7 @@ interface StoreMemoryResponse {
 #### Example Usage
 
 ```typescript
-import { postVisitorMemory } from '@awaf/api';
+import { postVisitorMemory } from '@alphabet/api';
 
 const result = await postVisitorMemory({
   visitorId: 'anon-7f8a9b2c',
@@ -937,7 +937,7 @@ interface GetMemoryResponse {
 #### Example Usage
 
 ```typescript
-import { getVisitorMemory } from '@awaf/api';
+import { getVisitorMemory } from '@alphabet/api';
 
 const result = await getVisitorMemory({
   visitorId: 'anon-7f8a9b2c',
@@ -1013,7 +1013,7 @@ interface EraseMemoryResponse {
 #### Example Usage
 
 ```typescript
-import { deleteVisitorMemory } from '@awaf/api';
+import { deleteVisitorMemory } from '@alphabet/api';
 
 // درخواست confirmation token (مرحله ۱)
 const confirmToken = await requestErasureToken({ visitorId: 'anon-7f8a9b2c' });
@@ -1098,7 +1098,7 @@ interface ClawQueryResponse {
 #### Example Usage
 
 ```typescript
-import { postClawQuery } from '@awaf/api';
+import { postClawQuery } from '@alphabet/api';
 
 const result = await postClawQuery({
   visitorId: 'anon-7f8a9b2c',
@@ -1177,7 +1177,7 @@ interface ClawIngestResponse {
 #### Example Usage
 
 ```typescript
-import { postClawIngest } from '@awaf/api';
+import { postClawIngest } from '@alphabet/api';
 
 const result = await postClawIngest({
   apiKey: 'ak_claw_prod_xxx',
@@ -1258,7 +1258,7 @@ interface ClawAdminAuditResponse {
 #### Example Usage
 
 ```typescript
-import { postClawAdminAudit } from '@awaf/api';
+import { postClawAdminAudit } from '@alphabet/api';
 
 const result = await postClawAdminAudit({
   apiKey: 'ak_admin_prod_xxx',
@@ -1347,7 +1347,7 @@ interface VisitorInsightsResponse {
 #### Example Usage
 
 ```typescript
-import { getAdminVisitorInsights } from '@awaf/api';
+import { getAdminVisitorInsights } from '@alphabet/api';
 
 const result = await getAdminVisitorInsights({
   apiKey: 'ak_admin_prod_xxx',
@@ -1431,7 +1431,7 @@ interface PulseSourcesResponse {
 #### Example Usage
 
 ```typescript
-import { getAdminPulseSources } from '@awaf/api';
+import { getAdminPulseSources } from '@alphabet/api';
 
 const result = await getAdminPulseSources({
   apiKey: 'ak_admin_prod_xxx',
@@ -1503,4 +1503,4 @@ POST /api/context/consent            (Auth: Bearer)
 
 ---
 
-*این سند بخشی از مستندات SDK AWAF است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*
+*این سند بخشی از مستندات SDK Alphabet است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*

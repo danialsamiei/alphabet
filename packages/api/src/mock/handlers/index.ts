@@ -1,17 +1,17 @@
 /**
  * @module mock/handlers
  * @description
- * Deterministic handlers for every AWAF endpoint. Each handler returns a
- * standard `AWAFResponse` envelope with seeded values so tests can assert
+ * Deterministic handlers for every Alphabet endpoint. Each handler returns a
+ * standard `AlphabetResponse` envelope with seeded values so tests can assert
  * exact equality.
  *
  * Adding a new handler:
  * 1. Implement a function with the {@link RouteHandler} signature.
- * 2. Register it in `routeHandlers` keyed by the matching `AWAF_ROUTES` key.
+ * 2. Register it in `routeHandlers` keyed by the matching `ALPHABET_ROUTES` key.
  * 3. Add an integration test in `test/integration/`.
  */
 
-import { AWAF_ROUTES } from '@awaf/core';
+import { ALPHABET_ROUTES } from '@alphabet/core';
 import type { SeededRng } from '../seeded-rng.js';
 
 /** Context object passed to every handler. */
@@ -81,9 +81,9 @@ const handlerHandshake: RouteHandler = (ctx) => {
       locale: 'en-US',
       direction: 'ltr',
       theme: 'auto',
-      heroCopy: 'Welcome to AWAF',
+      heroCopy: 'Welcome to Alphabet',
       consentRequired: true,
-      cssVariables: { '--awaf-accent': '#3366cc' },
+      cssVariables: { '--alphabet-accent': '#3366cc' },
     },
     privacyMode: 'standard',
   });
@@ -115,7 +115,7 @@ const handlerInteract: RouteHandler = (ctx) => {
     requestId: `req_mock_${ctx.callCount}`,
     visitorId: 'vst_mock',
     sessionId: 'ses_mock',
-    response: { text: 'Hello from the AWAF mock server.', tokensUsed: 12 },
+    response: { text: 'Hello from the Alphabet mock server.', tokensUsed: 12 },
     consentTier: 'ANONYMOUS',
     streaming: false,
   });
@@ -272,13 +272,13 @@ const handlerAdminPulseSources: RouteHandler = (ctx) => {
 // ─── Registry ────────────────────────────────────────────────────────────────
 
 /**
- * Map of {@link AWAF_ROUTES} keys to their mock handler functions. Note that
+ * Map of {@link ALPHABET_ROUTES} keys to their mock handler functions. Note that
  * the `visitorMemoryStore`, `visitorMemoryRead`, and `visitorMemoryDelete`
  * keys all share the same path; resolution is by HTTP method inside the
  * handler. The store-key handler is the canonical entry; the read-key
  * dispatches on method.
  */
-export const routeHandlers: Readonly<Record<keyof typeof AWAF_ROUTES, RouteHandler>> = {
+export const routeHandlers: Readonly<Record<keyof typeof ALPHABET_ROUTES, RouteHandler>> = {
   contextHandshake: handlerHandshake,
   contextConsent: handlerConsent,
   contextPreference: handlerPreference,

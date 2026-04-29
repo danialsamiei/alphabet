@@ -1,8 +1,8 @@
 {
-  "name": "@awaf/example-astro-islands-basic",
+  "name": "@alphabet/example-astro-islands-basic",
   "version": "0.0.0",
   "private": true,
-  "description": "Minimal Astro Islands example showing AWAF on a React island. Documentation-only snippet pack — see README for install steps.",
+  "description": "Minimal Astro Islands example showing Alphabet on a React island. Documentation-only snippet pack — see README for install steps.",
   "scripts": {
     "typecheck": "echo \"This example is documentation-only; install Astro locally and copy src/ into your project. See README.md.\""
   }

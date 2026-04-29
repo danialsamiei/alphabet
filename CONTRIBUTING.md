@@ -1,6 +1,6 @@
-# Contributing to AWAF
+# Contributing to Alphabet
 
-Thanks for your interest in contributing! AWAF is a privacy-first adaptive
+Thanks for your interest in contributing! Alphabet is a privacy-first adaptive
 web SDK and we welcome contributions from human developers and AI agents.
 
 > **The full guide is in [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md)** —

@@ -4,13 +4,13 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useAwafConsent } from '../hooks/useAwafConsent.js';
+import { useAlphabetConsent } from '../hooks/useAlphabetConsent.js';
 import { ConsentBanner } from './ConsentBanner.js';
 
 // Simple wrapper that lives inside React so the consent hook is shared
 // between banner and assertion via render-prop.
 function Harness({ onChange }: { readonly onChange?: (a: string) => void }): JSX.Element {
-  const consent = useAwafConsent();
+  const consent = useAlphabetConsent();
   return (
     <>
       <ConsentBanner

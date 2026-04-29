@@ -7,7 +7,7 @@
  *
  * Design notes
  * ─────────────
- * - A `Step<I, O>` is `(input, ctx) => Promise<Result<O, AWAFError>>`.
+ * - A `Step<I, O>` is `(input, ctx) => Promise<Result<O, AlphabetError>>`.
  *   It MUST NOT throw; any failure path is reported via `Result.err`.
  * - `compose(a, b)` short-circuits on first failure; the resulting step
  *   has type `Step<A_in, B_out>`.
@@ -22,7 +22,7 @@
  * collect/enrich flows with cancellation + retries + tracing for free.
  */
 
-import { type AWAFError, type Result, err } from '../../types/result.js';
+import { type AlphabetError, type Result, err } from '../../types/result.js';
 import { type Tracer, noopTracer, type SpanAttributes } from './trace.js';
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -55,10 +55,10 @@ export function makeStepContext(options: StepContextOptions = {}): StepContext {
 
 // ─── Step ─────────────────────────────────────────────────────────────────────
 
-/** یک واحد اجرای async که `Result<O, AWAFError>` برمی‌گرداند. */
+/** یک واحد اجرای async که `Result<O, AlphabetError>` برمی‌گرداند. */
 export interface Step<I, O> {
   readonly name: string;
-  run(input: I, ctx: StepContext): Promise<Result<O, AWAFError>>;
+  run(input: I, ctx: StepContext): Promise<Result<O, AlphabetError>>;
 }
 
 /**
@@ -68,7 +68,7 @@ export interface Step<I, O> {
  */
 export function defineStep<I, O>(
   name: string,
-  fn: (input: I, ctx: StepContext) => Promise<Result<O, AWAFError>> | Result<O, AWAFError>,
+  fn: (input: I, ctx: StepContext) => Promise<Result<O, AlphabetError>> | Result<O, AlphabetError>,
   attributes?: SpanAttributes,
 ): Step<I, O> {
   return {
@@ -177,7 +177,7 @@ export function parallel<I, O extends Record<string, unknown>>(
 
         const partial = {} as Record<keyof O & string, unknown>;
         for (let i = 0; i < keys.length; i++) {
-          const r = results[i] as Result<O[typeof keys[number]], AWAFError>;
+          const r = results[i] as Result<O[typeof keys[number]], AlphabetError>;
           if (!r.success) {
             inner.abort();
             span.fail(r.error.code);
@@ -196,7 +196,7 @@ export function parallel<I, O extends Record<string, unknown>>(
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function abortedError(stepName: string): AWAFError {
+function abortedError(stepName: string): AlphabetError {
   return {
     code: 'STEP_ABORTED',
     message: `Step "${stepName}" aborted via AbortSignal`,
