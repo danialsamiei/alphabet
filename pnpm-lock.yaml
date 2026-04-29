@@ -130,6 +130,8 @@ importers:
 
   examples/next-app-router-basic: {}
 
+  examples/vercel-ai-sdk-protocol-v2: {}
+
   examples/vite-react-basic:
     dependencies:
       '@awaf/api':
