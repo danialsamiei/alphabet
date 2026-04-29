@@ -142,6 +142,9 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
 
   const executeBackendRequest = async (path: string, init: RequestInit): Promise<Response> => {
     const response = await fetch(`${runtimeProfile.apiBaseUrl}${path}`, init);
+    if (!response.ok) {
+      throw new Error(`Backend returned HTTP ${response.status} for ${path}`);
+    }
     return response;
   };
 
