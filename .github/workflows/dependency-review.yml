@@ -1,0 +1,51 @@
+name: Dependency Review
+
+# Runs the official `actions/dependency-review-action` on every pull request to
+# `main`. Surfaces newly-introduced dependencies that have known
+# vulnerabilities or non-compatible licenses. Complements `pnpm audit` (which
+# scans existing manifest entries) and Dependabot (which proposes upgrades).
+#
+# This job runs in PR context; on push to `main`, the diff base is unavailable
+# so the action no-ops. Forks without write access are still safe — the
+# action requires only `contents: read`.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: dep-review-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: GitHub dependency-review
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          # Allow the licenses Alphabet itself ships under and common OSS
+          # ecosystem licenses. Add to this list with care — Alphabet is MIT
+          # and must not pull in copyleft dependencies into the runtime.
+          allow-licenses: >-
+            MIT,
+            Apache-2.0,
+            BSD-2-Clause,
+            BSD-3-Clause,
+            ISC,
+            CC0-1.0,
+            0BSD,
+            Unlicense,
+            BlueOak-1.0.0,
+            Python-2.0
+          comment-summary-in-pr: on-failure

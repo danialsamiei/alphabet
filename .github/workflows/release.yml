@@ -51,11 +51,32 @@ jobs:
         with:
           # `pnpm version-packages` runs `changeset version`
           version: pnpm version-packages
-          # `pnpm release` runs `pnpm build && changeset publish`
-          publish: pnpm release
+          # `pnpm release:publish` runs `changeset publish --no-git-tag` with
+          # npm provenance enabled. Build runs in the preceding step so we do
+          # not double-build inside the publish action.
+          publish: pnpm release:publish
           commit: "chore(release): version packages"
           title: "chore(release): version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # `id-token: write` is granted at the workflow level so npm can mint
+          # an OIDC token for `--provenance` attestation.
+          NPM_CONFIG_PROVENANCE: "true"
+
+      - name: Aggregate top-level CHANGELOG.md (post-publish)
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          node scripts/aggregate-changelog.mjs
+          if ! git diff --quiet -- CHANGELOG.md; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add CHANGELOG.md
+            git commit -m "chore(release): aggregate CHANGELOG.md [skip ci]"
+            git push
+          else
+            echo "CHANGELOG.md unchanged — skipping commit."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

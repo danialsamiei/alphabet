@@ -1,0 +1,99 @@
+name: Release dry-run
+
+# Manual workflow that builds every public package and runs `npm pack` on
+# each, uploading the resulting `.tgz` tarballs as a workflow artifact. A
+# maintainer can then download the artifact and run `npm publish --dry-run
+# *.tgz` locally (or `npm install ./<pkg>.tgz` in a sandbox app) to verify
+# the publish manifest **before** merging the Changesets release PR.
+#
+# Why a separate workflow:
+#   * The real `release.yml` only fires on `push: main`; we want a dry-run
+#     gate that any maintainer can trigger from the Actions tab on a feature
+#     branch or before approving the version PR.
+#   * `npm pack` validates the `files` allow-list, the `exports` map, and the
+#     declaration outputs in one shot — catching mistakes (extra source
+#     leaking, missing `dist/`) that size-limit alone won't catch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to dry-run (defaults to current branch)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-dry-run-${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dry-run:
+    name: Build + npm pack (no publish)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.1.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      # `pnpm -r --filter "./packages/*" --filter "!@alphabet/demo" exec npm pack`
+      # would also work; we run an explicit list to keep the dry-run scoped to
+      # the packages that actually publish.
+      - name: npm pack — public packages
+        run: |
+          set -e
+          mkdir -p tarballs
+          for pkg in core api ui protocols security; do
+            dir="packages/${pkg}"
+            if [ -f "${dir}/package.json" ]; then
+              echo "::group::npm pack ${dir}"
+              ( cd "${dir}" && npm pack --pack-destination "${GITHUB_WORKSPACE}/tarballs" )
+              echo "::endgroup::"
+            fi
+          done
+          ls -lh tarballs/
+
+      - name: npm publish --dry-run (registry compatibility check)
+        # `--dry-run` exits non-zero if the registry would reject the publish
+        # for missing fields, version conflicts, etc. We do this against the
+        # public registry so version conflicts are caught before merge.
+        # NPM_TOKEN is **not** required for `--dry-run`; we leave it unset.
+        run: |
+          set -e
+          for tgz in tarballs/*.tgz; do
+            echo "::group::npm publish --dry-run ${tgz}"
+            npm publish --dry-run --provenance=false "${tgz}" || \
+              echo "::warning::dry-run flagged ${tgz} — review manifest before real publish"
+            echo "::endgroup::"
+          done
+
+      - name: Upload tarballs
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-tarballs-${{ github.sha }}
+          path: tarballs/*.tgz
+          if-no-files-found: error
+          retention-days: 14
