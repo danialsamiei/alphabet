@@ -9,8 +9,9 @@
  * and the resolved decision with its reason code.
  */
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ContextProvider, useContextStream } from '@alphabet/ui';
+import { pushTelemetry } from '../telemetry.js';
 
 export function ContextDashboardExperience(): JSX.Element {
   return (
@@ -23,6 +24,8 @@ export function ContextDashboardExperience(): JSX.Element {
 function ContextDashboardInner(): JSX.Element {
   const { status, decision, snapshot, events, error } = useContextStream();
 
+  const sentCount = useRef(0);
+
   const phaseTimings = useMemo(() => {
     const ends = events.filter(
       (e): e is Extract<typeof e, { type: 'phase:end' }> =>
@@ -30,6 +33,14 @@ function ContextDashboardInner(): JSX.Element {
     );
     return ends.map((e) => ({ phase: e.phase, durationMs: e.durationMs }));
   }, [events]);
+
+  useEffect(() => {
+    const unseen = phaseTimings.slice(sentCount.current);
+    unseen.forEach((p) => {
+      pushTelemetry({ event: 'handshake_phase_timing', at: Date.now(), phase: p.phase, durationMs: p.durationMs, source: 'context-stream' });
+    });
+    sentCount.current = phaseTimings.length;
+  }, [phaseTimings]);
 
   return (
     <div className="alphabet-experience alphabet-grid-3">

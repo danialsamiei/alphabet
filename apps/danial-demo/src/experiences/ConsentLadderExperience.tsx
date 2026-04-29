@@ -11,6 +11,7 @@ import {
   type ConsentLadderProps,
 } from '@alphabet/ui';
 import type { ConsentTier } from '@alphabet/core';
+import { pushTelemetry } from '../telemetry.js';
 
 interface LogEntry {
   readonly id: number;
@@ -50,6 +51,7 @@ export function ConsentLadderExperience(): JSX.Element {
       note,
     };
     setLog((current) => [entry, ...current].slice(0, 25));
+    pushTelemetry({ event: 'consent_transition', at: Date.now(), fromTier: prev.tier, toTier: consent.tier, fromState: prev.state, toState: consent.state, source: 'ui-consent-hook' });
     previous.current = { tier: consent.tier, state: consent.state };
   }, [consent.tier, consent.state]);
 
