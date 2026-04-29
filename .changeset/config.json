@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@alphabet/demo", "@alphabet/docs"]
+  "ignore": ["@alphabet/demo"]
 }
