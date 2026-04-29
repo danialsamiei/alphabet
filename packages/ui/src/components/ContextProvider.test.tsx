@@ -34,15 +34,17 @@ describe('ContextProvider', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('status').textContent).toBe('ready');
-    });
 
-    const decision = screen.getByTestId('layer').textContent;
-    expect(decision).not.toBe('none');
-    // Handshake emits at minimum: 3× phase:start + 3× phase:end + decision +
-    // 1× signal-update = 8 events. Allow some slack in case of additions.
-    const eventCount = Number(screen.getByTestId('events').textContent ?? '0');
-    expect(eventCount).toBeGreaterThanOrEqual(7);
-    expect(screen.getByTestId('error').textContent).toBe('none');
+      const decision = screen.getByTestId('layer').textContent;
+      expect(decision).not.toBe('none');
+
+      // Handshake emits at minimum: 3× phase:start + 3× phase:end + decision +
+      // 1× signal-update = 8 events. Allow some slack in case of additions.
+      const eventCount = Number(screen.getByTestId('events').textContent ?? '0');
+      expect(eventCount).toBeGreaterThanOrEqual(7);
+
+      expect(screen.getByTestId('error').textContent).toBe('none');
+    });
   });
 
   it('surfaces a stable status before handshake completes', () => {
