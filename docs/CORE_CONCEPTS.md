@@ -4,7 +4,7 @@ Alphabet is built around four small ideas. This document describes each one
 in enough depth to read the source code, write integrations, and review
 PRs against the SDK.
 
-> **Naming.** Alphabet expands to **Adaptive Web Awareness Framework**. The
+> **Naming.** Alphabet expands to **Alefba Web-Aware Framework**. The
 > brand origin is **الفبا (Alefba)**, the Persian word for *alphabet* —
 > the elementary letters from which any language is built. Alphabet treats
 > *language*, *direction*, *device*, *network*, and *consent* as letters

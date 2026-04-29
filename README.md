@@ -415,7 +415,7 @@ MIT — see [`LICENSE`](LICENSE).
 
 <div dir="rtl" align="right">
 
-**Alphabet** — *Adaptive Web Awareness Framework* (با ریشهٔ نام **الفبا**) یک
+**Alphabet** — *Alefba Web-Aware Framework* (با ریشهٔ نام **الفبا**) یک
 SDK سبک به زبان TypeScript است: یک لایهٔ **بافتار تطبیقی و حریم خصوصی**
 که در کنار Next.js، Astro، i18next، Vercel AI SDK، GrowthBook و
 LaunchDarkly قرار می‌گیرد و **جایگزین** هیچ‌کدام نیست.
