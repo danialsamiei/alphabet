@@ -500,7 +500,7 @@ export default defineConfig({
 | `@alphabet/security` | `@alphabet/core` | `resolve(__dirname, '../core/src')` |
 | `@alphabet/protocols` | `@alphabet/core`, `@alphabet/api` | هر دو alias تعریف شوند |
 | `@alphabet/ui` | `@alphabet/core`, `@alphabet/api` | هر دو alias تعریف شوند |
-| `@alphabet/demo` | همه packages | تمام aliasها تعریف شوند |
+| `@alphabet/danial-demo` | همه packages | تمام aliasها تعریف شوند |
 
 ---
 
@@ -577,7 +577,7 @@ packages/core/dist/
                    /│\
                   / │ \        E2E Tests (Playwright)
                  /  │  \       ~۵% coverage — user journeys
-                /   │   \      apps/demo/e2e/
+                /   │   \      apps/danial-demo/e2e/
                /────┼────\
               /     │     \    Integration Tests (Vitest)
              /      │      \   ~۱۵% coverage — endpoint + handshake
@@ -715,7 +715,7 @@ describe('ContextHandshakeClient Integration', () => {
 ### 8.6 تست E2E (Playwright)
 
 ```typescript
-// apps/demo/e2e/handshake.spec.ts
+// apps/danial-demo/e2e/handshake.spec.ts
 import { test, expect } from '@playwright/test';
 
 test('full handshake flow', async ({ page }) => {
@@ -740,7 +740,7 @@ test('full handshake flow', async ({ page }) => {
 |-----|-------|----------------|------|
 | Unit | Vitest | ۸۰%+ | `packages/*/src/**/*.test.ts` |
 | Integration | Vitest | ۶۰%+ | `packages/*/src/**/*.integration.test.ts` |
-| E2E | Playwright | Journey-based | `apps/demo/e2e/*.spec.ts` |
+| E2E | Playwright | Journey-based | `apps/danial-demo/e2e/*.spec.ts` |
 
 ---
 

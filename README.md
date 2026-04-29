@@ -68,6 +68,8 @@ import '@alphabet/danial-demo/styles';
 
 See [`apps/danial-demo/README.md`](apps/danial-demo/README.md) for full embed, deployment, and customization docs.
 
+**Canonical demo path for CI/CD and contributors:** [`apps/danial-demo`](apps/danial-demo/)
+
 ---
 
 > **Alphabet** treats *language*, *direction*, *device*, *network*, and *consent*
@@ -524,7 +526,7 @@ A condensed view; the full plan is in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 |---|---|---|
 | ✅ **0 — Brand** *(this release)* | Rename AWAF → **Alphabet 1.0 (danial.ai Edition)**. Public framing under the Alefba program. | This README, package scope `@alphabet/*`, [`alphabet.alef.ba`](https://alphabet.alef.ba). |
 | **1 — Truth alignment** | Honest README, Implementation Status, Roadmap, comparison &amp; integration narrative. | [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md), [`docs/CORE_CONCEPTS.md`](docs/CORE_CONCEPTS.md), [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md). |
-| **2 — Smallest end-to-end** | `HandshakeOrchestrator`, real `display`/`consent`/`morph` phases, mock server, Layers 4 + 5 demo. | `apps/demo` running; `pnpm dev` opens an adaptive page. |
+| **2 — Smallest end-to-end** | `HandshakeOrchestrator`, real `display`/`consent`/`morph` phases, mock server, Layers 4 + 5 demo. | `apps/danial-demo` running; `pnpm dev` opens the canonical adaptive page. |
 | **3 — Adapters** | `@alphabet/next`, `@alphabet/vite`, `@alphabet/astro` first-class wrappers. | Working examples in `examples/`. |
 | **4 — Pulse plugin** | `@alphabet/pulse` (formerly Technology Pulse): trust-tiered ingestion, C2PA-style provenance, RAG brief generation. | Optional plugin module, opt-in. |
 | **5 — Hardening** | Benchmarks (sub-100 ms handshake target), NIST AI RMF mapping doc, cost guardian, differential-privacy helpers, accessibility audit. | 1.x maturity. |

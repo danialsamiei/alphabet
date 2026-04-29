@@ -28,7 +28,7 @@
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  LAYER 8 — EXPERIENCE & DEMO                                                 ║
 ║  ┌─────────────────────────────────────────────────────────────────────────┐ ║
-║  │  apps/demo/                                                             │ ║
+║  │  apps/danial-demo/                                                             │ ║
 ║  │  اپلیکیشن نمونه برای تست و توسعه (Vite + React)                        │ ║
 ║  └─────────────────────────────────────────────────────────────────────────┘ ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
@@ -414,8 +414,8 @@ export interface IntentSession {
 
 ```
                     ┌─────────────┐
-                    │  @alphabet/demo │
-                    │  (apps/demo)│
+                    │ @alphabet/danial-demo │
+                    │  (apps/danial-demo)│
                     └──────┬──────┘
                            │ depends on all
          ┌─────────────────┼─────────────────┐
@@ -454,7 +454,7 @@ export interface IntentSession {
 @alphabet/security  ← @alphabet/core
 @alphabet/protocols ← @alphabet/core + @alphabet/api
 @alphabet/ui        ← @alphabet/core + @alphabet/api
-@alphabet/demo      ← همه packageها (build آخر)
+@alphabet/danial-demo ← همه packageها (build آخر)
 ```
 
 ### 6.2 جدول Exports هر Package
@@ -466,7 +466,7 @@ export interface IntentSession {
 | `@alphabet/ui` | ۵ لایه degradation + hooks + components | `packages/ui/dist/` |
 | `@alphabet/protocols` | MCP, A2A, QR, API adapters | `packages/protocols/dist/` |
 | `@alphabet/security` | threat mitigations, sanitizers, audit | `packages/security/dist/` |
-| `@alphabet/demo` | اپلیکیشن نمونه (Vite app) | `apps/demo/dist/` |
+| `@alphabet/danial-demo` | اپلیکیشن نمونه (Vite app) | `apps/danial-demo/dist/` |
 
 ---
 
@@ -517,7 +517,7 @@ export interface IntentSession {
 │  ├─ Step 3: @alphabet/security → vite build + tsc (after core)  │
 │  ├─ Step 4: @alphabet/protocols → vite build (after core+api) │
 │  ├─ Step 5: @alphabet/ui      → vite build (after core+api)     │
-│  └─ Step 6: @alphabet/demo     → vite build (after all packages)│
+│  └─ Step 6: @alphabet/danial-demo → vite build (after all packages)│
 └──────────────────────────┬───────────────────────────────────┘
                            │
                            ▼
@@ -525,7 +525,7 @@ export interface IntentSession {
 │  Phase 3: test (after build)                                │
 │  ├─ vitest run unit (packages/*)                            │
 │  ├─ vitest run integration (packages/api)                   │
-│  └─ playwright test e2e (apps/demo)                         │
+│  └─ playwright test e2e (apps/danial-demo)                         │
 └──────────────────────────┬───────────────────────────────────┘
                            │
                            ▼
@@ -549,7 +549,7 @@ export interface IntentSession {
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@alphabet/demo"]
+  "ignore": ["@alphabet/demo"]  // legacy label (pre-canonical)
 }
 ```
 
