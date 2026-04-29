@@ -29,8 +29,7 @@
 
 import type { ContextStreamEvent } from './context-stream.js';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
+// ─── Types ───────────────────────────────────────────────────────────[...]\n
 export type ContextStreamListener = (event: ContextStreamEvent) => void;
 
 export interface MulticastContextStreamOptions {
@@ -82,7 +81,7 @@ export class MulticastContextStream {
   private readonly replay: number;
   private readonly perSubscriberBuffer: number;
   private readonly replayBuffer: ContextStreamEvent[] = [];
-  private readonly onListenerError?: (error: unknown, event: ContextStreamEvent) => void;
+  private readonly onListenerError?: ((error: unknown, event: ContextStreamEvent) => void) | undefined;
   private closed = false;
 
   constructor(options: MulticastContextStreamOptions = {}) {
