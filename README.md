@@ -295,7 +295,7 @@ graph TB
 ### Install and run the test suite
 
 ```bash
-git clone https://github.com/danialsamiei/awaf.git alphabet
+git clone https://github.com/danialsamiei/alphabet.git
 cd alphabet
 
 pnpm install

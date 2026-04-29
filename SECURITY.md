@@ -27,7 +27,7 @@ Pre-release `0.x` versions receive fixes only on the highest published minor.
 Use one of these private channels instead:
 
 1. **GitHub Security Advisories** — preferred. Open a private advisory at
-   <https://github.com/danialsamiei/awaf/security/advisories/new>.
+   <https://github.com/danialsamiei/alphabet/security/advisories/new>.
 2. **Email** — contact the maintainer listed in the repository profile.
    Encrypt with the maintainer's public key if possible.
 

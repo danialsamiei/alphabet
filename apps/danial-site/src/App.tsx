@@ -108,7 +108,7 @@ export function App(): JSX.Element {
       <footer className="ds-footer">
         <p>
           © {new Date().getFullYear()} {profile.name}. Built with the{' '}
-          <a href="https://github.com/danialsamiei/awaf" rel="noopener noreferrer" target="_blank">
+          <a href="https://github.com/danialsamiei/alphabet" rel="noopener noreferrer" target="_blank">
             Alphabet
           </a>{' '}
           SDK. Assistant powered by{' '}
