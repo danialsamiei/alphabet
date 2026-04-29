@@ -46,6 +46,5 @@ jobs:
             CC0-1.0,
             0BSD,
             Unlicense,
-            BlueOak-1.0.0,
-            Python-2.0
+            BlueOak-1.0.0
           comment-summary-in-pr: on-failure

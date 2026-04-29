@@ -1,5 +1,10 @@
 packages:
   - 'packages/*'
   - 'apps/*'
+  # The documentation site has its own dependency graph (Next.js + Nextra).
+  # Excluding it from the root workspace keeps `pnpm install --frozen-lockfile`
+  # in the main CI fast and stable; the `docs.yml` workflow installs the docs
+  # site in its own job with `--no-frozen-lockfile`.
+  - '!apps/docs'
   - 'benchmarks'
   - 'examples/*'
