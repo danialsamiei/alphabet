@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: 🔒 Security vulnerability
-    url: https://github.com/danialsamiei/awaf/security/advisories/new
+    url: https://github.com/danialsamiei/alphabet/security/advisories/new
     about: Report a security vulnerability privately. Do not file a public issue.
   - name: 📚 Documentation
-    url: https://github.com/danialsamiei/awaf/tree/main/docs
+    url: https://github.com/danialsamiei/alphabet/tree/main/docs
     about: AGENTS.md, ARCHITECTURE, SECURITY, RELEASE, and the rest of the developer docs.
   - name: 💬 Discussions
-    url: https://github.com/danialsamiei/awaf/discussions
+    url: https://github.com/danialsamiei/alphabet/discussions
     about: Questions, ideas, and design conversations.

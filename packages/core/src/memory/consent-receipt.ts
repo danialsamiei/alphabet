@@ -32,7 +32,7 @@ import type {
   MemoryTier,
 } from './types.js';
 
-// ─── base64url helpers (mirrors @awaf/protocols/v2/consent-proof) ────────────
+// ─── base64url helpers (mirrors @alphabet/protocols/v2/consent-proof) ────────
 
 function bytesToBase64Url(bytes: Uint8Array): string {
   let bin = '';
