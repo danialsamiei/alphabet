@@ -1,0 +1,536 @@
+openapi: 3.1.0
+info:
+  title: AwafProtocol v2 — AI Integration Layer
+  version: 2.0.0
+  description: |
+    AwafProtocol v2 is the streaming-first, provider-agnostic AI surface
+    of AWAF. It is **additive** to v1 (`openapi/awaf.v1.yaml`) — every
+    v1 route continues to work unchanged.
+
+    The spec covers four endpoint families that map directly onto the
+    `@awaf/protocols/v2` TypeScript SDK:
+
+      • `POST /api/awaf/v2/ai/generate`   — non-streaming completion
+      • `POST /api/awaf/v2/ai/stream`     — streaming completion (SSE)
+      • `POST /api/awaf/v2/consent/proof/sign`   — server-side signing
+      • `POST /api/awaf/v2/consent/proof/verify` — server-side verification
+      • `POST /api/awaf/v2/pulse/forecast` — proactive layer downgrade hints
+
+    All requests carry the visitor's `AwafToolContext` so the server can
+    perform consent-aware system-prelude injection and PII redaction
+    *before* dispatching to a provider. Privacy-restricted requests
+    (DNT/GPC) are honoured automatically.
+  contact:
+    name: AWAF
+    url: https://github.com/danialsamiei/awaf
+  license:
+    name: Apache-2.0
+
+servers:
+  - url: https://api.example.com
+    description: Production AWAF deployment
+  - url: http://localhost:3000
+    description: Local development
+
+tags:
+  - name: ai
+    description: Streaming + structured generation across built-in providers.
+  - name: consent-proof
+    description: Cryptographic Consent Proof (ECDSA P-256) issuance and verification.
+  - name: pulse
+    description: Predictive capability forecasting (Technology Pulse v2).
+
+# ─── Reusable schemas ────────────────────────────────────────────────────────
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        Bearer token issued by the AWAF runtime (HttpOnly cookie session
+        bridged into a short-lived JWT for upstream AI provider calls).
+
+  schemas:
+
+    ConsentTier:
+      type: string
+      enum: [NO_MEMORY, ANONYMOUS, CONSENTED, ENRICHED]
+      description: AWAF consent ladder tier.
+
+    CapabilityLayer:
+      type: string
+      enum: [R3F_IMMERSIVE, CSS_3D, CANVAS_2D, STATIC_HTML, TEXT_ONLY]
+
+    AwafToolContext:
+      type: object
+      required: [visitorId, sessionId, consentTier, privacyRestricted]
+      additionalProperties: false
+      properties:
+        visitorId: { type: string, description: Stable but rotating visitor id }
+        sessionId: { type: string }
+        consentTier: { $ref: '#/components/schemas/ConsentTier' }
+        layer: { $ref: '#/components/schemas/CapabilityLayer' }
+        locale: { type: string, example: fa-IR }
+        country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: Coarse ISO 3166-1 alpha-2 country (no city/lat/lon).
+        privacyRestricted:
+          type: boolean
+          description: Whether DNT/GPC is currently active.
+
+    AwafConsentScope:
+      type: object
+      required: [tier, operations, memoryDomains, respectsPrivacySignals]
+      additionalProperties: false
+      properties:
+        tier: { $ref: '#/components/schemas/ConsentTier' }
+        operations:
+          type: array
+          items:
+            type: string
+            enum: [memory.read, memory.write, suggest, generate, stream, tool.invoke]
+        memoryDomains:
+          type: array
+          items:
+            type: string
+            enum: [general, site_specific, visitor, class_notes, ideas, social, tech_pulse]
+        respectsPrivacySignals: { type: boolean }
+
+    AwafChatRole:
+      type: string
+      enum: [system, user, assistant, tool]
+
+    AwafToolCall:
+      type: object
+      required: [id, name, arguments]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        name: { type: string }
+        arguments:
+          type: string
+          description: JSON-encoded arguments string (matches OpenAI semantics).
+
+    AwafChatMessage:
+      type: object
+      required: [role, content]
+      additionalProperties: false
+      properties:
+        role: { $ref: '#/components/schemas/AwafChatRole' }
+        content: { type: string }
+        toolCallId: { type: string }
+        name: { type: string }
+        toolCalls:
+          type: array
+          items: { $ref: '#/components/schemas/AwafToolCall' }
+        priority:
+          type: integer
+          description: Lower priority messages are dropped first by compression.
+
+    AwafToolDefinition:
+      type: object
+      required: [name, description, parameters]
+      additionalProperties: false
+      properties:
+        name: { type: string }
+        description: { type: string }
+        parameters:
+          type: object
+          description: JSON Schema (subset).
+
+    AwafStructuredOutputSpec:
+      type: object
+      required: [mode]
+      additionalProperties: false
+      properties:
+        mode: { type: string, enum: [json, json_schema] }
+        name: { type: string }
+        schema: { type: object }
+
+    AwafSampling:
+      type: object
+      additionalProperties: false
+      properties:
+        temperature: { type: number, minimum: 0, maximum: 2 }
+        topP: { type: number, minimum: 0, maximum: 1 }
+        maxTokens: { type: integer, minimum: 1 }
+        stopSequences:
+          type: array
+          items: { type: string }
+        tokenBudget:
+          type: integer
+          minimum: 0
+          description: |
+            Max prompt tokens after compression. The server runs
+            `composeCompression` until this budget is met before
+            dispatching to a provider.
+
+    AwafGenerationRequest:
+      type: object
+      required: [model, messages, context]
+      additionalProperties: false
+      properties:
+        model: { type: string }
+        messages:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/AwafChatMessage' }
+        tools:
+          type: array
+          items: { $ref: '#/components/schemas/AwafToolDefinition' }
+        toolChoice:
+          oneOf:
+            - type: string
+              enum: [auto, none, required]
+            - type: object
+              required: [name]
+              properties:
+                name: { type: string }
+        structuredOutput: { $ref: '#/components/schemas/AwafStructuredOutputSpec' }
+        sampling: { $ref: '#/components/schemas/AwafSampling' }
+        context: { $ref: '#/components/schemas/AwafToolContext' }
+        consentProof:
+          type: string
+          description: Optional `ConsentProofToken` (`payload.signature`).
+
+    AwafFinishReason:
+      type: string
+      enum: [stop, length, tool_call, content_filter, error]
+
+    AwafUsage:
+      type: object
+      additionalProperties: false
+      properties:
+        promptTokens: { type: integer }
+        completionTokens: { type: integer }
+        totalTokens: { type: integer }
+
+    AwafGenerationResponse:
+      type: object
+      required: [text, toolCalls, finishReason, model, providerId]
+      additionalProperties: false
+      properties:
+        text: { type: string }
+        toolCalls:
+          type: array
+          items: { $ref: '#/components/schemas/AwafToolCall' }
+        structured:
+          description: Parsed JSON value when `structuredOutput` was requested.
+        finishReason: { $ref: '#/components/schemas/AwafFinishReason' }
+        usage: { $ref: '#/components/schemas/AwafUsage' }
+        model: { type: string }
+        providerId: { type: string }
+        diagnostics:
+          type: object
+          additionalProperties: false
+          properties:
+            redactedCount: { type: integer }
+            redactedKinds:
+              type: array
+              items: { type: string }
+            tokensBeforeCompression: { type: integer }
+            tokensAfterCompression: { type: integer }
+
+    AwafStreamChunk:
+      oneOf:
+        - type: object
+          required: [type, text]
+          properties:
+            type: { type: string, enum: [text-delta] }
+            text: { type: string }
+        - type: object
+          required: [type, text]
+          properties:
+            type: { type: string, enum: [structured-delta] }
+            text: { type: string }
+        - type: object
+          required: [type, toolCall]
+          properties:
+            type: { type: string, enum: [tool-call] }
+            toolCall: { $ref: '#/components/schemas/AwafToolCall' }
+        - type: object
+          required: [type, id, argumentsDelta]
+          properties:
+            type: { type: string, enum: [tool-call-delta] }
+            id: { type: string }
+            name: { type: string }
+            argumentsDelta: { type: string }
+        - type: object
+          required: [type, usage]
+          properties:
+            type: { type: string, enum: [usage] }
+            usage: { $ref: '#/components/schemas/AwafUsage' }
+        - type: object
+          required: [type, reason]
+          properties:
+            type: { type: string, enum: [finish] }
+            reason: { $ref: '#/components/schemas/AwafFinishReason' }
+            usage: { $ref: '#/components/schemas/AwafUsage' }
+        - type: object
+          required: [type, error]
+          properties:
+            type: { type: string, enum: [error] }
+            error: { $ref: '#/components/schemas/AwafProtocolError' }
+
+    AwafProtocolError:
+      type: object
+      required: [code, message]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          enum:
+            - INVALID_PROTOCOL_REQUEST
+            - INVALID_PROTOCOL_PAYLOAD
+            - CONSENT_INSUFFICIENT
+            - CONSENT_REVOKED
+            - MEMORY_PERMISSION_DENIED
+            - PII_DETECTED
+            - AUDIENCE_MISMATCH
+            - PAYLOAD_EXPIRED
+            - PAYLOAD_TAMPERED
+            - NONCE_INVALID
+            - CRYPTO_UNAVAILABLE
+            - CRYPTO_FAILURE
+            - TOOL_NOT_FOUND
+            - TASK_INVALID
+            - ADAPTER_NOT_CONFIGURED
+            - UNSUPPORTED_PROTOCOL
+        message: { type: string }
+        details: { type: object }
+
+    ConsentProofPayload:
+      type: object
+      required: [v, visitorId, scope, audience, issuedAt, expiresAt, keyId]
+      additionalProperties: false
+      properties:
+        v: { type: string, enum: [v2] }
+        visitorId: { type: string }
+        scope: { $ref: '#/components/schemas/AwafConsentScope' }
+        audience: { type: string }
+        issuedAt: { type: integer, description: Epoch ms }
+        expiresAt: { type: integer, description: Epoch ms }
+        keyId: { type: string }
+
+    LayerForecastHint:
+      oneOf:
+        - type: object
+          required: [kind, from, to, reason, urgency]
+          properties:
+            kind: { type: string, enum: [preemptive-downgrade] }
+            from: { $ref: '#/components/schemas/CapabilityLayer' }
+            to: { $ref: '#/components/schemas/CapabilityLayer' }
+            reason: { type: string }
+            urgency: { type: string, enum: [low, medium, high] }
+        - type: object
+          required: [kind, reason, urgency]
+          properties:
+            kind: { type: string, enum: [pause-animation] }
+            reason: { type: string }
+            urgency: { type: string, enum: [low, medium, high] }
+        - type: object
+          required: [kind, confidence]
+          properties:
+            kind: { type: string, enum: [no-change] }
+            currentLayer: { $ref: '#/components/schemas/CapabilityLayer' }
+            confidence: { type: number }
+
+    PulseSnapshot:
+      type: object
+      required: [at, currentLayer]
+      additionalProperties: false
+      properties:
+        at: { type: integer, description: Epoch ms }
+        currentLayer: { $ref: '#/components/schemas/CapabilityLayer' }
+        networkType:
+          type: string
+          enum: ['slow-2g', '2g', '3g', '4g', 'unknown']
+        batteryLevel: { type: number, minimum: 0, maximum: 1 }
+        batteryCharging: { type: boolean }
+        prefersReducedMotion: { type: boolean }
+        visibilityState: { type: string, enum: [visible, hidden] }
+        deviceMemory: { type: number }
+
+# ─── Paths ───────────────────────────────────────────────────────────────────
+
+paths:
+
+  /api/awaf/v2/ai/generate:
+    post:
+      tags: [ai]
+      operationId: generate
+      summary: Non-streaming AI generation.
+      description: |
+        Runs the full AwafProtocol v2 pipeline server-side
+        (consent-proof verification → consent-aware prelude → PII
+        redaction → context compression → provider) and returns the
+        collapsed generation. Equivalent to:
+
+        ```ts
+        const client = new AwafAiClient({ provider });
+        const r = await client.generate(req);
+        ```
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AwafGenerationRequest' }
+      responses:
+        '200':
+          description: Successful generation.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AwafGenerationResponse' }
+        '400':
+          description: Validation, consent, or crypto error.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+
+  /api/awaf/v2/ai/stream:
+    post:
+      tags: [ai]
+      operationId: stream
+      summary: Streaming AI generation (SSE).
+      description: |
+        Streams `AwafStreamChunk` events as Server-Sent Events. Each
+        SSE `data:` line is a JSON-encoded `AwafStreamChunk`. The
+        stream terminates with a `finish` chunk on success or an
+        `error` chunk on failure.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AwafGenerationRequest' }
+      responses:
+        '200':
+          description: SSE stream of `AwafStreamChunk` events.
+          content:
+            text/event-stream:
+              schema: { $ref: '#/components/schemas/AwafStreamChunk' }
+        '400':
+          description: Validation or consent error before streaming starts.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+
+  /api/awaf/v2/consent/proof/sign:
+    post:
+      tags: [consent-proof]
+      operationId: signConsentProof
+      summary: Sign a consent proof payload (server-side).
+      description: |
+        Returns a compact `<payloadB64>.<signatureB64>` token signed
+        with the runtime's ECDSA P-256 key. The same token can later
+        be verified by any party holding the matching public key.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConsentProofPayload' }
+      responses:
+        '200':
+          description: Signed token.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [token]
+                additionalProperties: false
+                properties:
+                  token: { type: string, description: '"<payload>.<signature>"' }
+        '400':
+          description: Validation or signing error.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+
+  /api/awaf/v2/consent/proof/verify:
+    post:
+      tags: [consent-proof]
+      operationId: verifyConsentProof
+      summary: Verify a consent proof token.
+      security:
+        - BearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, expectedAudience]
+              additionalProperties: false
+              properties:
+                token: { type: string }
+                expectedAudience: { type: string }
+                clockSkewMs: { type: integer, minimum: 0 }
+      responses:
+        '200':
+          description: Verified payload.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConsentProofPayload' }
+        '400':
+          description: Verification failed (audience, expiry, or signature).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AwafProtocolError' }
+
+  /api/awaf/v2/pulse/forecast:
+    post:
+      tags: [pulse]
+      operationId: pulseForecast
+      summary: Compute proactive layer-downgrade hints.
+      security:
+        - BearerAuth: []
+        - {}
+      description: |
+        Submits a window of `PulseSnapshot` observations and returns
+        ordered `LayerForecastHint` entries (preemptive downgrade,
+        pause animation, or no-change). The server uses
+        `ProactiveLayerForecaster` from `@awaf/protocols/v2/pulse`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [snapshots]
+              additionalProperties: false
+              properties:
+                snapshots:
+                  type: array
+                  minItems: 1
+                  items: { $ref: '#/components/schemas/PulseSnapshot' }
+                minConfidence:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+      responses:
+        '200':
+          description: Ordered list of hints.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [hints]
+                additionalProperties: false
+                properties:
+                  hints:
+                    type: array
+                    items: { $ref: '#/components/schemas/LayerForecastHint' }
+        '400':
+          description: Invalid snapshot payload.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AwafProtocolError' }
