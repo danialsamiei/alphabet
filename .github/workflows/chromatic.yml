@@ -45,7 +45,7 @@ jobs:
         with:
           fetch-depth: 0 # required by Chromatic for baseline comparison
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.1.0
 
