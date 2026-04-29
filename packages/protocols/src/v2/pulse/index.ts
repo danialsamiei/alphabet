@@ -39,10 +39,43 @@ export type LayerForecastHint =
       readonly urgency: 'low' | 'medium' | 'high';
     }
   | {
+      readonly kind: 'ethical-downgrade';
+      readonly from: CapabilityLayer;
+      readonly to: CapabilityLayer;
+      readonly reason: 'consent-revoked' | 'jurisdiction-restriction' | 'content-sensitivity';
+      readonly urgency: 'medium' | 'high';
+    }
+  | {
       readonly kind: 'no-change';
       readonly currentLayer?: CapabilityLayer;
       readonly confidence: number;
     };
+
+/**
+ * Non-capability signals consumed by `observeEthics()`. None of these
+ * fields are required individually — pass whichever the runtime knows
+ * about and the forecaster will combine them.
+ */
+export interface EthicsObservation {
+  /**
+   * The visitor's consent tier transition. `revoked` means a previously
+   * granted tier (≥ ANONYMOUS) has been revoked back to NO_MEMORY and
+   * therefore *all* personalization layers must be paused.
+   */
+  readonly consentTierChange?: 'granted' | 'revoked' | 'downgraded';
+  /**
+   * Hint that the visitor's jurisdiction restricts richer renderings —
+   * for example, an XR/biometric ban or a per-region content rule.
+   */
+  readonly jurisdictionRisk?: 'none' | 'low' | 'high';
+  /**
+   * Content moderation flag for the current page or response stream.
+   *   • `safe`  — no action.
+   *   • `caution` — strip animations.
+   *   • `flagged` — drop to STATIC_HTML.
+   */
+  readonly contentFlag?: 'safe' | 'caution' | 'flagged';
+}
 
 /** Options for `ProactiveLayerForecaster`. */
 export interface ProactiveLayerForecasterOptions {
@@ -88,6 +121,7 @@ export class ProactiveLayerForecaster {
   private readonly inner: InstanceType<typeof CapabilityPredictor>;
   private readonly order: readonly CapabilityLayer[];
   private readonly minConfidence: number;
+  private ethics: EthicsObservation = {};
 
   constructor(options: ProactiveLayerForecasterOptions = {}) {
     const innerOpts: ConstructorParameters<typeof CapabilityPredictor>[0] = {
@@ -109,9 +143,21 @@ export class ProactiveLayerForecaster {
     this.inner.observe(snapshot);
   }
 
-  /** Reset history. */
+  /**
+   * Record non-capability ethics signals. These take priority over
+   * capability-driven downgrades — consent revocation and jurisdiction
+   * risk are never overridden by "battery is fine, network is good".
+   *
+   * Pass an empty object to clear the previous ethics state.
+   */
+  observeEthics(observation: EthicsObservation): void {
+    this.ethics = { ...observation };
+  }
+
+  /** Reset history and ethics observations. */
   reset(): void {
     this.inner.reset();
+    this.ethics = {};
   }
 
   /**
@@ -122,13 +168,22 @@ export class ProactiveLayerForecaster {
   forecast(): readonly LayerForecastHint[] {
     const p = this.inner.predict();
     const hints: LayerForecastHint[] = [];
+    const currentLayer = p.lastObservedLayer ?? p.predictedLayer;
+
+    // Ethics signals are evaluated first — they take precedence over any
+    // capability-driven hint. The runtime should apply the highest-urgency
+    // ethical hint and then re-evaluate capability hints.
+    const ethicalHints = this.collectEthicalHints(currentLayer);
+    for (const h of ethicalHints) hints.push(h);
 
     if (p.confidence < this.minConfidence) {
-      hints.push({
-        kind: 'no-change',
-        ...(p.lastObservedLayer !== undefined ? { currentLayer: p.lastObservedLayer } : {}),
-        confidence: p.confidence,
-      });
+      if (hints.length === 0) {
+        hints.push({
+          kind: 'no-change',
+          ...(p.lastObservedLayer !== undefined ? { currentLayer: p.lastObservedLayer } : {}),
+          confidence: p.confidence,
+        });
+      }
       return hints;
     }
 
@@ -172,6 +227,51 @@ export class ProactiveLayerForecaster {
     }
 
     return hints;
+  }
+
+  // ─── Ethics ────────────────────────────────────────────────────────────────
+
+  private collectEthicalHints(
+    currentLayer: CapabilityLayer | undefined,
+  ): LayerForecastHint[] {
+    const out: LayerForecastHint[] = [];
+    const e = this.ethics;
+    const from = currentLayer ?? this.order[0]!;
+
+    if (e.consentTierChange === 'revoked') {
+      out.push({
+        kind: 'ethical-downgrade',
+        from,
+        to: 'STATIC_HTML',
+        reason: 'consent-revoked',
+        urgency: 'high',
+      });
+    }
+    if (e.jurisdictionRisk === 'high') {
+      out.push({
+        kind: 'ethical-downgrade',
+        from,
+        to: 'STATIC_HTML',
+        reason: 'jurisdiction-restriction',
+        urgency: 'high',
+      });
+    }
+    if (e.contentFlag === 'flagged') {
+      out.push({
+        kind: 'ethical-downgrade',
+        from,
+        to: 'STATIC_HTML',
+        reason: 'content-sensitivity',
+        urgency: 'high',
+      });
+    } else if (e.contentFlag === 'caution') {
+      out.push({
+        kind: 'pause-animation',
+        reason: 'content flagged for caution',
+        urgency: 'medium',
+      });
+    }
+    return out;
   }
 }
 

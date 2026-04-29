@@ -20,6 +20,7 @@ export default defineConfig({
         'v2-privacy': resolve(__dirname, 'src/v2/privacy/index.ts'),
         'v2-compression': resolve(__dirname, 'src/v2/compression/index.ts'),
         'v2-pulse': resolve(__dirname, 'src/v2/pulse/index.ts'),
+        'v2-xr': resolve(__dirname, 'src/v2/xr/index.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) =>
