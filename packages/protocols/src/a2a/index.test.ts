@@ -4,11 +4,11 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { A2AAdapter, AWAF_A2A_AGENT_CARD, type A2ATask } from './index.js';
+import { A2AAdapter, ALPHABET_A2A_AGENT_CARD, type A2ATask } from './index.js';
 import { makeConsentScope } from '../normalizers/index.js';
-import type { AwafToolContext } from '../contract.js';
+import type { AlphabetToolContext } from '../contract.js';
 
-const ctx: AwafToolContext = {
+const ctx: AlphabetToolContext = {
   visitorId: 'v-abc12345',
   sessionId: 'sess-1',
   consentTier: 'ANONYMOUS',
@@ -35,7 +35,7 @@ describe('A2AAdapter.getAgentCard', () => {
   it('returns a frozen agent card with the documented skills', () => {
     const adapter = new A2AAdapter();
     const card = adapter.getAgentCard();
-    expect(card).toBe(AWAF_A2A_AGENT_CARD);
+    expect(card).toBe(ALPHABET_A2A_AGENT_CARD);
     expect(card.skills.map((s) => s.id).sort()).toEqual([
       'consent.status',
       'context.handshake',
@@ -45,7 +45,7 @@ describe('A2AAdapter.getAgentCard', () => {
 });
 
 describe('A2AAdapter.normalizeTask', () => {
-  it('normalizes a valid task into AwafProtocolRequest', () => {
+  it('normalizes a valid task into AlphabetProtocolRequest', () => {
     const adapter = new A2AAdapter();
     const r = adapter.normalizeTask(task(), { tier: 'ANONYMOUS', privacy: noPrivacy });
     expect(r.success).toBe(true);

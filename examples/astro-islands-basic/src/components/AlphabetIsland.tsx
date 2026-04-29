@@ -1,14 +1,14 @@
 /**
- * @file src/components/AwafIsland.tsx
+ * @file src/components/AlphabetIsland.tsx
  * @description
- * The single React island that hosts AWAF for an Astro page. Keeping
- * AWAF inside one island means `useAwafHandshake` runs exactly once.
+ * The single React island that hosts Alphabet for an Astro page. Keeping
+ * Alphabet inside one island means `useAlphabetHandshake` runs exactly once.
  */
-import { AdaptiveSlot, AwafProvider, ConsentBanner, TransparencyNotice } from '@awaf/ui';
+import { AdaptiveSlot, AlphabetProvider, ConsentBanner, TransparencyNotice } from '@alphabet/ui';
 
-export default function AwafIsland(): JSX.Element {
+export default function AlphabetIsland(): JSX.Element {
   return (
-    <AwafProvider>
+    <AlphabetProvider>
       <AdaptiveSlot
         css3d={({ direction, locale }) => (
           <section dir={direction} lang={locale ?? undefined}>
@@ -39,8 +39,8 @@ export default function AwafIsland(): JSX.Element {
       <TransparencyNotice />
       <ConsentBanner
         title="Cookies & adaptive personalization"
-        description="AWAF can store anonymous session data so we can keep your language and layer choice across visits. We respect Do-Not-Track and Global Privacy Control."
+        description="Alphabet can store anonymous session data so we can keep your language and layer choice across visits. We respect Do-Not-Track and Global Privacy Control."
       />
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }

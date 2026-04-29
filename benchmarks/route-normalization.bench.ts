@@ -1,16 +1,16 @@
 /**
  * @file route-normalization.bench.ts
  * @description Benchmark `normalizeApiBaseUrl` and `joinRoute` — these are
- * called on every HTTP request issued by `AwafClient` and `HandshakeClient`.
+ * called on every HTTP request issued by `AlphabetClient` and `HandshakeClient`.
  */
 
 import { Bench } from 'tinybench';
-import { AWAF_ROUTES, joinRoute, normalizeApiBaseUrl } from '@awaf/core';
+import { ALPHABET_ROUTES, joinRoute, normalizeApiBaseUrl } from '@alphabet/core';
 import { benchOptions, isSmokeRun, printSuite, runBench } from './helpers.js';
 
 const bareOrigin = 'https://example.com/';
 const legacyApi = 'https://example.com/api/';
-const canonical = 'https://example.com/api/awaf/v1/';
+const canonical = 'https://example.com/api/alphabet/v1/';
 const trailingSlashes = 'https://example.com////';
 const normalized = normalizeApiBaseUrl(canonical);
 
@@ -35,7 +35,7 @@ export async function runRouteNormalizationSuite(): Promise<void> {
   });
 
   bench.add('joinRoute (contextHandshake)', () => {
-    joinRoute(normalized, AWAF_ROUTES.contextHandshake);
+    joinRoute(normalized, ALPHABET_ROUTES.contextHandshake);
   });
 
   const result = await runBench(bench, {

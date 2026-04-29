@@ -1,9 +1,9 @@
 {
-  "name": "@awaf/danial-site",
+  "name": "@alphabet/danial-site",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Personal & professional interactive site for Danial Samiei — researcher and assistant professor. Built on the AWAF SDK and powered by GitHub Models for the in-page assistant.",
+  "description": "Personal & professional interactive site for Danial Samiei — researcher and assistant professor. Built on the Alphabet SDK and powered by GitHub Models for the in-page assistant.",
   "scripts": {
     "dev": "vite",
     "dev:proxy": "node server.mjs",
@@ -14,8 +14,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@awaf/core": "workspace:*",
-    "@awaf/ui": "workspace:*",
+    "@alphabet/core": "workspace:*",
+    "@alphabet/ui": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -1,6 +1,6 @@
-# AWAF
+# Alphabet
 
-> **AWAF is a privacy-first adaptive web SDK for building context-aware, multilingual, capability-adaptive, AI-ready web experiences without invasive tracking.**
+> **Alphabet is a privacy-first adaptive web SDK for building context-aware, multilingual, capability-adaptive, AI-ready web experiences without invasive tracking.**
 
 <p align="left">
   <img src="https://img.shields.io/badge/status-pre--alpha-orange?style=flat-square" alt="Status" />
@@ -10,15 +10,15 @@
   <img src="https://img.shields.io/badge/license-MIT-yellow?style=flat-square" alt="License" />
 </p>
 
-> ⚠️ **AWAF is pre-alpha.** The README is honest about what ships today vs. what
+> ⚠️ **Alphabet is pre-alpha.** The README is honest about what ships today vs. what
 > is planned. For a feature-by-feature audit, see
 > [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md). For the
 > sequenced plan to 1.0, see [`docs/ROADMAP.md`](docs/ROADMAP.md). For a
 > 5-minute introduction, see [`docs/LAUNCH_NARRATIVE.md`](docs/LAUNCH_NARRATIVE.md).
 
-**AWAF** = **A**daptive **W**eb **A**wareness **F**ramework. The "A" also
+**Alphabet** = **A**daptive **W**eb **A**wareness **F**ramework. The "A" also
 honours the project's origin name **الفبا (Alefba)** — Persian for *alphabet*,
-the elementary letters from which any language is built. AWAF treats
+the elementary letters from which any language is built. Alphabet treats
 *language*, *direction*, *device*, *network*, and *consent* as letters of an
 alphabet that the page assembles itself from at runtime.
 
@@ -26,8 +26,8 @@ alphabet that the page assembles itself from at runtime.
 
 ## Table of contents
 
-- [Why AWAF exists](#why-awaf-exists)
-- [What AWAF is *not*](#what-awaf-is-not)
+- [Why Alphabet exists](#why-alphabet-exists)
+- [What Alphabet is *not*](#what-alphabet-is-not)
 - [Core concepts](#core-concepts)
 - [Quick start](#quick-start)
 - [Implemented features](#implemented-features)
@@ -43,7 +43,7 @@ alphabet that the page assembles itself from at runtime.
 
 ---
 
-## Why AWAF exists
+## Why Alphabet exists
 
 Most websites still serve every visitor the same glyphs, in the same direction,
 at the same visual fidelity, regardless of who they are or what their browser
@@ -55,7 +55,7 @@ already knows about them. The two common ways out of this are bad:
 - **Heavy client-side personalization** — adaptive, but typically built on
   cookies, fingerprinting, third-party trackers, and dark consent patterns.
 
-AWAF takes a third path: read the **passive, non-invasive signals the browser
+Alphabet takes a third path: read the **passive, non-invasive signals the browser
 already exposes** (Accept-Language, IANA timezone, viewport, WebGL support,
 network class, `prefers-reduced-motion`, DNT, GPC) and turn them into a small,
 fully-typed UI configuration — *before* a single tracking pixel fires.
@@ -65,27 +65,27 @@ remembers what you let it remember — and nothing else."
 
 ---
 
-## What AWAF is *not*
+## What Alphabet is *not*
 
-To stay credible, here is what AWAF deliberately is **not**:
+To stay credible, here is what Alphabet deliberately is **not**:
 
-- **Not a meta-framework.** AWAF does not own routing, rendering, or your build
+- **Not a meta-framework.** Alphabet does not own routing, rendering, or your build
   pipeline. It runs alongside Next.js, Astro, Remix, or plain Vite + React.
-- **Not an i18n library.** AWAF detects and negotiates the locale and writing
+- **Not an i18n library.** Alphabet detects and negotiates the locale and writing
   direction; it then hands them off to whatever i18n library you already use
   (i18next, next-intl, FormatJS, etc.).
-- **Not an LLM SDK.** AWAF does not bundle OpenAI, Anthropic, or Vercel AI SDK
+- **Not an LLM SDK.** Alphabet does not bundle OpenAI, Anthropic, or Vercel AI SDK
   as runtime dependencies. It normalizes context, consent, and memory
   permissions for *whichever* AI client you pick.
-- **Not a Consent Management Platform (CMP).** AWAF ships a developer-grade
+- **Not a Consent Management Platform (CMP).** Alphabet ships a developer-grade
   consent state machine and DNT/GPC enforcement in code. It can interoperate
   with a full CMP (OneTrust, Cookiebot) — it does not aim to replace one.
-- **Not a feature-flag / experimentation platform.** AWAF can feed
+- **Not a feature-flag / experimentation platform.** Alphabet can feed
   privacy-safe context traits (locale, capability layer, consent tier) to
   GrowthBook, LaunchDarkly, Statsig — it does not run experiments itself.
-- **Not "production-ready" yet.** AWAF is pre-alpha. The roadmap is honest;
+- **Not "production-ready" yet.** Alphabet is pre-alpha. The roadmap is honest;
   the README does not claim shipped what is only planned.
-- **Not a compliance certification.** AWAF's behaviour aligns with GDPR/CCPA
+- **Not a compliance certification.** Alphabet's behaviour aligns with GDPR/CCPA
   *principles* (lawful basis, data minimization, right to erasure), but the
   project has not been audited and makes no compliance guarantees.
 
@@ -122,7 +122,7 @@ See [`docs/ADAPTIVE_RENDER_LAYERS.md`](docs/ADAPTIVE_RENDER_LAYERS.md).
 > unchanged for compatibility.
 
 ### 4. AI-ready, provider-neutral protocols
-A normalized `AwafProtocolRequest` / `AwafProtocolResponse` envelope that
+A normalized `AlphabetProtocolRequest` / `AlphabetProtocolResponse` envelope that
 adapter packages expose over Direct REST, MCP (Model Context Protocol), A2A
 (Agent-to-Agent), and QR handoff — without locking you to any LLM provider.
 See [`docs/PROTOCOLS.md`](docs/PROTOCOLS.md) and
@@ -140,8 +140,8 @@ See [`docs/PROTOCOLS.md`](docs/PROTOCOLS.md) and
 ### Install and run the test suite
 
 ```bash
-git clone https://github.com/danialsamiei/awaf.git
-cd awaf
+git clone https://github.com/danialsamiei/alphabet.git
+cd alphabet
 
 pnpm install
 pnpm build
@@ -151,7 +151,7 @@ pnpm test
 
 ### Use the handshake primitives
 
-The fully-shipped, end-user-facing surface today is `@awaf/core`. A minimal,
+The fully-shipped, end-user-facing surface today is `@alphabet/core`. A minimal,
 honest example:
 
 ```typescript
@@ -159,13 +159,13 @@ import {
   SignalCollector,
   EnrichmentPipeline,
   HandshakeDecisionEngine,
-} from '@awaf/core';
+} from '@alphabet/core';
 
 // 1. Collect passive browser signals (no IP lookup, no third-party calls).
 const signals = new SignalCollector().collect();
 
 // 2. Enrich with a coarse geo context that *you* supply
-//    (AWAF does not do server-side IP→geo lookups itself).
+//    (Alphabet does not do server-side IP→geo lookups itself).
 const enriched = new EnrichmentPipeline().enrich(signals, {
   country: 'US', // ISO 3166-1 alpha-2
   timezone: signals.timezone,
@@ -183,11 +183,11 @@ console.log(decision.privacyMode);
 ### Use the React surface
 
 ```tsx
-import { AwafProvider, AdaptiveSlot, ConsentBanner } from '@awaf/ui';
+import { AlphabetProvider, AdaptiveSlot, ConsentBanner } from '@alphabet/ui';
 
 export function App() {
   return (
-    <AwafProvider>
+    <AlphabetProvider>
       <AdaptiveSlot
         r3f={({ direction, locale }) => <ImmersiveScene dir={direction} lang={locale} />}
         css3d={({ direction, locale }) => <Css3dHero dir={direction} lang={locale} />}
@@ -196,7 +196,7 @@ export function App() {
         textOnly={({ direction, locale }) => <TextHero dir={direction} lang={locale} />}
       />
       <ConsentBanner />
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }
 ```
@@ -214,29 +214,29 @@ unit tests in this repository. See
 [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) for
 file-level evidence.
 
-### `@awaf/core` ✅
+### `@alphabet/core` ✅
 - Strict-typed foundation: `Result<T, E>`, branded IDs (`VisitorId`,
   `SessionId`, `MemoryId`, `RequestId`, `ConsentToken`, `AuditLogId`,
   `ConfirmationId`), `ConsentTier`, `CapabilityLayer`, `MemoryDomain`,
   `ProtocolType`.
-- `AWAFConfig`, `AWAFLogger` (PII-safe, `exactOptionalPropertyTypes`-clean),
-  `AWAFEventEmitter`.
+- `AlphabetConfig`, `AlphabetLogger` (PII-safe, `exactOptionalPropertyTypes`-clean),
+  `AlphabetEventEmitter`.
 - Three handshake primitives: `SignalCollector`, `EnrichmentPipeline`,
   `HandshakeDecisionEngine` (locale + hero-copy maps for 25+ locales).
 - Privacy helpers: `canStoreMemory`, `canPersonalize`, `canUseAnalytics`,
   `canUsePreciseGeo` — the only authoritative permission checks in the SDK.
 
-### `@awaf/api` 🟡
-- `AwafClient` with one method per documented endpoint, returning
-  `Promise<Result<T, AWAFError>>`. `fetch` + `AbortController` timeouts.
-- `HandshakeClient` for `POST /api/awaf/v1/context/handshake` (envelope
+### `@alphabet/api` 🟡
+- `AlphabetClient` with one method per documented endpoint, returning
+  `Promise<Result<T, AlphabetError>>`. `fetch` + `AbortController` timeouts.
+- `HandshakeClient` for `POST /api/alphabet/v1/context/handshake` (envelope
   in / envelope out).
-- Canonical prefix `/api/awaf/v1` (legacy `/api` accepted via
+- Canonical prefix `/api/alphabet/v1` (legacy `/api` accepted via
   `normalizeApiBaseUrl`). Full contract in
-  [`openapi/awaf.v1.yaml`](openapi/awaf.v1.yaml).
+  [`openapi/alphabet.v1.yaml`](openapi/alphabet.v1.yaml).
 - Not yet: retry/backoff, SSE handler, mock server, rate-limit parsing.
 
-### `@awaf/security` ✅ (defence-in-depth supplement)
+### `@alphabet/security` ✅ (defence-in-depth supplement)
 - `ConsentTierManager` — code-enforced state machine
   (`pending → granted → revoked`) with monotonic upgrades, DNT/GPC
   auto-downgrade, and policy-version invalidation.
@@ -244,21 +244,21 @@ file-level evidence.
   strictness levels.
 - Prompt-injection heuristics (`detectPromptRisk`).
 - Output validation (`validateUrl`, `sanitizeHtml`, `markTextAsSafe`).
-- `MemoryIntegrityGuard`, `AWAFAuditLogger` with structured event
+- `MemoryIntegrityGuard`, `AlphabetAuditLogger` with structured event
   categories and automatic PII redaction.
 - **Scope.** This is a defence-in-depth supplement, *not* a complete
   security solution. See [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md).
 
-### `@awaf/ui` 🟡
-- `AwafProvider`, `AdaptiveSlot` (5-layer renderer with lazy R3F),
-  `ConsentBanner`, `TransparencyNotice`, hooks (`useAwafContext`,
+### `@alphabet/ui` 🟡
+- `AlphabetProvider`, `AdaptiveSlot` (5-layer renderer with lazy R3F),
+  `ConsentBanner`, `TransparencyNotice`, hooks (`useAlphabetContext`,
   `useConsent`).
 - Subpath exports: `./hooks`, `./layers`, `./layers/r3f`, `./runtime`.
 - R3F + `three` are external in the base bundle; the immersive layer is
   loaded only when selected.
 
-### `@awaf/protocols` 🟡
-- Normalized `AwafProtocolRequest` / `AwafProtocolResponse` contract.
+### `@alphabet/protocols` 🟡
+- Normalized `AlphabetProtocolRequest` / `AlphabetProtocolResponse` contract.
 - `direct-api`, `mcp`, `a2a`, `qr-handoff`, `normalizers`, `errors`,
   `ai-sdk` subpaths. AES-GCM-encrypted QR handoff with audience binding
   and 60s default expiry.
@@ -281,8 +281,8 @@ A condensed view; the full plan is in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 |---|---|---|
 | **1 — Truth alignment** *(current)* | Honest README, Implementation Status, Roadmap, comparison & integration narrative. | This README, `docs/IMPLEMENTATION_STATUS.md`, `docs/CORE_CONCEPTS.md`, `docs/INTEGRATIONS.md`. |
 | **2 — Smallest end-to-end** | `HandshakeOrchestrator`, real `display`/`consent`/`morph` phases, mock server, Layers 4 + 5 demo. | `apps/demo` running; `pnpm dev` opens an adaptive page. |
-| **3 — Adapters** | `@awaf/next`, `@awaf/vite`, `@awaf/astro` first-class wrappers. | Working examples in `examples/`. |
-| **4 — Pulse plugin** | `@awaf/pulse` (formerly Technology Pulse): trust-tiered ingestion, C2PA-style provenance, RAG brief generation. | Optional plugin module, opt-in. |
+| **3 — Adapters** | `@alphabet/next`, `@alphabet/vite`, `@alphabet/astro` first-class wrappers. | Working examples in `examples/`. |
+| **4 — Pulse plugin** | `@alphabet/pulse` (formerly Technology Pulse): trust-tiered ingestion, C2PA-style provenance, RAG brief generation. | Optional plugin module, opt-in. |
 | **5 — Hardening** | Benchmarks (sub-100 ms handshake target), NIST AI RMF mapping doc, cost guardian, differential-privacy helpers, accessibility audit. | 1.0 release. |
 
 No fixed dates are committed. Phases are scoped, not timeboxed.
@@ -295,9 +295,9 @@ Three runnable starters live in [`examples/`](examples/):
 
 | Example | Stack | What it demonstrates |
 |---|---|---|
-| [`examples/vite-react-basic`](examples/vite-react-basic) | Vite + React | `AwafProvider`, `AdaptiveSlot`, `ConsentBanner`, `TransparencyNotice`. |
+| [`examples/vite-react-basic`](examples/vite-react-basic) | Vite + React | `AlphabetProvider`, `AdaptiveSlot`, `ConsentBanner`, `TransparencyNotice`. |
 | [`examples/next-app-router-basic`](examples/next-app-router-basic) | Next.js App Router | SSR-safe handshake, server / client boundaries. |
-| [`examples/astro-islands-basic`](examples/astro-islands-basic) | Astro Islands | Static-first rendering with React island for AWAF. |
+| [`examples/astro-islands-basic`](examples/astro-islands-basic) | Astro Islands | Static-first rendering with React island for Alphabet. |
 
 Walk-throughs are in [`docs/EXAMPLES.md`](docs/EXAMPLES.md).
 
@@ -309,7 +309,7 @@ The full model lives in [`docs/PRIVACY_MODEL.md`](docs/PRIVACY_MODEL.md). The
 short version:
 
 - **Tier 0 (`NO_MEMORY`) by default.** Until a visitor explicitly grants
-  consent, AWAF stores nothing, profiles nothing, and personalizes nothing.
+  consent, Alphabet stores nothing, profiles nothing, and personalizes nothing.
 - **DNT/GPC restrict storage and personalization, *not* rendering.** A
   visitor with GPC enabled and a capable device still sees an immersive UI;
   they just don't get tracked. Render layer is selected from device
@@ -318,13 +318,13 @@ short version:
   `{ country, timezone, region }`. `city`, `coarseLatitude`, and
   `coarseLongitude` are gated behind `{ allowPreciseGeo: true }` *and*
   `canUsePreciseGeo()` returning true.
-- **No fingerprinting. No cookies. No PII in logs.** AWAF reads passive
+- **No fingerprinting. No cookies. No PII in logs.** Alphabet reads passive
   signals only and never hashes navigator properties into a fingerprint.
 - **Code-enforced consent ladder.** `ConsentTierManager` is a state machine
   with monotonic upgrades, explicit revoke, DNT/GPC auto-downgrade, and
   policy-version invalidation.
 
-AWAF is **aligned with GDPR, CCPA, and LGPD principles** (lawful basis, data
+Alphabet is **aligned with GDPR, CCPA, and LGPD principles** (lawful basis, data
 minimization, right to erasure, opt-out signals). It is **not certified
 compliant** with any of them — that is the integrator's responsibility, and
 auditing is on the roadmap.
@@ -333,17 +333,17 @@ auditing is on the roadmap.
 
 ## Integration targets
 
-AWAF is designed to *integrate*, not replace. See
+Alphabet is designed to *integrate*, not replace. See
 [`docs/INTEGRATIONS.md`](docs/INTEGRATIONS.md) for the full guide.
 
-| Integration | What AWAF contributes |
+| Integration | What Alphabet contributes |
 |---|---|
 | **Next.js / Astro / Remix / Vite + React** | Runs alongside as a small SDK. Hands the handshake decision to your renderer; never owns routing or hydration. |
 | **i18next, next-intl, FormatJS** | Detects `Accept-Language`, negotiates the primary locale + direction, hands the chosen `locale` and `dir` to your i18n library. |
-| **Vercel AI SDK, LangChain, OpenAI/Anthropic SDK** | Provides a normalized `AwafProtocolRequest` envelope with consent and memory permissions. AWAF stays provider-neutral; you keep your model client. |
+| **Vercel AI SDK, LangChain, OpenAI/Anthropic SDK** | Provides a normalized `AlphabetProtocolRequest` envelope with consent and memory permissions. Alphabet stays provider-neutral; you keep your model client. |
 | **GrowthBook, LaunchDarkly, Statsig** | Exposes privacy-safe context traits (`locale`, `capabilityLayer`, `consentTier`, `prefersReducedMotion`) for targeting and experimentation. |
-| **OneTrust, Cookiebot, Klaro** | Interoperates with a full CMP via the consent state machine; AWAF's `ConsentTierManager` can be the source-of-truth or a downstream consumer. |
-| **Edge runtimes (Cloudflare Workers, Vercel Edge, Deno Deploy)** | The `@awaf/core` handshake is pure-TypeScript, dependency-free, and edge-safe. |
+| **OneTrust, Cookiebot, Klaro** | Interoperates with a full CMP via the consent state machine; Alphabet's `ConsentTierManager` can be the source-of-truth or a downstream consumer. |
+| **Edge runtimes (Cloudflare Workers, Vercel Edge, Deno Deploy)** | The `@alphabet/core` handshake is pure-TypeScript, dependency-free, and edge-safe. |
 
 ---
 
@@ -351,14 +351,14 @@ AWAF is designed to *integrate*, not replace. See
 
 A short, accurate version of the integration table above:
 
-| Tool | AWAF's relationship |
+| Tool | Alphabet's relationship |
 |---|---|
-| **Next.js** | AWAF integrates with it; does not replace it. |
-| **Astro** | AWAF shares Astro's static-first / progressive-enhancement principles and runs as a React island or a server-side helper. |
-| **Vercel AI SDK** | AWAF complements it with context, consent, and adaptive UI. AWAF does not bundle a model client. |
-| **i18next / next-intl** | AWAF detects language and direction, then delegates localization. |
-| **GrowthBook / LaunchDarkly** | AWAF can provide privacy-safe context traits for targeting and experimentation. |
-| **OneTrust / Cookiebot** | AWAF ships a developer-grade consent state machine; it interoperates with a full CMP rather than replacing one. |
+| **Next.js** | Alphabet integrates with it; does not replace it. |
+| **Astro** | Alphabet shares Astro's static-first / progressive-enhancement principles and runs as a React island or a server-side helper. |
+| **Vercel AI SDK** | Alphabet complements it with context, consent, and adaptive UI. Alphabet does not bundle a model client. |
+| **i18next / next-intl** | Alphabet detects language and direction, then delegates localization. |
+| **GrowthBook / LaunchDarkly** | Alphabet can provide privacy-safe context traits for targeting and experimentation. |
+| **OneTrust / Cookiebot** | Alphabet ships a developer-grade consent state machine; it interoperates with a full CMP rather than replacing one. |
 
 ---
 
@@ -377,7 +377,7 @@ A short, accurate version of the integration table above:
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Conceptual 8-layer architecture (vision-level). |
 | [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md) | Truth-of-record audit: what is implemented vs. planned. |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | Phased plan to 1.0. |
-| [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md) | Scope and limitations of `@awaf/security`. |
+| [`docs/SECURITY_MODEL.md`](docs/SECURITY_MODEL.md) | Scope and limitations of `@alphabet/security`. |
 | [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) · [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) · [`docs/CODING_CONVENTIONS.md`](docs/CODING_CONVENTIONS.md) | Contributor onboarding. |
 | [`AGENTS.md`](AGENTS.md) | AI-agent onboarding (vision-level). |
 
@@ -397,7 +397,7 @@ A few rules specific to this stage of the project:
    defense", "fully implemented", "guarantees", or "compliant" for features
    that are not backed by shipped code, tests, and an entry in
    `docs/IMPLEMENTATION_STATUS.md`.
-2. **No new runtime dependencies** unless absolutely necessary. AWAF stays
+2. **No new runtime dependencies** unless absolutely necessary. Alphabet stays
    light. Build-time dev dependencies are fine.
 3. **TypeScript strictness is non-negotiable.** No `any` in source; use
    `unknown` + narrowing or branded types.
@@ -415,19 +415,19 @@ MIT — see [`LICENSE`](LICENSE).
 
 <div dir="rtl" align="right">
 
-**AWAF** — *Adaptive Web Awareness Framework* (با ریشهٔ نام **الفبا**) یک
+**Alphabet** — *Adaptive Web Awareness Framework* (با ریشهٔ نام **الفبا**) یک
 SDK سبک به زبان TypeScript است: یک لایهٔ **بافتار تطبیقی و حریم خصوصی**
 که در کنار Next.js، Astro، i18next، Vercel AI SDK، GrowthBook و
 LaunchDarkly قرار می‌گیرد و **جایگزین** هیچ‌کدام نیست.
 
-AWAF در millisecond‌های اول ورود بازدیدکننده، **سیگنال‌های منفعل مرورگر**
+Alphabet در millisecond‌های اول ورود بازدیدکننده، **سیگنال‌های منفعل مرورگر**
 (زبان، timezone، دستگاه، GPU، شبکه، DNT/GPC، prefers-reduced-motion) را
 می‌خواند و بر پایه آن‌ها — و **با احترام کامل به consent کاربر** — locale،
 جهت نوشتار، لایهٔ رندر، و کپی hero را انتخاب می‌کند. هیچ fingerprinting،
 هیچ cookie، هیچ PII در لاگ.
 
 «الفبا» مجموعه‌ای ابتدایی از حروف است که هر زبان از ترکیب آن‌ها ساخته
-می‌شود. AWAF نیز زبان، جهت نوشتار، دستگاه، و رضایت کاربر را به‌عنوان
+می‌شود. Alphabet نیز زبان، جهت نوشتار، دستگاه، و رضایت کاربر را به‌عنوان
 حروف الفبای یک تجربه وب در نظر می‌گیرد.
 
 **این پروژه در مرحله pre-alpha است.** برای دیدن دقیق آنچه پیاده‌سازی شده

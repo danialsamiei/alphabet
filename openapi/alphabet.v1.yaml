@@ -1,38 +1,38 @@
 openapi: 3.1.0
 info:
-  title: AWAF — Alefba Web-Aware Framework HTTP API
+  title: Alphabet — Alefba Web-Aware Framework HTTP API
   version: 1.0.0
-  summary: Canonical HTTP surface for AWAF context handshake, suggestions, AWAF Pulse, and consent-aware memory.
+  summary: Canonical HTTP surface for Alphabet context handshake, suggestions, Alphabet Pulse, and consent-aware memory.
   description: |
-    Single source of truth for AWAF API routes, request/response schemas,
+    Single source of truth for Alphabet API routes, request/response schemas,
     and authentication conventions. The canonical version prefix for
-    every endpoint is `/api/awaf/v1`.
+    every endpoint is `/api/alphabet/v1`.
 
-    Endpoint implementation status is encoded with the `x-awaf-status`
+    Endpoint implementation status is encoded with the `x-alphabet-status`
     extension:
 
-    - `implemented` — typed in `@awaf/api` and exercised by unit tests
+    - `implemented` — typed in `@alphabet/api` and exercised by unit tests
       (server backing is consumer-supplied).
     - `planned` — typed contract exists but is not yet wired
       end-to-end; safe to call only against a mock server.
 
     Naming note: the historical concept "Memory Mesh" is now referred to
     as "Consent-Aware Memory" / "Consent Memory Graph". "Technology
-    Pulse" is now packaged as the **AWAF Pulse** plugin module. Old
+    Pulse" is now packaged as the **Alphabet Pulse** plugin module. Old
     names remain as documentation aliases for backwards compatibility.
   license:
     name: MIT
 servers:
-  - url: '{origin}/api/awaf/v1'
-    description: Canonical AWAF v1 server. `origin` is the host root.
+  - url: '{origin}/api/alphabet/v1'
+    description: Canonical Alphabet v1 server. `origin` is the host root.
     variables:
       origin:
         default: http://localhost:3000
   - url: '{origin}/api'
     description: |
-      Legacy unversioned mount point. Accepted by `@awaf/api` clients
+      Legacy unversioned mount point. Accepted by `@alphabet/api` clients
       via the `normalizeApiBaseUrl()` helper for backwards compatibility,
-      but **deprecated**. Migrate to `/api/awaf/v1`.
+      but **deprecated**. Migrate to `/api/alphabet/v1`.
     variables:
       origin:
         default: http://localhost:3000
@@ -42,8 +42,8 @@ tags:
     description: Six-phase context handshake, consent ladder, and explicit preferences.
   - name: Visitor Interaction
     description: Text/voice interaction and ranked suggestions.
-  - name: AWAF Pulse
-    description: AWAF Pulse (formerly "Technology Pulse") signal feed and RAG briefs.
+  - name: Alphabet Pulse
+    description: Alphabet Pulse (formerly "Technology Pulse") signal feed and RAG briefs.
   - name: Consent-Aware Memory
     description: Consent-Aware Memory (formerly "Memory Mesh") store/read/erase.
   - name: OpenClaw Mesh
@@ -63,7 +63,7 @@ components:
       name: X-API-Key
 
   schemas:
-    AWAFError:
+    AlphabetError:
       type: object
       required: [code, message]
       properties:
@@ -148,7 +148,7 @@ components:
             - type: boolean
             - type: 'null'
         error:
-          $ref: '#/components/schemas/AWAFError'
+          $ref: '#/components/schemas/AlphabetError'
 
     ConsentPurpose:
       type: object
@@ -193,7 +193,7 @@ components:
           enum: [pending, granted, revoked]
         grantedAt: { type: string, format: date-time }
         expiresAt: { type: string, format: date-time }
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
     PreferenceRequest:
       type: object
@@ -237,7 +237,7 @@ components:
             theme: { type: string }
         updatedAt: { type: string, format: date-time }
         effectiveTier: { $ref: '#/components/schemas/ConsentTier' }
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
     SuggestionOption:
       type: object
@@ -295,7 +295,7 @@ components:
         streaming:
           type: boolean
           enum: [false]
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
     SuggestionsResponse:
       type: object
@@ -308,7 +308,7 @@ components:
           type: array
           items: { $ref: '#/components/schemas/SuggestionOption' }
         generatedAt: { type: string, format: date-time }
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
     VoiceTranscribeResponse:
       type: object
@@ -325,7 +325,7 @@ components:
             confidence: { type: number }
             language: { type: string }
             durationMs: { type: integer }
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
     TechnologySignal:
       type: object
@@ -371,7 +371,7 @@ components:
             totalPages: { type: integer }
         facets:
           type: object
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
     StoreMemoryRequest:
       type: object
@@ -408,7 +408,7 @@ components:
             expiresAt: { type: string, format: date-time }
         consentTier: { $ref: '#/components/schemas/ConsentTier' }
         tokensUsed: { type: integer }
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
     EraseMemoryRequest:
       type: object
@@ -442,7 +442,7 @@ components:
           type: array
           items: { type: string }
         confirmationId: { type: string }
-        error: { $ref: '#/components/schemas/AWAFError' }
+        error: { $ref: '#/components/schemas/AlphabetError' }
 
 paths:
   /context/handshake:
@@ -450,8 +450,8 @@ paths:
       tags: [Context Handshake]
       summary: Six-phase context handshake.
       operationId: contextHandshake
-      x-awaf-status: implemented
-      x-awaf-route-key: contextHandshake
+      x-alphabet-status: implemented
+      x-alphabet-route-key: contextHandshake
       security: []
       requestBody:
         required: true
@@ -470,8 +470,8 @@ paths:
       tags: [Context Handshake]
       summary: Grant, revoke, upgrade, or downgrade a consent record.
       operationId: contextConsent
-      x-awaf-status: implemented
-      x-awaf-route-key: contextConsent
+      x-alphabet-status: implemented
+      x-alphabet-route-key: contextConsent
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -490,8 +490,8 @@ paths:
       tags: [Context Handshake]
       summary: Persist explicit visitor preferences.
       operationId: contextPreference
-      x-awaf-status: implemented
-      x-awaf-route-key: contextPreference
+      x-alphabet-status: implemented
+      x-alphabet-route-key: contextPreference
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -508,14 +508,14 @@ paths:
   /interact:
     post:
       tags: [Visitor Interaction]
-      summary: Text/voice interaction with the AWAF agent.
+      summary: Text/voice interaction with the Alphabet agent.
       description: |
         When `streaming` is `false` (default), returns an
         `InteractResponse`. When `streaming` is `true`, returns an
         `text/event-stream` of `InteractStreamEvent` messages.
       operationId: interact
-      x-awaf-status: implemented
-      x-awaf-route-key: interact
+      x-alphabet-status: implemented
+      x-alphabet-route-key: interact
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -538,8 +538,8 @@ paths:
       tags: [Visitor Interaction]
       summary: Transcribe an uploaded audio file.
       operationId: voiceTranscribe
-      x-awaf-status: implemented
-      x-awaf-route-key: voiceTranscribe
+      x-alphabet-status: implemented
+      x-alphabet-route-key: voiceTranscribe
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -570,8 +570,8 @@ paths:
       tags: [Visitor Interaction]
       summary: Ranked context-aware suggestion chips.
       operationId: getSuggestions
-      x-awaf-status: implemented
-      x-awaf-route-key: suggestions
+      x-alphabet-status: implemented
+      x-alphabet-route-key: suggestions
       security: []
       parameters:
         - name: visitorId
@@ -602,11 +602,11 @@ paths:
 
   /technology-pulse:
     get:
-      tags: [AWAF Pulse]
-      summary: List AWAF Pulse signals (formerly "Technology Pulse").
+      tags: [Alphabet Pulse]
+      summary: List Alphabet Pulse signals (formerly "Technology Pulse").
       operationId: getTechnologyPulse
-      x-awaf-status: implemented
-      x-awaf-route-key: technologyPulse
+      x-alphabet-status: implemented
+      x-alphabet-route-key: technologyPulse
       security: []
       parameters:
         - name: category
@@ -645,18 +645,18 @@ paths:
             enum: [asc, desc]
       responses:
         '200':
-          description: Page of AWAF Pulse signals.
+          description: Page of Alphabet Pulse signals.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/TechnologyPulseResponse' }
 
   /technology-pulse/brief:
     post:
-      tags: [AWAF Pulse]
-      summary: Generate an AWAF Pulse RAG brief.
+      tags: [Alphabet Pulse]
+      summary: Generate an Alphabet Pulse RAG brief.
       operationId: postTechnologyPulseBrief
-      x-awaf-status: implemented
-      x-awaf-route-key: technologyPulseBrief
+      x-alphabet-status: implemented
+      x-alphabet-route-key: technologyPulseBrief
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -693,8 +693,8 @@ paths:
       tags: [Consent-Aware Memory]
       summary: Store a memory entry.
       operationId: postVisitorMemory
-      x-awaf-status: implemented
-      x-awaf-route-key: visitorMemoryStore
+      x-alphabet-status: implemented
+      x-alphabet-route-key: visitorMemoryStore
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -711,8 +711,8 @@ paths:
       tags: [Consent-Aware Memory]
       summary: Read memory entries.
       operationId: getVisitorMemory
-      x-awaf-status: implemented
-      x-awaf-route-key: visitorMemoryRead
+      x-alphabet-status: implemented
+      x-alphabet-route-key: visitorMemoryRead
       security: [{ bearerAuth: [] }]
       parameters:
         - name: visitorId
@@ -746,8 +746,8 @@ paths:
       tags: [Consent-Aware Memory]
       summary: Erase memory (GDPR Art. 17 / CCPA).
       operationId: deleteVisitorMemory
-      x-awaf-status: implemented
-      x-awaf-route-key: visitorMemoryDelete
+      x-alphabet-status: implemented
+      x-alphabet-route-key: visitorMemoryDelete
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -766,8 +766,8 @@ paths:
       tags: [OpenClaw Mesh]
       summary: Cross-domain semantic query against consent-aware memory.
       operationId: postClawQuery
-      x-awaf-status: planned
-      x-awaf-route-key: clawQuery
+      x-alphabet-status: planned
+      x-alphabet-route-key: clawQuery
       security: [{ bearerAuth: [] }]
       requestBody:
         required: true
@@ -788,8 +788,8 @@ paths:
       tags: [OpenClaw Mesh]
       summary: Ingest content into consent-aware memory.
       operationId: postClawIngest
-      x-awaf-status: planned
-      x-awaf-route-key: clawIngest
+      x-alphabet-status: planned
+      x-alphabet-route-key: clawIngest
       security: [{ apiKey: [] }]
       requestBody:
         required: true
@@ -810,8 +810,8 @@ paths:
       tags: [OpenClaw Mesh]
       summary: Admin audit of memory entries.
       operationId: postClawAdminAudit
-      x-awaf-status: planned
-      x-awaf-route-key: clawAdminAudit
+      x-alphabet-status: planned
+      x-alphabet-route-key: clawAdminAudit
       security: [{ apiKey: [] }]
       requestBody:
         required: true
@@ -832,8 +832,8 @@ paths:
       tags: [Admin]
       summary: k-anonymous aggregate visitor insights.
       operationId: getAdminVisitorInsights
-      x-awaf-status: planned
-      x-awaf-route-key: adminVisitorInsights
+      x-alphabet-status: planned
+      x-alphabet-route-key: adminVisitorInsights
       security: [{ apiKey: [] }]
       parameters:
         - name: dateFrom
@@ -861,10 +861,10 @@ paths:
   /admin/technology-pulse/sources:
     get:
       tags: [Admin]
-      summary: AWAF Pulse source catalog management.
+      summary: Alphabet Pulse source catalog management.
       operationId: getAdminPulseSources
-      x-awaf-status: planned
-      x-awaf-route-key: adminPulseSources
+      x-alphabet-status: planned
+      x-alphabet-route-key: adminPulseSources
       security: [{ apiKey: [] }]
       parameters:
         - name: trustTier

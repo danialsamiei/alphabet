@@ -12,7 +12,7 @@ import {
   getOrDefault,
   isOk,
   isErr,
-  type AWAFError,
+  type AlphabetError,
   type Result,
 } from './result.js';
 
@@ -45,7 +45,7 @@ describe('ok()', () => {
 
 describe('err()', () => {
   it('should return a failed Result', () => {
-    const error: AWAFError = { code: 'TEST_ERROR', message: 'Test error' };
+    const error: AlphabetError = { code: 'TEST_ERROR', message: 'Test error' };
     const result = err(error);
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -54,7 +54,7 @@ describe('err()', () => {
   });
 
   it('should include optional details', () => {
-    const error: AWAFError = {
+    const error: AlphabetError = {
       code: 'TEST_ERROR',
       message: 'Test',
       details: { key: 'value' },
@@ -77,7 +77,7 @@ describe('mapResult()', () => {
   });
 
   it('should pass through error when Result is failed', () => {
-    const error: AWAFError = { code: 'ERR', message: 'Error' };
+    const error: AlphabetError = { code: 'ERR', message: 'Error' };
     const result: Result<number> = err(error);
     const mapped = mapResult(result, (n) => n * 2);
     expect(mapped.success).toBe(false);
@@ -101,7 +101,7 @@ describe('flatMapResult()', () => {
   });
 
   it('should short-circuit on failure', () => {
-    const error: AWAFError = { code: 'ERR', message: 'Error' };
+    const error: AlphabetError = { code: 'ERR', message: 'Error' };
     const initial: Result<number> = err(error);
     const chained = flatMapResult(initial, (n) => ok(n * 2));
     expect(chained.success).toBe(false);

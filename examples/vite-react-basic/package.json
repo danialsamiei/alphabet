@@ -1,9 +1,9 @@
 {
-  "name": "@awaf/example-vite-react-basic",
+  "name": "@alphabet/example-vite-react-basic",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Minimal Vite + React example showing AWAF handshake, AdaptiveSlot, consent and transparency.",
+  "description": "Minimal Vite + React example showing Alphabet handshake, AdaptiveSlot, consent and transparency.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
@@ -11,9 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@awaf/core": "workspace:*",
-    "@awaf/api": "workspace:*",
-    "@awaf/ui": "workspace:*",
+    "@alphabet/core": "workspace:*",
+    "@alphabet/api": "workspace:*",
+    "@alphabet/ui": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

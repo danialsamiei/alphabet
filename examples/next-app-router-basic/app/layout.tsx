@@ -1,12 +1,12 @@
 /**
  * @file app/layout.tsx
- * @description Root Next.js App Router layout. Mounts the AWAF provider.
+ * @description Root Next.js App Router layout. Mounts the Alphabet provider.
  */
 import type { ReactNode } from 'react';
 import { Providers } from './providers.js';
 
 export const metadata = {
-  title: 'AWAF — Next.js App Router basic',
+  title: 'Alphabet — Next.js App Router basic',
   description: 'Adaptive Web-Aware Framework demo on Next.js App Router.',
 };
 

@@ -1,7 +1,7 @@
 /**
  * @module visitor
  * @description
- * مدل‌های داده مربوط به بازدیدکننده در AWAF SDK.
+ * مدل‌های داده مربوط به بازدیدکننده در Alphabet SDK.
  * Visitor-related data models: VisitorContext, VisitorConsent, VisitorPreference, DetectedSignals.
  */
 
@@ -55,7 +55,7 @@ export interface DetectedSignals {
  * موقعیت جغرافیایی coarse — به‌صورت پیش‌فرض فقط سطح کشور/منطقه/timezone.
  * Coarse geographic context — country/region/timezone level by default.
  *
- * **Privacy contract:** by default AWAF derives only `country`, `timezone`,
+ * **Privacy contract:** by default Alphabet derives only `country`, `timezone`,
  * and an optional broad `region` group from the IANA timezone. The `city`,
  * `coarseLatitude`, and `coarseLongitude` fields are reserved for future use
  * and are **only populated when the visitor has granted explicit consent for

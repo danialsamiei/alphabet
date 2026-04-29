@@ -1,6 +1,6 @@
-# create-awaf
+# create-alphabet
 
-Zero-dependency scaffolder for new AWAF apps.
+Zero-dependency scaffolder for new Alphabet apps.
 
 > **Status: planned/early.** A working `vite-react` template is included.
 > `next-app-router` and `astro-islands` templates are tracked but not yet
@@ -10,11 +10,11 @@ Zero-dependency scaffolder for new AWAF apps.
 ## Usage (once published)
 
 ```bash
-npm create awaf@latest my-app
+npm create alphabet@latest my-app
 # or
-pnpm create awaf my-app
+pnpm create alphabet my-app
 # or
-yarn create awaf my-app
+yarn create alphabet my-app
 ```
 
 Options:
@@ -27,8 +27,8 @@ Options:
 ## Local usage from the workspace
 
 ```bash
-pnpm --filter create-awaf build
-node packages/create-awaf/dist/cli.js my-app --template vite-react
+pnpm --filter create-alphabet build
+node packages/create-alphabet/dist/cli.js my-app --template vite-react
 ```
 
 ## Template anatomy

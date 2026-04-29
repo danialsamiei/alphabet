@@ -1,22 +1,22 @@
 /**
  * @file App.tsx
  * @description
- * Minimal AWAF example for Vite + React. Demonstrates:
- *   1. `AwafProvider` runs the handshake at the root.
+ * Minimal Alphabet example for Vite + React. Demonstrates:
+ *   1. `AlphabetProvider` runs the handshake at the root.
  *   2. `<AdaptiveSlot>` chooses one of the five Adaptive Render Layers
  *      based on capability/accessibility (NOT privacy).
- *   3. `<ConsentBanner>` collects consent; AWAF respects DNT/GPC.
+ *   3. `<ConsentBanner>` collects consent; Alphabet respects DNT/GPC.
  *   4. `<TransparencyNotice>` shows *why* the current layer was chosen.
  */
-import { AdaptiveSlot, AwafProvider, ConsentBanner, TransparencyNotice } from '@awaf/ui';
+import { AdaptiveSlot, AlphabetProvider, ConsentBanner, TransparencyNotice } from '@alphabet/ui';
 
 export function App(): JSX.Element {
   return (
-    <AwafProvider>
+    <AlphabetProvider>
       <main style={{ maxWidth: '40rem', margin: '2rem auto', fontFamily: 'system-ui, sans-serif' }}>
-        <h1>AWAF — Vite + React basic</h1>
+        <h1>Alphabet — Vite + React basic</h1>
         <p>
-          AWAF chooses a render layer from device capability and accessibility
+          Alphabet chooses a render layer from device capability and accessibility
           signals. DNT/GPC affect <em>storage</em>, not which layer is shown.
         </p>
 
@@ -27,7 +27,7 @@ export function App(): JSX.Element {
               <p>
                 On a capable device this is where you'd render a{' '}
                 <code>@react-three/fiber</code> <code>&lt;Canvas&gt;</code>.
-                The R3F renderer is loaded lazily by AWAF, so the base
+                The R3F renderer is loaded lazily by Alphabet, so the base
                 bundle stays R3F-free.
               </p>
             </section>
@@ -63,7 +63,7 @@ export function App(): JSX.Element {
           title="Cookies & adaptive personalization"
           description={
             <span>
-              AWAF can store anonymous session data so we can keep your
+              Alphabet can store anonymous session data so we can keep your
               language and layer choice across visits. You can change this
               at any time. We respect Do-Not-Track and Global Privacy Control.
             </span>
@@ -72,6 +72,6 @@ export function App(): JSX.Element {
           rejectLabel="Reject"
         />
       </main>
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }

@@ -2,16 +2,16 @@
  * @module runtime/performance-marks
  * @description
  * Wrapper نازک و SSR-safe برای Performance API.
- * Thin SSR-safe wrapper around the `performance` API for AWAF UI marks.
+ * Thin SSR-safe wrapper around the `performance` API for Alphabet UI marks.
  *
- * تمام مارک‌ها با prefix `awaf:` ذخیره می‌شوند تا در DevTools
+ * تمام مارک‌ها با prefix `alphabet:` ذخیره می‌شوند تا در DevTools
  * به‌راحتی قابل filter باشند.
  */
 
 import { isBrowser } from './hydration-safe.js';
 
-/** پیشوند ثابت برای تمام performance marks AWAF. */
-export const AWAF_MARK_PREFIX = 'awaf:';
+/** پیشوند ثابت برای تمام performance marks Alphabet. */
+export const ALPHABET_MARK_PREFIX = 'alphabet:';
 
 /**
  * بررسی این‌که Performance API در محیط فعلی در دسترس است.
@@ -21,19 +21,19 @@ function hasPerformance(): boolean {
 }
 
 /**
- * یک performance mark با پیشوند AWAF ثبت می‌کند.
- * Creates a performance mark with the AWAF prefix. No-op in SSR or where
+ * یک performance mark با پیشوند Alphabet ثبت می‌کند.
+ * Creates a performance mark with the Alphabet prefix. No-op in SSR or where
  * the Performance API is unavailable.
  *
  * @param name - نام مارک (بدون پیشوند)
  *
  * @example
- * mark('handshake:start');  // ثبت "awaf:handshake:start"
+ * mark('handshake:start');  // ثبت "alphabet:handshake:start"
  */
 export function mark(name: string): void {
   if (!hasPerformance()) return;
   try {
-    performance.mark(`${AWAF_MARK_PREFIX}${name}`);
+    performance.mark(`${ALPHABET_MARK_PREFIX}${name}`);
   } catch {
     // ignore — performance marks باید silent باشند
   }
@@ -41,7 +41,7 @@ export function mark(name: string): void {
 
 /**
  * فاصله بین دو مارک را اندازه می‌گیرد و مدت زمان (میلی‌ثانیه) را برمی‌گرداند.
- * Measures the duration between two AWAF marks and returns it in
+ * Measures the duration between two Alphabet marks and returns it in
  * milliseconds. Returns `null` in SSR or on failure.
  *
  * @example
@@ -54,9 +54,9 @@ export function measure(name: string, startMark: string, endMark: string): numbe
   if (!hasPerformance() || typeof performance.measure !== 'function') return null;
   try {
     const m = performance.measure(
-      `${AWAF_MARK_PREFIX}${name}`,
-      `${AWAF_MARK_PREFIX}${startMark}`,
-      `${AWAF_MARK_PREFIX}${endMark}`
+      `${ALPHABET_MARK_PREFIX}${name}`,
+      `${ALPHABET_MARK_PREFIX}${startMark}`,
+      `${ALPHABET_MARK_PREFIX}${endMark}`
     );
     return typeof m === 'object' && m !== null && 'duration' in m
       ? (m as PerformanceMeasure).duration
@@ -67,8 +67,8 @@ export function measure(name: string, startMark: string, endMark: string): numbe
 }
 
 /**
- * تمام مارک‌ها و measureهای AWAF را پاک می‌کند.
- * Clears all AWAF performance marks and measures.
+ * تمام مارک‌ها و measureهای Alphabet را پاک می‌کند.
+ * Clears all Alphabet performance marks and measures.
  */
 export function clearMarks(): void {
   if (!hasPerformance()) return;

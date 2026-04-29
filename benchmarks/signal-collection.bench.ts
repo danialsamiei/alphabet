@@ -9,7 +9,7 @@
  */
 
 import { Bench } from 'tinybench';
-import { SignalCollector } from '@awaf/core';
+import { SignalCollector } from '@alphabet/core';
 import { benchOptions, isSmokeRun, printSuite, runBench } from './helpers.js';
 
 const fakeMatchMedia = (query: string): { readonly matches: boolean } => ({

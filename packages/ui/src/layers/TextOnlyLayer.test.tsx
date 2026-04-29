@@ -28,12 +28,12 @@ describe('TextOnlyLayer', () => {
     render(<TextOnlyLayer heading="X" />);
     const skip = screen.getByRole('link', { name: /skip to main content/i });
     expect(skip).toBeInTheDocument();
-    expect(skip.getAttribute('href')).toBe('#awaf-main');
+    expect(skip.getAttribute('href')).toBe('#alphabet-main');
   });
 
   it('respects the direction prop for RTL', () => {
     const { container } = render(<TextOnlyLayer heading="سلام" direction="rtl" locale="fa-IR" />);
-    const root = container.querySelector('[data-awaf-layer="TEXT_ONLY"]');
+    const root = container.querySelector('[data-alphabet-layer="TEXT_ONLY"]');
     expect(root?.getAttribute('dir')).toBe('rtl');
     expect(root?.getAttribute('lang')).toBe('fa-IR');
   });

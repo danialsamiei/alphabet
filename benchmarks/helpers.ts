@@ -1,7 +1,7 @@
 /**
  * @module benchmarks/helpers
  * @description
- * Shared helpers for AWAF microbenchmarks.
+ * Shared helpers for Alphabet microbenchmarks.
  *
  * - `formatTask(...)` — pretty-print a single tinybench task row.
  * - `runSuite(...)` — run a `Bench`, sort the results by mean, and print

@@ -1,15 +1,15 @@
 /**
  * @module components/TransparencyNotice
  * @description
- * نمایش شفاف توضیح این‌که چرا AWAF این لایه/حالت را انتخاب کرده است.
- * Transparency notice — explains *why* AWAF chose the current adaptive
- * layer in plain language. Useful for the demo's "AWAF selected this
+ * نمایش شفاف توضیح این‌که چرا Alphabet این لایه/حالت را انتخاب کرده است.
+ * Transparency notice — explains *why* Alphabet chose the current adaptive
+ * layer in plain language. Useful for the demo's "Alphabet selected this
  * layer because…" text and as a generic transparency primitive for
- * any AWAF-aware UI.
+ * any Alphabet-aware UI.
  */
 
 import type { CSSProperties } from 'react';
-import { useAwafContext } from './AwafProvider.js';
+import { useAlphabetContext } from './AlphabetProvider.js';
 import { useAdaptiveLayer, type UseAdaptiveLayerOptions } from '../hooks/useAdaptiveLayer.js';
 
 export interface TransparencyNoticeProps extends UseAdaptiveLayerOptions {
@@ -34,14 +34,14 @@ const baseStyle: CSSProperties = {
 };
 
 /**
- * نوتیس شفافیت — متن "AWAF selected this layer because…" را نمایش می‌دهد.
+ * نوتیس شفافیت — متن "Alphabet selected this layer because…" را نمایش می‌دهد.
  *
  * @example
  * <TransparencyNotice />
  */
 export function TransparencyNotice(props: TransparencyNoticeProps): JSX.Element {
-  const { title = 'AWAF selected this layer because…', style, className, ...layerOptions } = props;
-  const ctx = useAwafContext();
+  const { title = 'Alphabet selected this layer because…', style, className, ...layerOptions } = props;
+  const ctx = useAlphabetContext();
   const handshakeFromProvider = ctx?.handshake;
   const layerInfo = useAdaptiveLayer({
     ...layerOptions,
@@ -50,13 +50,13 @@ export function TransparencyNotice(props: TransparencyNoticeProps): JSX.Element 
   return (
     <aside
       role="note"
-      aria-label="AWAF transparency notice"
-      data-awaf-transparency-notice
+      aria-label="Alphabet transparency notice"
+      data-alphabet-transparency-notice
       className={className}
       style={{ ...baseStyle, ...style }}
     >
       <strong style={{ display: 'block', marginBottom: '0.25rem' }}>{title}</strong>
-      <span data-awaf-reason-code={layerInfo.reasonCode}>{layerInfo.reason}</span>
+      <span data-alphabet-reason-code={layerInfo.reasonCode}>{layerInfo.reason}</span>
       <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', opacity: 0.75 }}>
         Active layer: <code>{layerInfo.layer}</code>
         {layerInfo.privacySignalActive ? ' · Privacy signal active (DNT/GPC).' : ''}

@@ -25,7 +25,7 @@
 import {
   type ConsentTier,
   type Result,
-  type AWAFError,
+  type AlphabetError,
   type PrivacySignals,
   CONSENT_TIER_LEVEL,
   ok,
@@ -34,7 +34,7 @@ import {
   canStoreMemory,
   canUseAnalytics,
   canUsePreciseGeo,
-} from '@awaf/core';
+} from '@alphabet/core';
 import type { SyncConsentStorageAdapter } from './storage/types.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -249,9 +249,9 @@ export class ConsentTierManager {
    * intentionally lower the tier, call `revoke()` first or use
    * `downgradeOnPrivacySignal()`.
    *
-   * @returns Result with the new snapshot, or an `AWAFError` on violation.
+   * @returns Result with the new snapshot, or an `AlphabetError` on violation.
    */
-  grant(tier: ConsentTier): Result<ConsentSnapshot, AWAFError> {
+  grant(tier: ConsentTier): Result<ConsentSnapshot, AlphabetError> {
     if (this.state === 'granted' && CONSENT_TIER_LEVEL[tier] < CONSENT_TIER_LEVEL[this.tier]) {
       return err({
         code: 'CONSENT_DOWNGRADE_FORBIDDEN',

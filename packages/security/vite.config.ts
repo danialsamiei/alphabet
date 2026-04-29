@@ -9,7 +9,7 @@ export default defineConfig({
       fileName: (format) => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
-      external: ['@awaf/core'],
+      external: ['@alphabet/core'],
       output: {
         preserveModules: false,
       },

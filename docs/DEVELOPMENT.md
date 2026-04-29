@@ -1,7 +1,7 @@
-# راهنمای توسعه AWAF SDK
-# AWAF SDK Development Guide
+# راهنمای توسعه Alphabet SDK
+# Alphabet SDK Development Guide
 
-> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/awaf`
+> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/alphabet`
 > **زبان:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
 
 ---
@@ -57,26 +57,26 @@ corepack prepare pnpm@9.1.0 --activate
 
 ```bash
 # API
-AWAF_API_BASE_URL=http://localhost:3000/api
-AWAF_TIMEOUT_MS=5000
-AWAF_MAX_RETRIES=3
+ALPHABET_API_BASE_URL=http://localhost:3000/api
+ALPHABET_TIMEOUT_MS=5000
+ALPHABET_MAX_RETRIES=3
 
 # Consent
-AWAF_DEFAULT_CONSENT_TIER=NO_MEMORY
+ALPHABET_DEFAULT_CONSENT_TIER=NO_MEMORY
 
 # Logging
-AWAF_LOG_LEVEL=debug          # debug | info | warn | error
-AWAF_ENABLE_TELEMETRY=false
+ALPHABET_LOG_LEVEL=debug          # debug | info | warn | error
+ALPHABET_ENABLE_TELEMETRY=false
 
 # Token Budget
-AWAF_TOKEN_TIER=ANONYMOUS
+ALPHABET_TOKEN_TIER=ANONYMOUS
 
 # Locale
-AWAF_DEFAULT_COUNTRY=IR
-AWAF_DEFAULT_LANGUAGE=fa
+ALPHABET_DEFAULT_COUNTRY=IR
+ALPHABET_DEFAULT_LANGUAGE=fa
 
 # Development
-AWAF_FORCE_UI_LAYER=          # R3F | CSS3D | CANVAS2D | STATIC_HTML | TEXT_ONLY
+ALPHABET_FORCE_UI_LAYER=          # R3F | CSS3D | CANVAS2D | STATIC_HTML | TEXT_ONLY
 ```
 
 ---
@@ -86,7 +86,7 @@ AWAF_FORCE_UI_LAYER=          # R3F | CSS3D | CANVAS2D | STATIC_HTML | TEXT_ONLY
 ### 2.1 درخت دایرکتوری
 
 ```
-awaf/
+alphabet/
 ├── package.json                    # Root package.json
 ├── pnpm-workspace.yaml             # تعریف workspace
 ├── turbo.json                       # Turborepo pipeline
@@ -104,16 +104,16 @@ awaf/
 │   │       │   ├── index.ts         # re-exports
 │   │       │   ├── base.ts          # ConsentTier, MemoryDomain, UILayer, ...
 │   │       │   ├── visitor.ts       # VisitorContext, VisitorConsent, VisitorPreference
-│   │       │   ├── api.ts           # AWAFRequest, AWAFResponse, TokenBudget
+│   │       │   ├── api.ts           # AlphabetRequest, AlphabetResponse, TokenBudget
 │   │       │   ├── memory.ts        # VisitorMemory, TechnologySignal
 │   │       │   ├── brands.ts        # VisitorId, SessionId, MemoryId (brand types)
 │   │       │   └── result.ts        # Result<T,E> pattern
 │   │       ├── config/
-│   │       │   └── awaf-config.ts   # کلاس AWAFConfig
+│   │       │   └── alphabet-config.ts   # کلاس AlphabetConfig
 │   │       ├── logger/
-│   │       │   └── awaf-logger.ts   # AWAFLogger با ۴ سطح
+│   │       │   └── alphabet-logger.ts   # AlphabetLogger با ۴ سطح
 │   │       ├── events/
-│   │       │   └── awaf-events.ts   # AWAFEventEmitter با typed events
+│   │       │   └── alphabet-events.ts   # AlphabetEventEmitter با typed events
 │   │       ├── signals/             # SignalCollector + PassiveSignals
 │   │       ├── enrichment/          # EnrichmentPipeline + GeoIP + Referrer
 │   │       ├── decision/            # HandshakeDecisionEngine + UIConfigGenerator
@@ -207,7 +207,7 @@ packages:
 
 ```json
 {
-  "name": "@awaf/sdk",
+  "name": "@alphabet/sdk",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -241,8 +241,8 @@ packages:
 
 ```bash
 # 1. Clone مخزن
-git clone https://github.com/danialsamiei/awaf.git
-cd awaf
+git clone https://github.com/danialsamiei/alphabet.git
+cd alphabet
 
 # 2. نصب وابستگی‌ها
 pnpm install
@@ -266,7 +266,7 @@ pnpm dev
 
 ```json
 {
-  "name": "@awaf/core",
+  "name": "@alphabet/core",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -325,7 +325,7 @@ pnpm dev
 }
 ```
 
-> **Required build order:** Every workspace package's tsconfig maps `@awaf/core` and `@awaf/api` to their built `dist/index.d.ts`. As a result, `tsc` (and `tsc --emitDeclarationOnly`) only succeeds after the dependency packages have been built. The `dependsOn: ["^build"]` rule on the `build` and `typecheck` tasks above is what guarantees this order — always run `pnpm build` (or `pnpm typecheck`) at the workspace root rather than calling `tsc` directly inside a package whose dependencies are not yet built.
+> **Required build order:** Every workspace package's tsconfig maps `@alphabet/core` and `@alphabet/api` to their built `dist/index.d.ts`. As a result, `tsc` (and `tsc --emitDeclarationOnly`) only succeeds after the dependency packages have been built. The `dependsOn: ["^build"]` rule on the `build` and `typecheck` tasks above is what guarantees this order — always run `pnpm build` (or `pnpm typecheck`) at the workspace root rather than calling `tsc` directly inside a package whose dependencies are not yet built.
 
 ### 4.2 شرح pipeline
 
@@ -344,10 +344,10 @@ pnpm dev
 pnpm build
 
 # ساخت یک package خاص
-pnpm --filter @awaf/core build
+pnpm --filter @alphabet/core build
 
 # typecheck یک package خاص
-pnpm --filter @awaf/api typecheck
+pnpm --filter @alphabet/api typecheck
 
 # dev mode (watch + HMR)
 pnpm dev
@@ -356,16 +356,16 @@ pnpm dev
 pnpm test
 
 # اجرای تست یک package
-pnpm --filter @awaf/core test
+pnpm --filter @alphabet/core test
 
 # اجرای تست با watch mode
-pnpm --filter @awaf/core test -- --watch
+pnpm --filter @alphabet/core test -- --watch
 
 # lint همه
 pnpm lint
 
 # lint یک package
-pnpm --filter @awaf/ui lint
+pnpm --filter @alphabet/ui lint
 ```
 
 ---
@@ -430,7 +430,7 @@ pnpm --filter @awaf/ui lint
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@awaf/core/*": ["./src/*"]
+      "@alphabet/core/*": ["./src/*"]
     }
   },
   "include": ["src/**/*"],
@@ -444,7 +444,7 @@ pnpm --filter @awaf/ui lint
 
 ### 6.1 نحوه کار Path Mapping
 
-AWAF از دو سطح path resolution استفاده می‌کند:
+Alphabet از دو سطح path resolution استفاده می‌کند:
 
 1. **TypeScript paths** (`tsconfig.json`) — برای `tsc` و IDE autocomplete
 2. **Vite resolve.alias** (`vite.config.ts`) — برای bundler در build time
@@ -456,9 +456,9 @@ AWAF از دو سطح path resolution استفاده می‌کند:
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@awaf/core/*": ["packages/core/src/*"],
-      "@awaf/api/*": ["packages/api/src/*"],
-      "@awaf/ui/*": ["packages/ui/src/*"]
+      "@alphabet/core/*": ["packages/core/src/*"],
+      "@alphabet/api/*": ["packages/api/src/*"],
+      "@alphabet/ui/*": ["packages/ui/src/*"]
     }
   }
 }
@@ -473,8 +473,8 @@ import { resolve } from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      '@awaf/core': resolve(__dirname, '../core/src'),
-      '@awaf/api': resolve(__dirname, '../api/src'),
+      '@alphabet/core': resolve(__dirname, '../core/src'),
+      '@alphabet/api': resolve(__dirname, '../api/src'),
     },
   },
   build: {
@@ -484,7 +484,7 @@ export default defineConfig({
       fileName: (format) => `index.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@awaf/core', '@awaf/api'],
+      external: ['react', 'react-dom', '@alphabet/core', '@alphabet/api'],
     },
     sourcemap: true,
     minify: false,
@@ -496,11 +496,11 @@ export default defineConfig({
 
 | Package | Import از | مسیر Vite Alias |
 |---------|-----------|----------------|
-| `@awaf/api` | `@awaf/core` | `resolve(__dirname, '../core/src')` |
-| `@awaf/security` | `@awaf/core` | `resolve(__dirname, '../core/src')` |
-| `@awaf/protocols` | `@awaf/core`, `@awaf/api` | هر دو alias تعریف شوند |
-| `@awaf/ui` | `@awaf/core`, `@awaf/api` | هر دو alias تعریف شوند |
-| `@awaf/demo` | همه packages | تمام aliasها تعریف شوند |
+| `@alphabet/api` | `@alphabet/core` | `resolve(__dirname, '../core/src')` |
+| `@alphabet/security` | `@alphabet/core` | `resolve(__dirname, '../core/src')` |
+| `@alphabet/protocols` | `@alphabet/core`, `@alphabet/api` | هر دو alias تعریف شوند |
+| `@alphabet/ui` | `@alphabet/core`, `@alphabet/api` | هر دو alias تعریف شوند |
+| `@alphabet/demo` | همه packages | تمام aliasها تعریف شوند |
 
 ---
 
@@ -523,10 +523,10 @@ export default defineConfig({
       external: [
         'react',
         'react-dom',
-        '@awaf/core',
-        '@awaf/api',
-        '@awaf/security',
-        '@awaf/protocols',
+        '@alphabet/core',
+        '@alphabet/api',
+        '@alphabet/security',
+        '@alphabet/protocols',
         'three',
         '@react-three/fiber',
         '@react-three/drei',
@@ -545,7 +545,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@awaf/core': resolve(__dirname, '../core/src'),
+      '@alphabet/core': resolve(__dirname, '../core/src'),
     },
   },
 });
@@ -570,7 +570,7 @@ packages/core/dist/
 
 ## 8. استراتژی تست (Testing Strategy)
 
-### 8.1 هرم تست AWAF
+### 8.1 هرم تست Alphabet
 
 ```
                     ▲
@@ -618,7 +618,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@awaf/core': resolve(__dirname, '../core/src'),
+      '@alphabet/core': resolve(__dirname, '../core/src'),
     },
   },
 });
@@ -722,7 +722,7 @@ test('full handshake flow', async ({ page }) => {
   await page.goto('http://localhost:5173');
 
   // Wait for handshake completion
-  await page.waitForEvent('awaf:handshake-complete');
+  await page.waitForEvent('alphabet:handshake-complete');
 
   // Verify locale applied
   const lang = await page.evaluate(() => document.documentElement.lang);
@@ -748,7 +748,7 @@ test('full handshake flow', async ({ page }) => {
 
 ### 9.1 نحوه کار Changesets
 
-AWAF از `@changesets/cli` برای مدیریت semantic versioning استفاده می‌کند.
+Alphabet از `@changesets/cli` برای مدیریت semantic versioning استفاده می‌کند.
 
 ### 9.2 مراحل ایجاد Changeset
 
@@ -852,9 +852,9 @@ pnpm test
 ├── ۵. types/api.ts           (Request/Response — به base.ts وابسته)
 ├── ۶. types/memory.ts        (Memory models — به base.ts وابسته)
 ├── ۷. types/index.ts         (Re-exports)
-├── ۸. config/awaf-config.ts  (Config class — به types وابسته)
-├── ۹. logger/awaf-logger.ts  (Logger — مستقل)
-└── ۱۰. events/awaf-events.ts (EventEmitter — به types وابسته)
+├── ۸. config/alphabet-config.ts  (Config class — به types وابسته)
+├── ۹. logger/alphabet-logger.ts  (Logger — مستقل)
+└── ۱۰. events/alphabet-events.ts (EventEmitter — به types وابسته)
 
 فاز ۲: Handshake
 ├── ۱۱. signals/types.ts      (Signal interfaces)
@@ -898,8 +898,8 @@ pnpm test
 
 | خطا | علت | راه‌حل |
 |-----|-----|--------|
-| `Cannot find module '@awaf/core'` | Path alias تنظیم نشده | بررسی `vite.config.ts` resolve.alias |
-| `TS2307: Cannot find module` | Package build نشده | `pnpm --filter @awaf/core build` |
+| `Cannot find module '@alphabet/core'` | Path alias تنظیم نشده | بررسی `vite.config.ts` resolve.alias |
+| `TS2307: Cannot find module` | Package build نشده | `pnpm --filter @alphabet/core build` |
 | `Composite projects may not disable declaration emit` | `composite: true` بدون `declaration` | هر دو `true` باشند |
 | `ENOENT: .tsbuildinfo` | `tsBuildInfoFile` directory وجود ندارد | `mkdir -p dist/` یا build اجرا شود |
 | `Rate limit exceeded` | تست‌های متعدد endpoint | `beforeEach` با `vi.waitFor` و delay |
@@ -923,7 +923,7 @@ pnpm build
 cat packages/core/dist/.tsbuildinfo | jq '.program.fileNames[:10]'
 
 # بررسی resolution path
-pnpm exec tsc --traceResolution 2>&1 | grep "@awaf/core" | head -20
+pnpm exec tsc --traceResolution 2>&1 | grep "@alphabet/core" | head -20
 
 # بررسی خروجی declaration
 ls -la packages/core/dist/*.d.ts
@@ -931,4 +931,4 @@ ls -la packages/core/dist/*.d.ts
 
 ---
 
-*این سند بخشی از مستندات SDK AWAF است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*
+*این سند بخشی از مستندات SDK Alphabet است. برای معماری کلی به ARCHITECTURE.md و برای قراردادهای کدنویسی به CODING_CONVENTIONS.md مراجعه کنید.*

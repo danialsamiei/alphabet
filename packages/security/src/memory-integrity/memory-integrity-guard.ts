@@ -24,10 +24,10 @@ import {
   type ConsentTier,
   type MemoryDomain,
   type Result,
-  type AWAFError,
+  type AlphabetError,
   ok,
   err,
-} from '@awaf/core';
+} from '@alphabet/core';
 import {
   ADMIN_ONLY_WRITE_DOMAINS,
   DEFAULT_DOMAIN_READ_ACL,
@@ -61,7 +61,7 @@ export interface MemoryReadContext {
 }
 
 /** Decision خروجی guard. */
-export type MemoryDecision = Result<{ readonly allowed: true }, AWAFError>;
+export type MemoryDecision = Result<{ readonly allowed: true }, AlphabetError>;
 
 /** گزینه‌های guard. */
 export interface MemoryIntegrityGuardOptions {

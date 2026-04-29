@@ -1,16 +1,16 @@
 /**
- * @file awaf-logger.test.ts
- * @description Unit tests for AWAFLogger.
+ * @file alphabet-logger.test.ts
+ * @description Unit tests for AlphabetLogger.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AWAFLogger, type LogEntry } from './awaf-logger.js';
+import { AlphabetLogger, type LogEntry } from './alphabet-logger.js';
 
-describe('AWAFLogger', () => {
+describe('AlphabetLogger', () => {
   describe('minLevel filtering', () => {
     it('should call sink for messages at or above minLevel', () => {
       const sink = vi.fn();
-      const logger = new AWAFLogger({ minLevel: 'warn', sink, jsonOutput: false });
+      const logger = new AlphabetLogger({ minLevel: 'warn', sink, jsonOutput: false });
 
       logger.debug('debug msg');
       logger.info('info msg');
@@ -25,7 +25,7 @@ describe('AWAFLogger', () => {
 
     it('should call sink for all messages when minLevel is debug', () => {
       const sink = vi.fn();
-      const logger = new AWAFLogger({ minLevel: 'debug', sink });
+      const logger = new AlphabetLogger({ minLevel: 'debug', sink });
 
       logger.debug('d');
       logger.info('i');
@@ -37,7 +37,7 @@ describe('AWAFLogger', () => {
 
     it('should call sink only for error when minLevel is error', () => {
       const sink = vi.fn();
-      const logger = new AWAFLogger({ minLevel: 'error', sink });
+      const logger = new AlphabetLogger({ minLevel: 'error', sink });
 
       logger.debug('d');
       logger.info('i');
@@ -51,7 +51,7 @@ describe('AWAFLogger', () => {
   describe('log entry structure', () => {
     it('should include timestamp, level, message in sink entry', () => {
       const entries: LogEntry[] = [];
-      const logger = new AWAFLogger({
+      const logger = new AlphabetLogger({
         minLevel: 'debug',
         sink: (e) => entries.push(e),
       });
@@ -71,7 +71,7 @@ describe('AWAFLogger', () => {
 
     it('should include module name when provided', () => {
       const entries: LogEntry[] = [];
-      const logger = new AWAFLogger({
+      const logger = new AlphabetLogger({
         minLevel: 'debug',
         module: 'TestModule',
         sink: (e) => entries.push(e),
@@ -89,7 +89,7 @@ describe('AWAFLogger', () => {
   describe('child()', () => {
     it('should create child logger with new module name', () => {
       const entries: LogEntry[] = [];
-      const parent = new AWAFLogger({
+      const parent = new AlphabetLogger({
         minLevel: 'debug',
         sink: (e) => entries.push(e),
       });
@@ -108,7 +108,7 @@ describe('AWAFLogger', () => {
   describe('defaults', () => {
     it('should default to minLevel info when not specified', () => {
       const sink = vi.fn();
-      const logger = new AWAFLogger({ sink });
+      const logger = new AlphabetLogger({ sink });
 
       logger.debug('debug');
       expect(sink).not.toHaveBeenCalled();

@@ -1,18 +1,18 @@
 /**
- * @module @awaf/protocols/errors
+ * @module @alphabet/protocols/errors
  * @description
- * Typed protocol errors for AWAF adapters. Errors are returned via the
+ * Typed protocol errors for Alphabet adapters. Errors are returned via the
  * shared `Result<T, E>` pattern instead of being thrown.
  */
 
-import type { AWAFError } from '@awaf/core';
+import type { AlphabetError } from '@alphabet/core';
 
 /**
- * Machine-readable error codes for AWAF protocol adapters.
+ * Machine-readable error codes for Alphabet protocol adapters.
  * All adapters must use these codes (or extend them) so that callers can
  * branch reliably without parsing free-form messages.
  */
-export type AwafProtocolErrorCode =
+export type AlphabetProtocolErrorCode =
   | 'INVALID_PROTOCOL_REQUEST'
   | 'INVALID_PROTOCOL_PAYLOAD'
   | 'CONSENT_INSUFFICIENT'
@@ -31,25 +31,25 @@ export type AwafProtocolErrorCode =
   | 'UNSUPPORTED_PROTOCOL';
 
 /**
- * Typed AWAF protocol error. Extends the base `AWAFError` shape so that it
- * remains compatible with the shared `Result<T, AWAFError>` pattern from
- * `@awaf/core`.
+ * Typed Alphabet protocol error. Extends the base `AlphabetError` shape so that it
+ * remains compatible with the shared `Result<T, AlphabetError>` pattern from
+ * `@alphabet/core`.
  */
-export interface AwafProtocolError extends AWAFError {
-  readonly code: AwafProtocolErrorCode;
+export interface AlphabetProtocolError extends AlphabetError {
+  readonly code: AlphabetProtocolErrorCode;
   readonly message: string;
   readonly details?: Record<string, unknown>;
 }
 
 /**
- * Build a typed `AwafProtocolError`. The `details` object must not contain
+ * Build a typed `AlphabetProtocolError`. The `details` object must not contain
  * PII; callers are expected to redact identifying fields beforehand.
  */
 export function protocolError(
-  code: AwafProtocolErrorCode,
+  code: AlphabetProtocolErrorCode,
   message: string,
   details?: Record<string, unknown>
-): AwafProtocolError {
+): AlphabetProtocolError {
   return details === undefined
     ? { code, message }
     : { code, message, details };

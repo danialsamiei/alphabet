@@ -9,8 +9,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@awaf/core': resolve(__dirname, '../core/src'),
-      '@awaf/api': resolve(__dirname, '../api/src'),
+      '@alphabet/core': resolve(__dirname, '../core/src'),
+      '@alphabet/api': resolve(__dirname, '../api/src'),
     },
   },
 });

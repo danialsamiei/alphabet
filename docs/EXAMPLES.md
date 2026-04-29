@@ -2,23 +2,23 @@
 
 Three runnable starters live in [`examples/`](../examples/). Each one
 exists for a different purpose and demonstrates a different subset of
-AWAF.
+Alphabet.
 
 | Example | Stack | What it demonstrates |
 |---|---|---|
 | [`vite-react-basic`](../examples/vite-react-basic) | Vite + React | The full client-side surface: provider, adaptive slot, consent banner, transparency notice. |
 | [`next-app-router-basic`](../examples/next-app-router-basic) | Next.js App Router | Server-side handshake; SSR-safe initial render; client hydration. |
-| [`astro-islands-basic`](../examples/astro-islands-basic) | Astro Islands | Static-first rendering with AWAF mounted only on routes that benefit. |
+| [`astro-islands-basic`](../examples/astro-islands-basic) | Astro Islands | Static-first rendering with Alphabet mounted only on routes that benefit. |
 
 All three are intentionally minimal — about one page each. They do not
-yet show every feature of AWAF; they show the ones that are real.
+yet show every feature of Alphabet; they show the ones that are real.
 
 ---
 
 ## `vite-react-basic`
 
 The most complete example today, because it exercises every component
-in `@awaf/ui` that ships now.
+in `@alphabet/ui` that ships now.
 
 ```bash
 cd examples/vite-react-basic
@@ -41,7 +41,7 @@ What you should observe:
   refused even after clicking *Accept*.
 
 Source: `examples/vite-react-basic/src/App.tsx`. The example uses only
-the public top-level entry of `@awaf/ui` plus the lazy R3F subpath; no
+the public top-level entry of `@alphabet/ui` plus the lazy R3F subpath; no
 internal imports.
 
 ---
@@ -62,12 +62,12 @@ Notable points:
 
 - The handshake runs in a Server Component or Route Handler.
 - The first paint is locale- and direction-correct.
-- `<AwafProvider initialDecision={…}>` skips a re-handshake on the
+- `<AlphabetProvider initialDecision={…}>` skips a re-handshake on the
   client.
 - The `STATIC_HTML` layer is what SSR emits; client hydration may
   upgrade to `CSS_3D` / `R3F_IMMERSIVE` if the device qualifies.
 
-This example is the seed for the planned `@awaf/next` adapter package
+This example is the seed for the planned `@alphabet/next` adapter package
 (see [`docs/ROADMAP.md`](./ROADMAP.md), Phase 3).
 
 ---
@@ -75,7 +75,7 @@ This example is the seed for the planned `@awaf/next` adapter package
 ## `astro-islands-basic`
 
 Demonstrates the static-first pattern: the bulk of the page is
-pre-rendered HTML and AWAF is mounted as a React island.
+pre-rendered HTML and Alphabet is mounted as a React island.
 
 ```bash
 cd examples/astro-islands-basic
@@ -86,12 +86,12 @@ pnpm dev
 Notable points:
 
 - Astro renders `STATIC_HTML` at build time.
-- An island runs the AWAF handshake on the client and may upgrade the
+- An island runs the Alphabet handshake on the client and may upgrade the
   hero region to `CSS_3D` or `R3F_IMMERSIVE`.
 - All content remains accessible to crawlers and visitors with JS
   disabled.
 
-This example is the seed for the planned `@awaf/astro` integration
+This example is the seed for the planned `@alphabet/astro` integration
 (see [`docs/ROADMAP.md`](./ROADMAP.md), Phase 3).
 
 ---
@@ -100,10 +100,10 @@ This example is the seed for the planned `@awaf/astro` integration
 
 To stay honest:
 
-- **No real backend** is included. Endpoints called by `AwafClient`
+- **No real backend** is included. Endpoints called by `AlphabetClient`
   return mock data via `fetch` mocks where used. A first-party mock
   server is on the roadmap (Phase 2).
-- **No AI integration** is included. `@awaf/protocols` ships, but the
+- **No AI integration** is included. `@alphabet/protocols` ships, but the
   examples do not yet wire an LLM through it. A small Vercel AI SDK
   example is on the roadmap (Phase 3+).
 - **No Pulse / OpenClaw demo** is included. Those subsystems are

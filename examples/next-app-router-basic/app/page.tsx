@@ -1,21 +1,21 @@
 /**
  * @file app/page.tsx
  * @description
- * Home page using AWAF AdaptiveSlot, ConsentBanner, TransparencyNotice.
- * The page itself is a Client Component because AWAF reads browser
+ * Home page using Alphabet AdaptiveSlot, ConsentBanner, TransparencyNotice.
+ * The page itself is a Client Component because Alphabet reads browser
  * APIs during the handshake; an alternative is to keep the page as a
- * Server Component and put the AWAF UI inside a child Client Component.
+ * Server Component and put the Alphabet UI inside a child Client Component.
  */
 'use client';
 
-import { AdaptiveSlot, ConsentBanner, TransparencyNotice } from '@awaf/ui';
+import { AdaptiveSlot, ConsentBanner, TransparencyNotice } from '@alphabet/ui';
 
 export default function HomePage(): JSX.Element {
   return (
     <main style={{ maxWidth: '40rem', margin: '2rem auto', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>AWAF — Next.js App Router basic</h1>
+      <h1>Alphabet — Next.js App Router basic</h1>
       <p>
-        AWAF picks a render layer from device capability and accessibility
+        Alphabet picks a render layer from device capability and accessibility
         signals. DNT/GPC affect storage, not which layer is shown.
       </p>
 
@@ -49,7 +49,7 @@ export default function HomePage(): JSX.Element {
       <TransparencyNotice />
       <ConsentBanner
         title="Cookies & adaptive personalization"
-        description="AWAF can store anonymous session data so we can keep your language and layer choice across visits. We respect Do-Not-Track and Global Privacy Control."
+        description="Alphabet can store anonymous session data so we can keep your language and layer choice across visits. We respect Do-Not-Track and Global Privacy Control."
       />
     </main>
   );

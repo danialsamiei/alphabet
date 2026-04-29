@@ -1,6 +1,6 @@
-# AWAF Protocols
+# Alphabet Protocols
 
-`@awaf/protocols` is the protocol-adapter layer of the AWAF SDK. It
+`@alphabet/protocols` is the protocol-adapter layer of the Alphabet SDK. It
 normalizes **context**, **consent**, **memory permissions**, and **UI
 adaptation signals** across multiple transports (Direct REST API, Model
 Context Protocol, Agent-to-Agent, QR Handoff) without committing the
@@ -8,17 +8,17 @@ SDK to any specific LLM provider.
 
 ## Design principles
 
-- **AWAF is not an LLM provider SDK.** Adapters never embed OpenAI,
+- **Alphabet is not an LLM provider SDK.** Adapters never embed OpenAI,
   Anthropic, Vercel AI SDK, etc. as runtime dependencies. Provider
-  integrations are exposed as the optional `AwafAiProviderAdapter`
+  integrations are exposed as the optional `AlphabetAiProviderAdapter`
   contract, which consumers implement themselves.
 - **Single contract, many transports.** Every adapter converts its
-  native input into an `AwafProtocolRequest` and returns an
-  `AwafProtocolResponse`. The rest of the SDK works exclusively with the
+  native input into an `AlphabetProtocolRequest` and returns an
+  `AlphabetProtocolResponse`. The rest of the SDK works exclusively with the
   normalized shape.
 - **Consent is enforced in code.** `validateConsentScope` and
   `evaluateMemoryPermission` are the canonical implementations of the
-  AWAF consent ladder; adapters must use them.
+  Alphabet consent ladder; adapters must use them.
 - **Tree-shakable subpaths.** Each adapter is exported under its own
   subpath so consumers pay only for what they use.
 - **Security-first QR handoff.** Payloads are AES-GCM-encrypted, bound
@@ -29,12 +29,12 @@ SDK to any specific LLM provider.
 
 ```
 packages/protocols/src/
-├── direct-api/        # REST-like → AwafProtocolRequest
+├── direct-api/        # REST-like → AlphabetProtocolRequest
 ├── mcp/               # MCP tool manifests + handlers
 ├── a2a/               # A2A task/artifact normalization
 ├── qr-handoff/        # WebCrypto encrypted handoff payloads
 ├── normalizers/       # Consent scope + memory permission helpers
-├── errors/            # Typed AwafProtocolError
+├── errors/            # Typed AlphabetProtocolError
 ├── ai-sdk/            # Optional AI provider adapter contract
 └── contract.ts        # Normalized request/response/context types
 ```
@@ -43,25 +43,25 @@ packages/protocols/src/
 
 ```ts
 import type {
-  AwafProtocolRequest,
-  AwafProtocolResponse,
-  AwafToolContext,
-  AwafConsentScope,
-  AwafMemoryPermission,
-  AwafProtocolError,
-} from '@awaf/protocols';
+  AlphabetProtocolRequest,
+  AlphabetProtocolResponse,
+  AlphabetToolContext,
+  AlphabetConsentScope,
+  AlphabetMemoryPermission,
+  AlphabetProtocolError,
+} from '@alphabet/protocols';
 ```
 
 | Type | Purpose |
 |------|---------|
-| `AwafProtocolRequest<T>` | Container every adapter produces. Carries protocol, operation, context, consent, payload, and correlation id. |
-| `AwafProtocolResponse<T>` | Container every handler returns. Wraps `Result<T, AwafProtocolError>`. |
-| `AwafToolContext` | PII-free subset of visitor/session state safe to expose to tools. |
-| `AwafConsentScope` | Operations + memory domains the caller wants. Validated against the authoritative tier. |
-| `AwafMemoryPermission` | Read/write decision for a single memory domain. |
-| `AwafProtocolError` | Typed error with codes such as `CONSENT_INSUFFICIENT`, `PII_DETECTED`, `AUDIENCE_MISMATCH`. |
+| `AlphabetProtocolRequest<T>` | Container every adapter produces. Carries protocol, operation, context, consent, payload, and correlation id. |
+| `AlphabetProtocolResponse<T>` | Container every handler returns. Wraps `Result<T, AlphabetProtocolError>`. |
+| `AlphabetToolContext` | PII-free subset of visitor/session state safe to expose to tools. |
+| `AlphabetConsentScope` | Operations + memory domains the caller wants. Validated against the authoritative tier. |
+| `AlphabetMemoryPermission` | Read/write decision for a single memory domain. |
+| `AlphabetProtocolError` | Typed error with codes such as `CONSENT_INSUFFICIENT`, `PII_DETECTED`, `AUDIENCE_MISMATCH`. |
 
-All errors flow through the `Result<T, E>` pattern from `@awaf/core`.
+All errors flow through the `Result<T, E>` pattern from `@alphabet/core`.
 
 ## Direct API adapter
 
@@ -69,7 +69,7 @@ Convert a parsed REST body into a normalized request. The adapter is
 framework-agnostic — wire it into Express, Fastify, Hono, etc.
 
 ```ts
-import { DirectApiAdapter, makeConsentScope } from '@awaf/protocols';
+import { DirectApiAdapter, makeConsentScope } from '@alphabet/protocols';
 
 const adapter = new DirectApiAdapter();
 
@@ -91,23 +91,23 @@ const result = adapter.normalizeRequest(
 );
 
 if (result.success) {
-  // result.data is an AwafProtocolRequest. Hand off to your dispatcher.
+  // result.data is an AlphabetProtocolRequest. Hand off to your dispatcher.
 }
 ```
 
 ## MCP adapter
 
-Provides serializable tool manifests for four AWAF tools:
+Provides serializable tool manifests for four Alphabet tools:
 `context_handshake`, `memory_query`, `consent_status`, and
 `adaptive_layer_explain`. The adapter does not pull in
 `@modelcontextprotocol/sdk`; serve the manifests over any transport you
 already operate.
 
 ```ts
-import { McpAdapter, AWAF_MCP_TOOL_MANIFESTS } from '@awaf/protocols/mcp';
+import { McpAdapter, ALPHABET_MCP_TOOL_MANIFESTS } from '@alphabet/protocols/mcp';
 
 // Expose tools/list:
-const tools = Object.values(AWAF_MCP_TOOL_MANIFESTS);
+const tools = Object.values(ALPHABET_MCP_TOOL_MANIFESTS);
 
 // Dispatch a tools/call:
 const adapter = new McpAdapter({
@@ -120,20 +120,20 @@ const adapter = new McpAdapter({
 const response = await adapter.invoke(
   'memory_query',
   { domain: 'general', query: 'webgl support', limit: 5 },
-  request, // AwafProtocolRequest produced by your transport layer
+  request, // AlphabetProtocolRequest produced by your transport layer
   { dntEnabled: false, gpcEnabled: false },
 );
 ```
 
 ## A2A adapter
 
-Normalizes A2A task/artifact messages into AWAF protocol requests.
-Serve `AWAF_A2A_AGENT_CARD` from `/.well-known/agent.json`.
+Normalizes A2A task/artifact messages into Alphabet protocol requests.
+Serve `ALPHABET_A2A_AGENT_CARD` from `/.well-known/agent.json`.
 
 ```ts
-import { A2AAdapter, AWAF_A2A_AGENT_CARD } from '@awaf/protocols/a2a';
+import { A2AAdapter, ALPHABET_A2A_AGENT_CARD } from '@alphabet/protocols/a2a';
 
-app.get('/.well-known/agent.json', (_req, res) => res.json(AWAF_A2A_AGENT_CARD));
+app.get('/.well-known/agent.json', (_req, res) => res.json(ALPHABET_A2A_AGENT_CARD));
 
 const adapter = new A2AAdapter();
 
@@ -143,7 +143,7 @@ const result = adapter.normalizeTask(incomingTask, {
 });
 
 if (result.success) {
-  // result.data is an AwafProtocolRequest with operation === 'context.handshake'
+  // result.data is an AlphabetProtocolRequest with operation === 'context.handshake'
   // (or whichever skill you registered in skillMap).
 }
 ```
@@ -156,7 +156,7 @@ audience invalidates decryption. Tokens default to a 60-second lifetime
 and are PII-scrubbed before encoding.
 
 ```ts
-import { QrHandoffAdapter, makeConsentScope } from '@awaf/protocols/qr-handoff';
+import { QrHandoffAdapter, makeConsentScope } from '@alphabet/protocols/qr-handoff';
 
 const adapter = new QrHandoffAdapter();
 const key = crypto.getRandomValues(new Uint8Array(32)); // 256-bit
@@ -165,7 +165,7 @@ const enc = await adapter.encode(
   {
     sessionId: 'sess-7f3e1c2a',
     visitorId: 'v-abc12345',
-    audience: 'awaf:demo',
+    audience: 'alphabet:demo',
     consent: makeConsentScope('ANONYMOUS', { operations: ['read_context'] }),
   },
   key,
@@ -181,7 +181,7 @@ if (!enc.success) {
 
 // On the receiving device:
 const dec = await adapter.decode(enc.data, key, {
-  expectedAudience: 'awaf:demo',
+  expectedAudience: 'alphabet:demo',
 });
 if (dec.success) {
   // dec.data is the original payload. Replay protection: store dec.data.nonce
@@ -204,9 +204,9 @@ Failure codes you should branch on:
 For consumers who want to plug in Vercel AI SDK or another provider:
 
 ```ts
-import type { AwafAiProviderAdapter } from '@awaf/protocols/ai-sdk';
+import type { AlphabetAiProviderAdapter } from '@alphabet/protocols/ai-sdk';
 
-export const myProvider: AwafAiProviderAdapter = {
+export const myProvider: AlphabetAiProviderAdapter = {
   id: 'vercel-ai',
   async generate({ context, prompt, system, maxTokens }) {
     if (context.privacyRestricted) {
@@ -228,7 +228,7 @@ Every adapter ships with vitest tests. None of them performs real
 network I/O. Run them with:
 
 ```sh
-pnpm --filter @awaf/protocols test
+pnpm --filter @alphabet/protocols test
 ```
 
 Coverage focus:
@@ -247,7 +247,7 @@ When writing new adapters, double-check that you:
       trust `request.consent.tier` for security decisions.
 - [ ] Run `ensureNoPIIInContext` before exposing context to a third
       party (MCP / A2A).
-- [ ] Return `Result<…, AwafProtocolError>` instead of throwing.
+- [ ] Return `Result<…, AlphabetProtocolError>` instead of throwing.
 - [ ] Avoid logging anything from `payload` or memory entries by
       default.
 - [ ] For new payloads sent over the wire: bind the audience as AAD,

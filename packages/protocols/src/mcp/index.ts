@@ -1,23 +1,23 @@
 /**
- * @module @awaf/protocols/mcp
+ * @module @alphabet/protocols/mcp
  * @description
- * MCP (Model Context Protocol) adapter — exposes AWAF tools to MCP-aware
+ * MCP (Model Context Protocol) adapter — exposes Alphabet tools to MCP-aware
  * clients without pulling in a heavy MCP server runtime.
  *
  * The adapter provides:
  *   1. Serializable tool manifests (JSON-Schema-compatible inputSchema).
- *   2. Pure handler functions that accept normalized AWAF context and
- *      return normalized AWAF responses.
+ *   2. Pure handler functions that accept normalized Alphabet context and
+ *      return normalized Alphabet responses.
  *   3. A small registry that wires manifests and handlers together.
  *
  * Consumers can serve the manifests over any transport (stdio, HTTP/SSE,
  * WebSocket) — that is intentionally out of scope for this package.
  */
 
-import { ok, err, type Result } from '@awaf/core';
+import { ok, err, type Result } from '@alphabet/core';
 import {
   protocolError,
-  type AwafProtocolError,
+  type AlphabetProtocolError,
 } from '../errors/index.js';
 import {
   ensureNoPIIInContext,
@@ -25,17 +25,17 @@ import {
   validateConsentScope,
 } from '../normalizers/index.js';
 import type {
-  AwafProtocolRequest,
-  AwafToolContext,
-  AwafConsentScope,
-  AwafMemoryPermission,
+  AlphabetProtocolRequest,
+  AlphabetToolContext,
+  AlphabetConsentScope,
+  AlphabetMemoryPermission,
 } from '../contract.js';
-import type { CapabilityLayer, ConsentTier, MemoryDomain, PrivacySignals } from '@awaf/core';
+import type { CapabilityLayer, ConsentTier, MemoryDomain, PrivacySignals } from '@alphabet/core';
 
 // ─── Tool Manifests ──────────────────────────────────────────────────────────
 
 /**
- * Minimal JSON-Schema subset used by the AWAF MCP tool manifests. We do
+ * Minimal JSON-Schema subset used by the Alphabet MCP tool manifests. We do
  * not depend on `@modelcontextprotocol/sdk` so that consumers can run
  * the adapter in any environment, including the browser.
  */
@@ -52,25 +52,25 @@ export interface JsonSchema {
  * Serializable manifest for a single MCP tool. Compatible with the
  * `tools/list` shape from the MCP specification.
  */
-export interface AwafMcpToolManifest {
+export interface AlphabetMcpToolManifest {
   readonly name: string;
   readonly description: string;
   readonly inputSchema: JsonSchema;
 }
 
-/** All AWAF MCP tool names. */
-export const AWAF_MCP_TOOLS = [
+/** All Alphabet MCP tool names. */
+export const ALPHABET_MCP_TOOLS = [
   'context_handshake',
   'memory_query',
   'consent_status',
   'adaptive_layer_explain',
 ] as const;
 
-/** Type of any AWAF-supported MCP tool name. */
-export type AwafMcpToolName = (typeof AWAF_MCP_TOOLS)[number];
+/** Type of any Alphabet-supported MCP tool name. */
+export type AlphabetMcpToolName = (typeof ALPHABET_MCP_TOOLS)[number];
 
-/** Frozen list of manifests for all AWAF MCP tools. */
-export const AWAF_MCP_TOOL_MANIFESTS: Readonly<Record<AwafMcpToolName, AwafMcpToolManifest>> =
+/** Frozen list of manifests for all Alphabet MCP tools. */
+export const ALPHABET_MCP_TOOL_MANIFESTS: Readonly<Record<AlphabetMcpToolName, AlphabetMcpToolManifest>> =
   Object.freeze({
     context_handshake: {
       name: 'context_handshake',
@@ -81,13 +81,13 @@ export const AWAF_MCP_TOOL_MANIFESTS: Readonly<Record<AwafMcpToolName, AwafMcpTo
       inputSchema: {
         type: 'object',
         properties: {},
-        description: 'No input — context is taken from the AWAF session.',
+        description: 'No input — context is taken from the Alphabet session.',
       },
     },
     memory_query: {
       name: 'memory_query',
       description:
-        'Reads memory entries from a specific AWAF memory domain. Access ' +
+        'Reads memory entries from a specific Alphabet memory domain. Access ' +
         'is gated by consent tier; isolated domains require CONSENTED+.',
       inputSchema: {
         type: 'object',
@@ -95,7 +95,7 @@ export const AWAF_MCP_TOOL_MANIFESTS: Readonly<Record<AwafMcpToolName, AwafMcpTo
         properties: {
           domain: {
             type: 'string',
-            description: 'AWAF memory domain to query.',
+            description: 'Alphabet memory domain to query.',
             enum: [
               'general',
               'site_specific',
@@ -137,13 +137,13 @@ export const AWAF_MCP_TOOL_MANIFESTS: Readonly<Record<AwafMcpToolName, AwafMcpTo
 
 /** Result of `context_handshake`. */
 export interface ContextHandshakeResult {
-  readonly context: AwafToolContext;
+  readonly context: AlphabetToolContext;
 }
 
 /** Result of `memory_query`. */
 export interface MemoryQueryResult {
   readonly domain: MemoryDomain;
-  readonly permission: AwafMemoryPermission;
+  readonly permission: AlphabetMemoryPermission;
   readonly entries: readonly { readonly id: string; readonly snippet: string }[];
 }
 
@@ -151,7 +151,7 @@ export interface MemoryQueryResult {
 export interface ConsentStatusResult {
   readonly tier: ConsentTier;
   readonly privacyRestricted: boolean;
-  readonly operations: readonly AwafConsentScope['operations'][number][];
+  readonly operations: readonly AlphabetConsentScope['operations'][number][];
 }
 
 /** Result of `adaptive_layer_explain`. */
@@ -171,7 +171,7 @@ export type MemoryQueryBackend = (input: {
   readonly domain: MemoryDomain;
   readonly query: string;
   readonly limit: number;
-  readonly context: AwafToolContext;
+  readonly context: AlphabetToolContext;
 }) => Promise<readonly { readonly id: string; readonly snippet: string }[]>;
 
 // ─── Adapter ─────────────────────────────────────────────────────────────────
@@ -184,7 +184,7 @@ export interface McpAdapterOptions {
    * Optional explainer that returns reasons for the current layer. If
    * omitted, the adapter returns a generic explanation.
    */
-  readonly layerExplainer?: (context: AwafToolContext) => readonly string[];
+  readonly layerExplainer?: (context: AlphabetToolContext) => readonly string[];
 }
 
 /**
@@ -193,9 +193,9 @@ export interface McpAdapterOptions {
 export class McpAdapter {
   constructor(private readonly options: McpAdapterOptions = {}) {}
 
-  /** Returns the full list of AWAF MCP tool manifests. */
-  listTools(): readonly AwafMcpToolManifest[] {
-    return AWAF_MCP_TOOLS.map((name) => AWAF_MCP_TOOL_MANIFESTS[name]);
+  /** Returns the full list of Alphabet MCP tool manifests. */
+  listTools(): readonly AlphabetMcpToolManifest[] {
+    return ALPHABET_MCP_TOOLS.map((name) => ALPHABET_MCP_TOOL_MANIFESTS[name]);
   }
 
   /**
@@ -205,7 +205,7 @@ export class McpAdapter {
   async invoke(
     toolName: string,
     input: unknown,
-    request: AwafProtocolRequest,
+    request: AlphabetProtocolRequest,
     privacy: PrivacySignals
   ): Promise<
     Result<
@@ -213,10 +213,10 @@ export class McpAdapter {
       | MemoryQueryResult
       | ConsentStatusResult
       | AdaptiveLayerExplainResult,
-      AwafProtocolError
+      AlphabetProtocolError
     >
   > {
-    if (!isAwafMcpTool(toolName)) {
+    if (!isAlphabetMcpTool(toolName)) {
       return err(protocolError('TOOL_NOT_FOUND', `Unknown MCP tool: ${toolName}`));
     }
 
@@ -266,9 +266,9 @@ export class McpAdapter {
 
   private async handleMemoryQuery(
     input: unknown,
-    context: AwafToolContext,
+    context: AlphabetToolContext,
     privacy: PrivacySignals
-  ): Promise<Result<MemoryQueryResult, AwafProtocolError>> {
+  ): Promise<Result<MemoryQueryResult, AlphabetProtocolError>> {
     const parsed = parseMemoryQueryInput(input);
     if (!parsed.success) return parsed;
 
@@ -310,8 +310,8 @@ export class McpAdapter {
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
-function isAwafMcpTool(name: string): name is AwafMcpToolName {
-  return (AWAF_MCP_TOOLS as readonly string[]).includes(name);
+function isAlphabetMcpTool(name: string): name is AlphabetMcpToolName {
+  return (ALPHABET_MCP_TOOLS as readonly string[]).includes(name);
 }
 
 const ALL_DOMAINS: ReadonlySet<MemoryDomain> = new Set<MemoryDomain>([
@@ -337,7 +337,7 @@ interface ParsedMemoryQueryInput {
 
 function parseMemoryQueryInput(
   input: unknown
-): Result<ParsedMemoryQueryInput, AwafProtocolError> {
+): Result<ParsedMemoryQueryInput, AlphabetProtocolError> {
   if (!input || typeof input !== 'object') {
     return err(
       protocolError('INVALID_PROTOCOL_PAYLOAD', 'memory_query input must be an object')
@@ -361,7 +361,7 @@ function parseMemoryQueryInput(
   return ok({ domain: domain as MemoryDomain, query, limit });
 }
 
-function defaultLayerReasons(context: AwafToolContext): readonly string[] {
+function defaultLayerReasons(context: AlphabetToolContext): readonly string[] {
   const reasons: string[] = [];
   if (context.privacyRestricted) {
     reasons.push('DNT/GPC active — animations and tracking disabled');

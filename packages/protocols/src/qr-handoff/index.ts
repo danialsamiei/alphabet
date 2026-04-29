@@ -1,5 +1,5 @@
 /**
- * @module @awaf/protocols/qr-handoff
+ * @module @alphabet/protocols/qr-handoff
  * @description
  * QR Handoff — short-lived encrypted payload that lets a visitor move a
  * session from one device to another (e.g. mobile → desktop) by scanning
@@ -26,13 +26,13 @@
  *     and storing them securely is the host application's job.
  */
 
-import { ok, err, type Result } from '@awaf/core';
+import { ok, err, type Result } from '@alphabet/core';
 import {
   protocolError,
-  type AwafProtocolError,
+  type AlphabetProtocolError,
 } from '../errors/index.js';
 import { looksLikePII } from '../normalizers/index.js';
-import type { AwafConsentScope } from '../contract.js';
+import type { AlphabetConsentScope } from '../contract.js';
 
 // ─── Public types ────────────────────────────────────────────────────────────
 
@@ -45,14 +45,14 @@ export interface QrHandoffPayload {
   readonly sessionId: string;
   /** Visitor identifier (no PII). */
   readonly visitorId: string;
-  /** Audience the payload is intended for — e.g. "awaf:demo". */
+  /** Audience the payload is intended for — e.g. "alphabet:demo". */
   readonly audience: string;
   /** Expiry as ISO 8601 timestamp (string for stability across runtimes). */
   readonly expiresAt: string;
   /** Nonce / handoff id — surfaced to allow replay detection at the receiver. */
   readonly nonce: string;
   /** Consent scope being handed off. */
-  readonly consent: AwafConsentScope;
+  readonly consent: AlphabetConsentScope;
 }
 
 /** Options for `encode`. */
@@ -103,7 +103,7 @@ export class QrHandoffAdapter {
     },
     rawKey: Uint8Array,
     options: QrEncodeOptions = {}
-  ): Promise<Result<string, AwafProtocolError>> {
+  ): Promise<Result<string, AlphabetProtocolError>> {
     const cryptoLike = getSubtle();
     if (!cryptoLike) {
       return err(
@@ -187,7 +187,7 @@ export class QrHandoffAdapter {
     token: string,
     rawKey: Uint8Array,
     options: QrDecodeOptions
-  ): Promise<Result<QrHandoffPayload, AwafProtocolError>> {
+  ): Promise<Result<QrHandoffPayload, AlphabetProtocolError>> {
     const cryptoLike = getSubtle();
     if (!cryptoLike) {
       return err(
@@ -317,7 +317,7 @@ function getSubtle(): SubtleCrypto | null {
   return g.crypto?.subtle ?? null;
 }
 
-function randomBytes(length: number): Result<Uint8Array, AwafProtocolError> {
+function randomBytes(length: number): Result<Uint8Array, AlphabetProtocolError> {
   const out = new Uint8Array(length);
   const g = globalThis as { crypto?: { getRandomValues?: (b: Uint8Array) => Uint8Array } };
   if (g.crypto?.getRandomValues) {
@@ -332,7 +332,7 @@ function randomBytes(length: number): Result<Uint8Array, AwafProtocolError> {
   );
 }
 
-function randomNonce(): Result<string, AwafProtocolError> {
+function randomNonce(): Result<string, AlphabetProtocolError> {
   const r = randomBytes(16);
   return r.success ? ok(toBase64Url(r.data)) : r;
 }
@@ -375,9 +375,9 @@ function ensureNoPIIInPayload(
     readonly audience: string;
     readonly expiresAt?: string;
     readonly nonce?: string;
-    readonly consent: AwafConsentScope;
+    readonly consent: AlphabetConsentScope;
   }
-): Result<true, AwafProtocolError> {
+): Result<true, AlphabetProtocolError> {
   const fields: ReadonlyArray<readonly [string, string | undefined]> = [
     ['sessionId', payload.sessionId],
     ['visitorId', payload.visitorId],

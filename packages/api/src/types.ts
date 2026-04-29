@@ -1,12 +1,12 @@
 /**
  * @module api-types
  * @description
- * تمام تایپ‌های درخواست و پاسخ برای ۱۶ endpoint در @awaf/api.
- * Request and response types for all 16 AWAF API endpoints.
+ * تمام تایپ‌های درخواست و پاسخ برای ۱۶ endpoint در @alphabet/api.
+ * Request and response types for all 16 Alphabet API endpoints.
  */
 
-import type { AWAFError } from '@awaf/core';
-import type { ConsentTier, MemoryDomain, TrustTier, SuggestionActionIntent } from '@awaf/core';
+import type { AlphabetError } from '@alphabet/core';
+import type { ConsentTier, MemoryDomain, TrustTier, SuggestionActionIntent } from '@alphabet/core';
 
 // ─── Group 1: Context Handshake (Endpoints 2–3) ───────────────────────────────
 
@@ -52,7 +52,7 @@ export interface ConsentResponse {
     readonly retentionDays: number;
     readonly rightToErasure: boolean;
   };
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -85,7 +85,7 @@ export interface PreferenceResponse {
   };
   readonly updatedAt: string;
   readonly effectiveTier: ConsentTier;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 // ─── Group 2: Visitor Interaction (Endpoints 4–6) ────────────────────────────
@@ -96,7 +96,7 @@ export interface PreferenceResponse {
  * The `intentType` describes the UI/action affordance of the suggestion
  * (a {@link SuggestionActionIntent}), **not** the visitor's domain-level
  * purpose. For high-level visitor intent classification use
- * `DomainIntent` from `@awaf/core`.
+ * `DomainIntent` from `@alphabet/core`.
  */
 export interface SuggestionOption {
   readonly id: string;
@@ -154,7 +154,7 @@ export interface InteractResponse {
     readonly total: number;
   };
   readonly streaming: false;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -162,7 +162,7 @@ export interface InteractResponse {
  */
 export interface InteractStreamEvent {
   readonly type: 'token' | 'suggestion' | 'reference' | 'done' | 'error';
-  readonly data: string | SuggestionOption | { readonly title: string; readonly url: string } | AWAFError;
+  readonly data: string | SuggestionOption | { readonly title: string; readonly url: string } | AlphabetError;
 }
 
 /**
@@ -179,7 +179,7 @@ export interface VoiceTranscribeResponse {
     readonly durationMs: number;
     readonly words?: { readonly word: string; readonly start: number; readonly end: number }[];
   };
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -203,7 +203,7 @@ export interface SuggestionsResponse {
   readonly success: boolean;
   readonly suggestions: SuggestionOption[];
   readonly generatedAt: string;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 // ─── Group 3: Technology Pulse (Endpoints 7–8) ────────────────────────────────
@@ -258,7 +258,7 @@ export interface TechnologyPulseResponse {
     readonly sources: { readonly name: string; readonly count: number }[];
     readonly trustTiers: { readonly tier: string; readonly count: number }[];
   };
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -289,7 +289,7 @@ export interface TechnologyPulseBriefResponse {
     readonly categoryBreakdown: { readonly category: string; readonly count: number; readonly topSignal: string }[];
     readonly trustDistribution: { readonly tier: string; readonly count: number }[];
   };
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 // ─── Group 4: Memory (Endpoints 9–11) ────────────────────────────────────────
@@ -325,7 +325,7 @@ export interface StoreMemoryResponse {
   };
   readonly consentTier: ConsentTier;
   readonly tokensUsed: number;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -358,7 +358,7 @@ export interface GetMemoryResponse {
   }[];
   readonly total: number;
   readonly consentTier: ConsentTier;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -391,7 +391,7 @@ export interface EraseMemoryResponse {
     readonly retentionDaysRemaining: number;
     readonly thirdPartyNotifications: string[];
   };
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 // ─── Group 5: OpenClaw Mesh (Endpoints 12–14) ────────────────────────────────
@@ -437,7 +437,7 @@ export interface ClawQueryResponse {
   };
   readonly totalResults: number;
   readonly domainsSearched: MemoryDomain[];
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -472,7 +472,7 @@ export interface ClawIngestResponse {
     readonly isDuplicate: boolean;
     readonly similarTo?: string[];
   };
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -508,7 +508,7 @@ export interface ClawAdminAuditResponse {
   }[];
   readonly auditLogId: string;
   readonly gdprCompliant: boolean;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 // ─── Group 6: Admin (Endpoints 15–16) ────────────────────────────────────────
@@ -556,7 +556,7 @@ export interface VisitorInsightsResponse {
     readonly warnings: string[];
   };
   readonly generatedAt: string;
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }
 
 /**
@@ -606,5 +606,5 @@ export interface PulseSourcesResponse {
     readonly t2Count: number;
     readonly t3Count: number;
   };
-  readonly error?: AWAFError;
+  readonly error?: AlphabetError;
 }

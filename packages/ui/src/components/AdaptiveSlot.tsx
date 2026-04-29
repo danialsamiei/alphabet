@@ -31,7 +31,7 @@ import {
   type UseAdaptiveLayerOptions,
   type UseAdaptiveLayerReturn,
 } from '../hooks/useAdaptiveLayer.js';
-import { useAwafContext } from './AwafProvider.js';
+import { useAlphabetContext } from './AlphabetProvider.js';
 import {
   ADAPTIVE_LAYER_FALLBACK_CHAIN,
   type AdaptiveLayer,
@@ -153,8 +153,8 @@ export function AdaptiveSlot(props: AdaptiveSlotProps): JSX.Element | null {
     ...layerOptions
   } = props;
 
-  // اگر AwafProvider موجود است، handshake را از آن می‌خوانیم.
-  const ctx = useAwafContext();
+  // اگر AlphabetProvider موجود است، handshake را از آن می‌خوانیم.
+  const ctx = useAlphabetContext();
   const handshakeFromProvider = ctx?.handshake;
   const layerInfo: UseAdaptiveLayerReturn = useAdaptiveLayer({
     ...layerOptions,

@@ -1,17 +1,17 @@
 /**
  * @module events
  * @description
- * AWAFEventEmitter — event emitter typed با priority و once support.
+ * AlphabetEventEmitter — event emitter typed با priority و once support.
  * Typed event emitter with priority queue and one-time listeners.
  */
 
 // ─── Event Map ────────────────────────────────────────────────────────────────
 
 /**
- * نقشه رویدادهای AWAF — نوع payload هر رویداد.
+ * نقشه رویدادهای Alphabet — نوع payload هر رویداد.
  * Event map: event name → payload type.
  */
-export interface AWAFEventMap {
+export interface AlphabetEventMap {
   /** handshake کامل شد */
   'handshake:complete': { readonly sessionId: string; readonly layer: string };
   /** handshake در یک فاز خطا داد */
@@ -31,29 +31,29 @@ export interface AWAFEventMap {
 }
 
 /** نام‌های رویدادهای موجود */
-export type AWAFEventName = keyof AWAFEventMap;
+export type AlphabetEventName = keyof AlphabetEventMap;
 
 // ─── Listener ────────────────────────────────────────────────────────────────
 
 /** نوع listener برای یک رویداد */
-export type AWAFEventListener<K extends AWAFEventName> = (
-  payload: AWAFEventMap[K]
+export type AlphabetEventListener<K extends AlphabetEventName> = (
+  payload: AlphabetEventMap[K]
 ) => void;
 
 /** listener با priority و once flag */
-interface ListenerEntry<K extends AWAFEventName> {
-  readonly listener: AWAFEventListener<K>;
+interface ListenerEntry<K extends AlphabetEventName> {
+  readonly listener: AlphabetEventListener<K>;
   readonly priority: number;
   readonly once: boolean;
 }
 
-// ─── AWAFEventEmitter Class ───────────────────────────────────────────────────
+// ─── AlphabetEventEmitter Class ───────────────────────────────────────────────────
 
 /**
  * Event emitter typed با priority queue و once support.
  *
  * @example
- * const emitter = new AWAFEventEmitter();
+ * const emitter = new AlphabetEventEmitter();
  *
  * emitter.on('handshake:complete', ({ sessionId, layer }) => {
  *   console.log(`Handshake done: session=${sessionId}, layer=${layer}`);
@@ -65,10 +65,10 @@ interface ListenerEntry<K extends AWAFEventName> {
  *
  * emitter.emit('handshake:complete', { sessionId: 'sess-abc', layer: 'STATIC_HTML' });
  */
-export class AWAFEventEmitter {
+export class AlphabetEventEmitter {
   private readonly listeners = new Map<
-    AWAFEventName,
-    ListenerEntry<AWAFEventName>[]
+    AlphabetEventName,
+    ListenerEntry<AlphabetEventName>[]
   >();
 
   /**
@@ -79,9 +79,9 @@ export class AWAFEventEmitter {
    * @param priority - اولویت (بیشتر = اجرا زودتر) — پیش‌فرض: 0
    * @returns this برای chaining
    */
-  on<K extends AWAFEventName>(
+  on<K extends AlphabetEventName>(
     event: K,
-    listener: AWAFEventListener<K>,
+    listener: AlphabetEventListener<K>,
     priority = 0
   ): this {
     return this.addListener(event, listener, priority, false);
@@ -95,9 +95,9 @@ export class AWAFEventEmitter {
    * @param priority - اولویت — پیش‌فرض: 0
    * @returns this برای chaining
    */
-  once<K extends AWAFEventName>(
+  once<K extends AlphabetEventName>(
     event: K,
-    listener: AWAFEventListener<K>,
+    listener: AlphabetEventListener<K>,
     priority = 0
   ): this {
     return this.addListener(event, listener, priority, true);
@@ -110,15 +110,15 @@ export class AWAFEventEmitter {
    * @param listener - تابع listener که باید حذف شود
    * @returns this برای chaining
    */
-  off<K extends AWAFEventName>(
+  off<K extends AlphabetEventName>(
     event: K,
-    listener: AWAFEventListener<K>
+    listener: AlphabetEventListener<K>
   ): this {
     const entries = this.listeners.get(event);
     if (!entries) return this;
 
     const filtered = entries.filter(
-      (e) => e.listener !== (listener as AWAFEventListener<AWAFEventName>)
+      (e) => e.listener !== (listener as AlphabetEventListener<AlphabetEventName>)
     );
 
     if (filtered.length === 0) {
@@ -136,9 +136,9 @@ export class AWAFEventEmitter {
    * @param event - نام رویداد
    * @param payload - داده رویداد
    */
-  emit<K extends AWAFEventName>(
+  emit<K extends AlphabetEventName>(
     event: K,
-    payload: AWAFEventMap[K]
+    payload: AlphabetEventMap[K]
   ): void {
     const entries = this.listeners.get(event);
     if (!entries || entries.length === 0) return;
@@ -147,10 +147,10 @@ export class AWAFEventEmitter {
     const sorted = [...entries].sort((a, b) => b.priority - a.priority);
 
     // listenerهای once را جمع‌آوری می‌کنیم تا حذف کنیم
-    const toRemove: AWAFEventListener<AWAFEventName>[] = [];
+    const toRemove: AlphabetEventListener<AlphabetEventName>[] = [];
 
     for (const entry of sorted) {
-      entry.listener(payload as AWAFEventMap[AWAFEventName]);
+      entry.listener(payload as AlphabetEventMap[AlphabetEventName]);
       if (entry.once) {
         toRemove.push(entry.listener);
       }
@@ -172,7 +172,7 @@ export class AWAFEventEmitter {
    *
    * @param event - نام رویداد
    */
-  removeAllListeners(event?: AWAFEventName): void {
+  removeAllListeners(event?: AlphabetEventName): void {
     if (event) {
       this.listeners.delete(event);
     } else {
@@ -186,22 +186,22 @@ export class AWAFEventEmitter {
    * @param event - نام رویداد
    * @returns تعداد listener
    */
-  listenerCount(event: AWAFEventName): number {
+  listenerCount(event: AlphabetEventName): number {
     return this.listeners.get(event)?.length ?? 0;
   }
 
   /**
    * افزودن listener به map (helper داخلی).
    */
-  private addListener<K extends AWAFEventName>(
+  private addListener<K extends AlphabetEventName>(
     event: K,
-    listener: AWAFEventListener<K>,
+    listener: AlphabetEventListener<K>,
     priority: number,
     once: boolean
   ): this {
     const existing = this.listeners.get(event) ?? [];
     existing.push({
-      listener: listener as AWAFEventListener<AWAFEventName>,
+      listener: listener as AlphabetEventListener<AlphabetEventName>,
       priority,
       once,
     });

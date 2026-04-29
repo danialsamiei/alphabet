@@ -3,7 +3,7 @@
  * @description
  * Top-level shell for Danial Samiei's personal site.
  *
- * Showcases the AWAF SDK: the page is wrapped in {@link AwafProvider}
+ * Showcases the Alphabet SDK: the page is wrapped in {@link AlphabetProvider}
  * and the hero section adapts via {@link AdaptiveSlot} — the same
  * five-layer fallback chain the framework uses everywhere else in
  * this monorepo. The interactive assistant is powered by the
@@ -13,12 +13,12 @@
 import { useRef } from 'react';
 import {
   AdaptiveSlot,
-  AwafProvider,
+  AlphabetProvider,
   Canvas2DLayer,
   Css3DLayer,
   StaticHtmlLayer,
   TextOnlyLayer,
-} from '@awaf/ui';
+} from '@alphabet/ui';
 
 import { profile } from './data/profile.js';
 import { Hero } from './components/Hero.js';
@@ -41,13 +41,13 @@ export function App(): JSX.Element {
   };
 
   return (
-    <AwafProvider>
+    <AlphabetProvider>
       <a href="#ds-main" className="ds-skip-link">
         Skip to main content
       </a>
 
       {/*
-        The hero is rendered through AWAF's AdaptiveSlot so on a
+        The hero is rendered through Alphabet's AdaptiveSlot so on a
         capable, motion-friendly device the user gets a richer
         background, while reduced-motion / low-capability / SSR users
         fall through to a clean static HTML hero. All variants render
@@ -108,8 +108,8 @@ export function App(): JSX.Element {
       <footer className="ds-footer">
         <p>
           © {new Date().getFullYear()} {profile.name}. Built with the{' '}
-          <a href="https://github.com/danialsamiei/awaf" rel="noopener noreferrer" target="_blank">
-            AWAF
+          <a href="https://github.com/danialsamiei/alphabet" rel="noopener noreferrer" target="_blank">
+            Alphabet
           </a>{' '}
           SDK. Assistant powered by{' '}
           <a
@@ -122,7 +122,7 @@ export function App(): JSX.Element {
           .
         </p>
       </footer>
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }
 

@@ -1,7 +1,7 @@
-# قراردادهای کدنویسی — AWAF SDK
-# AWAF SDK Coding Conventions
+# قراردادهای کدنویسی — Alphabet SDK
+# Alphabet SDK Coding Conventions
 
-> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/awaf`
+> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/alphabet`
 > **زبان:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
 
 ---
@@ -211,7 +211,7 @@ const wrong: VisitorMemory = {
 ```typescript
 // src/types/result.ts
 
-export type Result<T, E = AWAFError> =
+export type Result<T, E = AlphabetError> =
   | { readonly success: true; readonly data: T }
   | { readonly success: false; readonly error: E };
 
@@ -220,7 +220,7 @@ export function ok<T>(data: T): Result<T, never> {
   return { success: true, data };
 }
 
-export function err<E = AWAFError>(error: E): Result<never, E> {
+export function err<E = AlphabetError>(error: E): Result<never, E> {
   return { success: false, error };
 }
 ```
@@ -238,7 +238,7 @@ function parseConfig(json: string): Config {
 }
 
 // ✅ AFTER (with Result<T,E>):
-function parseConfig(json: string): Result<Config, AWAFError> {
+function parseConfig(json: string): Result<Config, AlphabetError> {
   let parsed: unknown;
   try {
     parsed = JSON.parse(json);
@@ -283,7 +283,7 @@ const config = result.data;
 // ✅ Async function با Result
 async function postHandshake(
   request: HandshakeRequest
-): Promise<Result<HandshakeResponse, AWAFError>> {
+): Promise<Result<HandshakeResponse, AlphabetError>> {
   try {
     const response = await fetch(`${API_BASE}/context/handshake`, {
       method: 'POST',
@@ -347,7 +347,7 @@ const configResult = parseConfig(json)
 ### ۴.۲ Error Types
 
 ```typescript
-interface AWAFError {
+interface AlphabetError {
   code: string;              // کد machine-readable (UPPER_SNAKE_CASE)
   message: string;           // پیام human-readable
   details?: Record<string, unknown>;  // اطلاعات اضافی (بدون PII)
@@ -375,7 +375,7 @@ const MEMORY_ERRORS = {
 // ✅ تابع کاملاً functional — هیچ throw
 export function validateHandshakeRequest(
   request: unknown
-): Result<HandshakeRequest, AWAFError> {
+): Result<HandshakeRequest, AlphabetError> {
   if (!request || typeof request !== 'object') {
     return err({ code: 'INVALID_REQUEST', message: 'Request must be an object' });
   }
@@ -415,7 +415,7 @@ export function validateHandshakeRequest(
 
 ```typescript
 // ✅ استفاده از Capability Detection قبل از render
-import { runCapabilityDetection, CapabilityLayer } from '@awaf/core';
+import { runCapabilityDetection, CapabilityLayer } from '@alphabet/core';
 
 function App() {
   const [layer, setLayer] = useState<CapabilityLayer | null>(null);
@@ -500,7 +500,7 @@ function Scene() {
 }
 ```
 
-### ۵.۴ React Hooks برای AWAF
+### ۵.۴ React Hooks برای Alphabet
 
 ```typescript
 // ✅ Custom hook برای handshake
@@ -550,7 +550,7 @@ export function useConsent(visitorId: VisitorId) {
 | TypeScript integration test | `kebab-case.integration.test.ts` | `context-handshake.integration.test.ts` |
 | React component | `PascalCase.tsx` | `Layer1R3F.tsx` |
 | React component test | `PascalCase.test.tsx` | `Layer1R3F.test.tsx` |
-| Type definition | `kebab-case.d.ts` | `awaf-config.d.ts` |
+| Type definition | `kebab-case.d.ts` | `alphabet-config.d.ts` |
 | Utility | `kebab-case.ts` | `result-helpers.ts` |
 | Constants | `SCREAMING_SNAKE.ts` | `HANDSHAKE_ERRORS.ts` |
 
@@ -559,7 +559,7 @@ export function useConsent(visitorId: VisitorId) {
 | نوع | فرمت | مثال |
 |-----|------|------|
 | Class | `PascalCase` | `ContextHandshakeClient` |
-| Interface | `PascalCase` | `VisitorContext`, `AWAFRequest` |
+| Interface | `PascalCase` | `VisitorContext`, `AlphabetRequest` |
 | Type alias | `PascalCase` | `ConsentTier`, `MemoryDomain` |
 | Enum | `PascalCase` | `UILayer`, `CapabilityLayer` |
 | Function | `camelCase` | `detectDeviceClass`, `sanitizeInput` |
@@ -603,14 +603,14 @@ src/
 
 ```typescript
 // ❌ AVOID: Barrel imports در hot paths
-import { VisitorContext, VisitorConsent, VisitorMemory } from '@awaf/core';
+import { VisitorContext, VisitorConsent, VisitorMemory } from '@alphabet/core';
 
 // ✅ PREFER: Import صریح از فایل مبدأ
-import { VisitorContext } from '@awaf/core/types/visitor';
-import { VisitorConsent } from '@awaf/core/types/visitor';
+import { VisitorContext } from '@alphabet/core/types/visitor';
+import { VisitorConsent } from '@alphabet/core/types/visitor';
 
 // ✅ EXCEPTION: فایل‌های index.ts و config می‌توانند barrel import کنند
-import type { AWAFConfig } from '@awaf/core/config';
+import type { AlphabetConfig } from '@alphabet/core/config';
 ```
 
 ### ۷.۲ ترتیب Importها
@@ -620,10 +620,10 @@ import type { AWAFConfig } from '@awaf/core/config';
 import { useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 
-// ۲. Internal packages (@awaf/*)
-import { runCapabilityDetection } from '@awaf/core';
-import { postInteract } from '@awaf/api';
-import { sanitizeInput } from '@awaf/security';
+// ۲. Internal packages (@alphabet/*)
+import { runCapabilityDetection } from '@alphabet/core';
+import { postInteract } from '@alphabet/api';
+import { sanitizeInput } from '@alphabet/security';
 
 // ۳. Relative imports (همان package)
 import { Layer1R3F } from './layers/Layer1R3F';
@@ -637,8 +637,8 @@ import './styles.css';
 
 ```typescript
 // ✅ استفاده از import type برای type-only imports
-import type { VisitorContext } from '@awaf/core/types/visitor';
-import { createVisitorId } from '@awaf/core/types/brands';
+import type { VisitorContext } from '@alphabet/core/types/visitor';
+import { createVisitorId } from '@alphabet/core/types/brands';
 
 // ✅ این distinction باعث می‌شود type imports در runtime حذف شوند
 ```
@@ -908,7 +908,7 @@ return err({
 
 ```typescript
 // ✅ Pattern: Consent check قبل از هر operation
-function storeMemory(data: MemoryData, consent: VisitorConsent): Result<MemoryId, AWAFError> {
+function storeMemory(data: MemoryData, consent: VisitorConsent): Result<MemoryId, AlphabetError> {
   // ۱. Check state
   if (consent.state === 'revoked') {
     return err({ code: 'CONSENT_REVOKED', message: 'Consent revoked' });
@@ -929,14 +929,14 @@ function storeMemory(data: MemoryData, consent: VisitorConsent): Result<MemoryId
 
 | تنظیم | مقدار پیش‌فرض | دلیل |
 |-------|---------------|------|
-| `AWAF_DEFAULT_CONSENT_TIER` | `NO_MEMORY` | حداقل data collection |
-| `AWAF_TIMEOUT_MS` | `5000` | جلوگیری از hanging connections |
-| `AWAF_MAX_RETRIES` | `3` | محدودیت retry |
-| `AWAF_LOG_LEVEL` | `warn` | حداقل logging در production |
-| `AWAF_ENABLE_TELEMETRY` | `false` | Opt-in، نه opt-out |
+| `ALPHABET_DEFAULT_CONSENT_TIER` | `NO_MEMORY` | حداقل data collection |
+| `ALPHABET_TIMEOUT_MS` | `5000` | جلوگیری از hanging connections |
+| `ALPHABET_MAX_RETRIES` | `3` | محدودیت retry |
+| `ALPHABET_LOG_LEVEL` | `warn` | حداقل logging در production |
+| `ALPHABET_ENABLE_TELEMETRY` | `false` | Opt-in، نه opt-out |
 | Session TTL | `۲۴h` | حداکثر anonymous session |
 | Token budget | `ANONYMOUS` | حداقل tier |
 
 ---
 
-*این سند بخشی از مستندات SDK AWAF است. برای معماری کلی به ARCHITECTURE.md و برای راهنمای توسعه به DEVELOPMENT.md مراجعه کنید.*
+*این سند بخشی از مستندات SDK Alphabet است. برای معماری کلی به ARCHITECTURE.md و برای راهنمای توسعه به DEVELOPMENT.md مراجعه کنید.*

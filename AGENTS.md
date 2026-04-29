@@ -1,30 +1,30 @@
-# AWAF — AI Agent Onboarding Guide
+# Alphabet — AI Agent Onboarding Guide
 
 > **نام فایل:** `AGENTS.md`
 > **هدف:** اولین و مهم‌ترین فایلی که هر AI Agent (Kimi، GitHub Copilot Pro+، Codex، Claude Code، KiloCode) هنگام باز کردن repository می‌خواند.
 > **زبان:** فارسی (Farsi) با حفظ اصطلاحات فنی انگلیسی.
 > **نسخه:** 1.0.0
 > **آخرین بروزرسانی:** 2025-06-15
-> **مخاطب:** تمام AI Agents — این سند single source of truth پروژه AWAF است.
-> **منبع:** AWAF SDK Prompt Suite (بخش‌های ۰ تا ۱۰)
+> **مخاطب:** تمام AI Agents — این سند single source of truth پروژه Alphabet است.
+> **منبع:** Alphabet SDK Prompt Suite (بخش‌های ۰ تا ۱۰)
 
 ---
 
 ## Project Identity
 
-**AWAF (Alefba Web-Aware Framework)** یک چارچوب نرم‌افزاری TypeScript مبتنی بر React است که وب‌سایت‌ها را از «صفحات ایستا» به «تجربیات آگاه از بافتار» (context-aware experiences) تبدیل می‌کند. AWAF به جای تلاش برای «خواندن ذهن» کاربر، سیگنال‌های عینی و قابل مشاهده مرورگر را جمع‌آوری کرده و از آن‌ها برای سفارشی‌سازی شفاف، قابل حسابرسی و قابل revoked تجربه کاربری استفاده می‌نماید.
+**Alphabet (Alefba Web-Aware Framework)** یک چارچوب نرم‌افزاری TypeScript مبتنی بر React است که وب‌سایت‌ها را از «صفحات ایستا» به «تجربیات آگاه از بافتار» (context-aware experiences) تبدیل می‌کند. Alphabet به جای تلاش برای «خواندن ذهن» کاربر، سیگنال‌های عینی و قابل مشاهده مرورگر را جمع‌آوری کرده و از آن‌ها برای سفارشی‌سازی شفاف، قابل حسابرسی و قابل revoked تجربه کاربری استفاده می‌نماید.
 
 **Vision:** وب آگاه (web-aware) — وب‌سایتی که زبان کاربر را می‌شناسد، timezone او را می‌داند، دستگاه او را درک می‌کند، و بدون نقض حریم خصوصی، تجربه‌ای شخصی‌سازی‌شده ارائه می‌دهد.
 
 **Mission:** ایجاد SDK و demonstration کاملی از اصول World-Aware Web در قالب یک framework تولیدی (generative) با ۵ لایه UI degradation، ۶ دامنه حافظه consent-tiered، و ۴ پروتکل ارتباطی.
 
-**Problem it solves:** وب‌سایت‌های امروزی یا کاملاً ایستا هستند (one-size-fits-all) یا به tracking invasive متکی‌اند (cookies third-party، fingerprinting). AWAF راه سوم را ارائه می‌دهد: adaptation بر اساس سیگنال‌های passive مرورگر با رضایت صریح کاربر (explicit consent) و isolation دامنه‌ای (domain isolation).
+**Problem it solves:** وب‌سایت‌های امروزی یا کاملاً ایستا هستند (one-size-fits-all) یا به tracking invasive متکی‌اند (cookies third-party، fingerprinting). Alphabet راه سوم را ارائه می‌دهد: adaptation بر اساس سیگنال‌های passive مرورگر با رضایت صریح کاربر (explicit consent) و isolation دامنه‌ای (domain isolation).
 
 ---
 
 ## Architecture at a Glance
 
-AWAF یک معماری ۸ لایه‌ای دارد که از ingestion سیگنال در لبه (edge) آغاز شده و تا تولید Technology Brief با RAG grounding ادامه می‌یابد. هر لایه autonomous است اما از طریق مدل‌های داده مشترک (shared data models) با هم در ارتباط‌اند.
+Alphabet یک معماری ۸ لایه‌ای دارد که از ingestion سیگنال در لبه (edge) آغاز شده و تا تولید Technology Brief با RAG grounding ادامه می‌یابد. هر لایه autonomous است اما از طریق مدل‌های داده مشترک (shared data models) با هم در ارتباط‌اند.
 
 ### ASCII Diagram — 8 Layers
 
@@ -157,7 +157,7 @@ AWAF یک معماری ۸ لایه‌ای دارد که از ingestion سیگن�
              │ depends on
 ┌────────────▼──────────────────────────────────────────────────────┐
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────┐ │
-│  │ @awaf/core   │  │  @awaf/api   │  │  @awaf/ui    │  │@awaf/cli│ │
+│  │ @alphabet/core   │  │  @alphabet/api   │  │  @alphabet/ui    │  │@alphabet/cli│ │
 │  │ (models +  │  │ (client +  │  │ (react     │  │ (scaffold│ │
 │  │  handshake) │  │  server)    │  │  hooks)    │  │ + mock)  │ │
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └─────┬───┘ │
@@ -165,12 +165,12 @@ AWAF یک معماری ۸ لایه‌ای دارد که از ingestion سیگن�
 │         └────────────────┴────────────────┴───────────────┘     │
 │                                    │                              │
 │                         ┌──────────▼──────────┐                  │
-│                         │   @awaf/protocols   │                  │
+│                         │   @alphabet/protocols   │                  │
 │                         │  (MCP + A2A + QR)   │                  │
 │                         └──────────┬──────────┘                  │
 │                                    │                              │
 │                         ┌──────────▼──────────┐                  │
-│                         │   @awaf/security    │                  │
+│                         │   @alphabet/security    │                  │
 │                         │(consent + defense +  │                  │
 │                         │    privacy + NIST)   │                  │
 │                         └─────────────────────┘                  │
@@ -184,9 +184,9 @@ AWAF یک معماری ۸ لایه‌ای دارد که از ingestion سیگن�
 این پروژه یک monorepo مبتنی بر pnpm workspaces و Turborepo است.
 
 ```
-awaf/
+alphabet/
 ├── packages/
-│   ├── core/                    # @awaf/core — مدل‌ها، handshake، context
+│   ├── core/                    # @alphabet/core — مدل‌ها، handshake، context
 │   │   ├── src/
 │   │   │   ├── models/
 │   │   │   │   ├── handshake.ts        # HandshakeRequest, HandshakeResponse
@@ -210,10 +210,10 @@ awaf/
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
-│   ├── api/                     # @awaf/api — client HTTP + mock server
+│   ├── api/                     # @alphabet/api — client HTTP + mock server
 │   │   ├── src/
 │   │   │   ├── client/
-│   │   │   │   └── AwafClient.ts        # HTTP client برای ۱۶ endpoint
+│   │   │   │   └── AlphabetClient.ts        # HTTP client برای ۱۶ endpoint
 │   │   │   ├── server/
 │   │   │   │   └── mock/                # MSW handlers + json-server
 │   │   │   ├── test/
@@ -233,7 +233,7 @@ awaf/
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
-│   ├── ui/                      # @awaf/ui — React hooks + components
+│   ├── ui/                      # @alphabet/ui — React hooks + components
 │   │   ├── src/
 │   │   │   ├── hooks/
 │   │   │   │   ├── useHandshake.ts      # 6-phase handshake hook
@@ -260,7 +260,7 @@ awaf/
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
-│   ├── protocols/               # @awaf/protocols — protocol adapters
+│   ├── protocols/               # @alphabet/protocols — protocol adapters
 │   │   ├── src/
 │   │   │   ├── mcp/
 │   │   │   │   └── MCPAdapter.ts        # Model Context Protocol
@@ -274,7 +274,7 @@ awaf/
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
-│   ├── security/                # @awaf/security — defense & privacy
+│   ├── security/                # @alphabet/security — defense & privacy
 │   │   ├── src/
 │   │   │   ├── consent/
 │   │   │   │   ├── VisitorConsentManager.ts   # Jurisdiction-aware consent
@@ -292,7 +292,7 @@ awaf/
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
-│   └── cli/                     # @awaf/cli — tooling
+│   └── cli/                     # @alphabet/cli — tooling
 │       ├── src/
 │       │   ├── commands/
 │       │   │   ├── create.ts            # Scaffold پروژه جدید
@@ -302,7 +302,7 @@ awaf/
 │       │   │   └── project/             # Template files for create
 │       │   └── index.ts
 │       ├── bin/
-│       │   └── awaf.js                  # Entry point
+│       │   └── alphabet.js                  # Entry point
 │       ├── package.json
 │       └── tsconfig.json
 │
@@ -416,7 +416,7 @@ awaf/
 | ۷ | `package.json` | dependencies، scripts، و workspace config |
 | ۸ | `turbo.json` | pipeline build و task dependencies |
 
-**قانون طلایی:** اگر تسک شما به package دیگری وابسته است (مثلاً `@awaf/ui` به `@awaf/core` وابسته است)، ابتدا interfaceهای مورد نیاز را در `@awaf/core` پیاده‌سازی یا بررسی کنید، سپس به package بالادست بروید.
+**قانون طلایی:** اگر تسک شما به package دیگری وابسته است (مثلاً `@alphabet/ui` به `@alphabet/core` وابسته است)، ابتدا interfaceهای مورد نیاز را در `@alphabet/core` پیاده‌سازی یا بررسی کنید، سپس به package بالادست بروید.
 
 ### Coding Standards
 
@@ -498,61 +498,61 @@ function getVisitorProfile(id: VisitorId): VisitorProfile;
 
 ### File Creation Order
 
-پروژه AWAF از سه Phase ساخت تشکیل می‌شود. هر Phase به Phase پیشین وابسته است. **هرگز** نباید Phase ۳ را قبل از تکمیل Phase ۱ شروع کرد.
+پروژه Alphabet از سه Phase ساخت تشکیل می‌شود. هر Phase به Phase پیشین وابسته است. **هرگز** نباید Phase ۳ را قبل از تکمیل Phase ۱ شروع کرد.
 
 #### Phase 1: Foundation (Sprint 1 — MVP Core)
 | ترتیب | فایل | بسته | وابستگی |
 |:---:|:-----|:-----|:--------|
-| ۱ | `packages/core/src/models/*.ts` | @awaf/core | هیچ — foundation types |
-| ۲ | `packages/core/src/handshake/HandshakeManager.ts` | @awaf/core | models |
-| ۳ | `packages/core/src/intent/IntentDetector.ts` | @awaf/core | models |
-| ۴ | `packages/core/src/language/LanguageNegotiator.ts` | @awaf/core | models |
-| ۵ | `packages/security/src/consent/jurisdiction-rules.ts` | @awaf/security | هیچ |
-| ۶ | `packages/security/src/consent/VisitorConsentManager.ts` | @awaf/security | jurisdiction-rules |
-| ۷ | `packages/security/src/consent/GoogleConsentAdapter.ts` | @awaf/security | VisitorConsentManager |
-| ۸ | `packages/api/src/client/AwafClient.ts` | @awaf/api | @awaf/core |
-| ۹ | `packages/api/src/test/handlers/*.ts` | @awaf/api | @awaf/core |
-| ۱۰ | `packages/ui/src/hooks/useHandshake.ts` | @awaf/ui | @awaf/api, @awaf/core |
-| ۱۱ | `packages/ui/src/hooks/useConsent.ts` | @awaf/ui | @awaf/security |
-| ۱۲ | `packages/ui/src/layers/Layer4StaticHTML.tsx` | @awaf/ui | @awaf/core |
+| ۱ | `packages/core/src/models/*.ts` | @alphabet/core | هیچ — foundation types |
+| ۲ | `packages/core/src/handshake/HandshakeManager.ts` | @alphabet/core | models |
+| ۳ | `packages/core/src/intent/IntentDetector.ts` | @alphabet/core | models |
+| ۴ | `packages/core/src/language/LanguageNegotiator.ts` | @alphabet/core | models |
+| ۵ | `packages/security/src/consent/jurisdiction-rules.ts` | @alphabet/security | هیچ |
+| ۶ | `packages/security/src/consent/VisitorConsentManager.ts` | @alphabet/security | jurisdiction-rules |
+| ۷ | `packages/security/src/consent/GoogleConsentAdapter.ts` | @alphabet/security | VisitorConsentManager |
+| ۸ | `packages/api/src/client/AlphabetClient.ts` | @alphabet/api | @alphabet/core |
+| ۹ | `packages/api/src/test/handlers/*.ts` | @alphabet/api | @alphabet/core |
+| ۱۰ | `packages/ui/src/hooks/useHandshake.ts` | @alphabet/ui | @alphabet/api, @alphabet/core |
+| ۱۱ | `packages/ui/src/hooks/useConsent.ts` | @alphabet/ui | @alphabet/security |
+| ۱۲ | `packages/ui/src/layers/Layer4StaticHTML.tsx` | @alphabet/ui | @alphabet/core |
 | ۱۳ | `mock-server/server.js` | mock-server | هیچ |
 
 #### Phase 2: Integration (Sprint 2 — Memory + Pulse + Protocols)
 | ترتیب | فایل | بسته | وابستگی |
 |:---:|:-----|:-----|:--------|
-| ۱۴ | `packages/core/src/models/pulse.ts` | @awaf/core | types.ts |
-| ۱۵ | `packages/core/src/pulse/types.ts` | @awaf/core | هیچ (foundation) |
-| ۱۶ | `packages/core/src/pulse/provenance.ts` | @awaf/core | types.ts |
-| ۱۷ | `packages/core/src/pulse/trust-scorer.ts` | @awaf/core | types.ts |
-| ۱۸ | `packages/core/src/pulse/extractor.ts` | @awaf/core | types.ts |
-| ۱۹ | `packages/core/src/pulse/ingestor.ts` | @awaf/core | types.ts, provenance.ts, trust-scorer.ts, extractor.ts |
-| ۲۰ | `packages/core/src/pulse/brief-types.ts` | @awaf/core | types.ts |
-| ۲۱ | `packages/core/src/pulse/verification.ts` | @awaf/core | brief-types.ts, types.ts |
-| ۲۲ | `packages/core/src/pulse/brief-generator.ts` | @awaf/core | brief-types.ts, types.ts, verification.ts |
-| ۲۳ | `packages/protocols/src/mcp/MCPAdapter.ts` | @awaf/protocols | @awaf/core |
-| ۲۴ | `packages/protocols/src/a2a/A2AAdapter.ts` | @awaf/protocols | @awaf/core |
-| ۲۵ | `packages/protocols/src/qr/QRHandoffAdapter.ts` | @awaf/protocols | @awaf/core |
-| ۲۶ | `packages/ui/src/hooks/useVisitorMemory.ts` | @awaf/ui | @awaf/core |
-| ۲۷ | `packages/ui/src/hooks/useTechnologyPulse.ts` | @awaf/ui | @awaf/core, @awaf/api |
-| ۲۸ | `packages/ui/src/hooks/useRuntimeLoop.ts` | @awaf/ui | @awaf/api |
-| ۲۹ | `packages/ui/src/hooks/useLayerDetection.ts` | @awaf/ui | @awaf/core |
-| ۳۰ | `packages/ui/src/layers/Layer1R3F.tsx` | @awaf/ui | React Three Fiber |
-| ۳۱ | `packages/ui/src/layers/Layer2CSS3D.tsx` | @awaf/ui | CSS transforms |
-| ۳۲ | `packages/ui/src/layers/Layer3Canvas2D.tsx` | @awaf/ui | Canvas API |
-| ۳۳ | `apps/demo/src/components/App.tsx` | apps/demo | @awaf/ui, @awaf/core |
+| ۱۴ | `packages/core/src/models/pulse.ts` | @alphabet/core | types.ts |
+| ۱۵ | `packages/core/src/pulse/types.ts` | @alphabet/core | هیچ (foundation) |
+| ۱۶ | `packages/core/src/pulse/provenance.ts` | @alphabet/core | types.ts |
+| ۱۷ | `packages/core/src/pulse/trust-scorer.ts` | @alphabet/core | types.ts |
+| ۱۸ | `packages/core/src/pulse/extractor.ts` | @alphabet/core | types.ts |
+| ۱۹ | `packages/core/src/pulse/ingestor.ts` | @alphabet/core | types.ts, provenance.ts, trust-scorer.ts, extractor.ts |
+| ۲۰ | `packages/core/src/pulse/brief-types.ts` | @alphabet/core | types.ts |
+| ۲۱ | `packages/core/src/pulse/verification.ts` | @alphabet/core | brief-types.ts, types.ts |
+| ۲۲ | `packages/core/src/pulse/brief-generator.ts` | @alphabet/core | brief-types.ts, types.ts, verification.ts |
+| ۲۳ | `packages/protocols/src/mcp/MCPAdapter.ts` | @alphabet/protocols | @alphabet/core |
+| ۲۴ | `packages/protocols/src/a2a/A2AAdapter.ts` | @alphabet/protocols | @alphabet/core |
+| ۲۵ | `packages/protocols/src/qr/QRHandoffAdapter.ts` | @alphabet/protocols | @alphabet/core |
+| ۲۶ | `packages/ui/src/hooks/useVisitorMemory.ts` | @alphabet/ui | @alphabet/core |
+| ۲۷ | `packages/ui/src/hooks/useTechnologyPulse.ts` | @alphabet/ui | @alphabet/core, @alphabet/api |
+| ۲۸ | `packages/ui/src/hooks/useRuntimeLoop.ts` | @alphabet/ui | @alphabet/api |
+| ۲۹ | `packages/ui/src/hooks/useLayerDetection.ts` | @alphabet/ui | @alphabet/core |
+| ۳۰ | `packages/ui/src/layers/Layer1R3F.tsx` | @alphabet/ui | React Three Fiber |
+| ۳۱ | `packages/ui/src/layers/Layer2CSS3D.tsx` | @alphabet/ui | CSS transforms |
+| ۳۲ | `packages/ui/src/layers/Layer3Canvas2D.tsx` | @alphabet/ui | Canvas API |
+| ۳۳ | `apps/demo/src/components/App.tsx` | apps/demo | @alphabet/ui, @alphabet/core |
 
 #### Phase 3: Security + Admin + Optimization (Sprint 3+)
 | ترتیب | فایل | بسته | وابستگی |
 |:---:|:-----|:-----|:--------|
-| ۳۴ | `packages/security/src/security/PromptInjectionDefense.ts` | @awaf/security | InputSanitizer, PromptSandbox, OutputFilter, AuditLogger |
-| ۳۵ | `packages/security/src/security/MemoryIntegrityGuard.ts` | @awaf/security | vector DB interface |
-| ۳۶ | `packages/security/src/security/CostGuardian.ts` | @awaf/security | CircuitBreaker, AuditLogger |
-| ۳۷ | `packages/security/src/security/NISTAIMapping.ts` | @awaf/security | هیچ (mapping table) |
-| ۳۸ | `packages/security/src/privacy/DifferentialPrivacy.ts` | @awaf/security | هیچ |
-| ۳۹ | `packages/security/src/consent/RightToErasure.ts` | @awaf/security | AuditLogger |
-| ۴۰ | `packages/core/src/pulse/admin/source-manager.ts` | @awaf/core | types.ts |
-| ۴۱ | `packages/core/src/pulse/admin/monitor.ts` | @awaf/core | types.ts |
-| ۴۲ | `packages/cli/src/commands/*.ts` | @awaf/cli | fs-extra, commander |
+| ۳۴ | `packages/security/src/security/PromptInjectionDefense.ts` | @alphabet/security | InputSanitizer, PromptSandbox, OutputFilter, AuditLogger |
+| ۳۵ | `packages/security/src/security/MemoryIntegrityGuard.ts` | @alphabet/security | vector DB interface |
+| ۳۶ | `packages/security/src/security/CostGuardian.ts` | @alphabet/security | CircuitBreaker, AuditLogger |
+| ۳۷ | `packages/security/src/security/NISTAIMapping.ts` | @alphabet/security | هیچ (mapping table) |
+| ۳۸ | `packages/security/src/privacy/DifferentialPrivacy.ts` | @alphabet/security | هیچ |
+| ۳۹ | `packages/security/src/consent/RightToErasure.ts` | @alphabet/security | AuditLogger |
+| ۴۰ | `packages/core/src/pulse/admin/source-manager.ts` | @alphabet/core | types.ts |
+| ۴۱ | `packages/core/src/pulse/admin/monitor.ts` | @alphabet/core | types.ts |
+| ۴۲ | `packages/cli/src/commands/*.ts` | @alphabet/cli | fs-extra, commander |
 | ۴۳ | `e2e/*.spec.ts` | e2e | Playwright |
 
 ### Testing Requirements
@@ -596,9 +596,9 @@ function getVisitorProfile(id: VisitorId): VisitorProfile;
 
 ```typescript
 // ✅ صحیح
-import { TechnologySignal, TrustTier } from '@awaf/core';
-import { useConsent } from '@awaf/ui';
-import { MCPAdapter } from '@awaf/protocols';
+import { TechnologySignal, TrustTier } from '@alphabet/core';
+import { useConsent } from '@alphabet/ui';
+import { MCPAdapter } from '@alphabet/protocols';
 
 // ❌ غلط — path نسبی بین packages
 import { TechnologySignal } from '../../packages/core/src/models/pulse';
@@ -608,12 +608,12 @@ import { TechnologySignal } from '../../packages/core/src/models/pulse';
 
 | Alias | Target | استفاده در |
 |:------|:-------|:-----------|
-| `@awaf/core` | `packages/core/src/index.ts` | همه packages |
-| `@awaf/api` | `packages/api/src/index.ts` | UI, Demo |
-| `@awaf/ui` | `packages/ui/src/index.ts` | Demo |
-| `@awaf/protocols` | `packages/protocols/src/index.ts` | API, Demo |
-| `@awaf/security` | `packages/security/src/index.ts` | Core, API, UI |
-| `@awaf/cli` | `packages/cli/src/index.ts` | standalone |
+| `@alphabet/core` | `packages/core/src/index.ts` | همه packages |
+| `@alphabet/api` | `packages/api/src/index.ts` | UI, Demo |
+| `@alphabet/ui` | `packages/ui/src/index.ts` | Demo |
+| `@alphabet/protocols` | `packages/protocols/src/index.ts` | API, Demo |
+| `@alphabet/security` | `packages/security/src/index.ts` | Core, API, UI |
+| `@alphabet/cli` | `packages/cli/src/index.ts` | standalone |
 
 **قانون:** اگر یک package به package دیگر import می‌کند، باید در `package.json` آن package به عنوان `dependency` یا `peerDependency` ثبت شده باشد.
 
@@ -623,7 +623,7 @@ import { TechnologySignal } from '../../packages/core/src/models/pulse';
 
 ### ۱. Context Handshake — ۶ فاز
 
-Context Handshake قلب تپنده AWAF است. این pipeline شش‌فازی، سیگنال‌های passive مرورگر را به یک پروفایل آگاه از بافتار تبدیل می‌کند.
+Context Handshake قلب تپنده Alphabet است. این pipeline شش‌فازی، سیگنال‌های passive مرورگر را به یک پروفایل آگاه از بافتار تبدیل می‌کند.
 
 ```
 Phase 1: Signal Collection        Phase 2: Signal Classification
@@ -677,7 +677,7 @@ Phase 5: Language Negotiation     └──────────────�
 
 ### ۲. Memory Mesh — ۶ دامنه + Consent Ladder
 
-Memory Mesh سیستم حافظه چنددامنه‌ای AWAF است که با ladder consent چهارپله‌ای محافظت می‌شود.
+Memory Mesh سیستم حافظه چنددامنه‌ای Alphabet است که با ladder consent چهارپله‌ای محافظت می‌شود.
 
 #### شش دامنه حافظه
 
@@ -721,7 +721,7 @@ Memory Mesh سیستم حافظه چنددامنه‌ای AWAF است که با 
 
 ### ۳. UI Degradation — ۵ لایه
 
-AWAF «degradation» را «progressive enhancement معکوس» می‌داند. هر لایه یک UI کامل و functional است، نه یک نسخه «خراب» از لایه بالاتر.
+Alphabet «degradation» را «progressive enhancement معکوس» می‌داند. هر لایه یک UI کامل و functional است، نه یک نسخه «خراب» از لایه بالاتر.
 
 | لایه | نام | تکنولوژی | GPU نیاز | Network نیاز | JS نیاز | viewport |
 |:-----|:----|:---------|:---------|:-------------|:--------|:---------|
@@ -759,7 +759,7 @@ GPU  fps≥30│  (R3F)   │ (R3F)    │  (Canvas)   │
 
 ### ۴. Technology Pulse — Trust Scoring + RAG Grounding
 
-Technology Pulse لایه هوشمندی جهانی AWAF است. صرفاً یک news aggregator نیست، بلکه یک «بافتار فکری» (intellectual fabric) ایجاد می‌کند که هر پیشرفت فناوری را در قالب اثرات بلندمدت بر هشت حوزه قرار می‌دهد.
+Technology Pulse لایه هوشمندی جهانی Alphabet است. صرفاً یک news aggregator نیست، بلکه یک «بافتار فکری» (intellectual fabric) ایجاد می‌کند که هر پیشرفت فناوری را در قالب اثرات بلندمدت بر هشت حوزه قرار می‌دهد.
 
 #### Pipeline Ingestion پنج‌مرحله‌ای
 
@@ -816,9 +816,9 @@ freshnessBonus = max(0, 1 − ageHours / 168)  # 7-day half-life
 
 ### ۵. Protocols — ۴ پروتکل ارتباطی
 
-AWAF چهار پروتکل استاندارد industry را برای ارتباط با agentها و سیستم‌های خارجی پشتیبانی می‌کند:
+Alphabet چهار پروتکل استاندارد industry را برای ارتباط با agentها و سیستم‌های خارجی پشتیبانی می‌کند:
 
-| پروتکل | استاندارد | کاربرد در AWAF | adapter location |
+| پروتکل | استاندارد | کاربرد در Alphabet | adapter location |
 |:-------|:---------|:---------------|:-----------------|
 | **MCP** | Model Context Protocol (Anthropic) | context sharing بین LLMها | `packages/protocols/src/mcp/MCPAdapter.ts` |
 | **A2A** | Agent-to-Agent Protocol (Google) | communication بین agentهای autonomous | `packages/protocols/src/a2a/A2AAdapter.ts` |
@@ -844,9 +844,9 @@ AWAF چهار پروتکل استاندارد industry را برای ارتبا�
 
 ### ۶. Security — Defense in Depth + ۸ Threat Category + NIST AI 100-1
 
-AWAF از معماری defense in depth (دفاع در عمق) استفاده می‌کند: چهار لایه دفاع، هر کدام مستقل و redundant.
+Alphabet از معماری defense in depth (دفاع در عمق) استفاده می‌کند: چهار لایه دفاع، هر کدام مستقل و redundant.
 
-#### ۸ تهدید AWAF + Risk Score
+#### ۸ تهدید Alphabet + Risk Score
 
 | # | تهدید | Risk Score | OWASP Ref | لایه دفاع |
 |:--|:------|:----------:|:---------:|:----------|
@@ -894,7 +894,7 @@ AWAF از معماری defense in depth (دفاع در عمق) استفاده م
 
 ## Data Models
 
-این بخش تمام ۱۱ interface اصلی AWAF را با توضیحات کامل فهرست می‌کند. هر interface باید در `packages/core/src/models/` پیاده‌سازی شده باشد.
+این بخش تمام ۱۱ interface اصلی Alphabet را با توضیحات کامل فهرست می‌کند. هر interface باید در `packages/core/src/models/` پیاده‌سازی شده باشد.
 
 ### ۱. HandshakeRequest / HandshakeResponse
 
@@ -1207,26 +1207,26 @@ export interface ErasureResult {
 
 ## API Endpoints
 
-جدول زیر تمام ۱۶ endpoint AWAF را فهرست می‌کند. هر endpoint باید در `packages/api/src/test/handlers/` یک MSW handler داشته باشد و در `packages/api/src/client/AwafClient.ts` یک متد client-side.
+جدول زیر تمام ۱۶ endpoint Alphabet را فهرست می‌کند. هر endpoint باید در `packages/api/src/test/handlers/` یک MSW handler داشته باشد و در `packages/api/src/client/AlphabetClient.ts` یک متد client-side.
 
 | # | Method | Path | Purpose | Package | Priority |
 |:--|:-------|:-----|:--------|:--------|:---------|
-| ۱ | POST | `/api/v1/handshake` | ۶-phase context handshake — تولید visitorId و detection | @awaf/api | MVP |
-| ۲ | GET | `/api/v1/visitor/:id` | Anonymous visitor profile — tier ۱ memory | @awaf/api | MVP |
-| ۳ | POST | `/api/v1/visitor/consent` | Update consent — grant/revoke با tier | @awaf/api | MVP |
-| ۴ | PATCH | `/api/v1/visitor/:id/profile` | Update visitor profile — tier ۲+ | @awaf/api | MVP |
-| ۵ | GET | `/api/v1/technology-pulse` | Technology signals — با filter category/trust_tier | @awaf/api | MVP |
-| ۶ | POST | `/api/v1/suggestion/rank` | Rank intent suggestions بر اساس context | @awaf/api | MVP |
-| ۷ | GET | `/api/v1/intent/:type` | Get content برای یک intent مشخص | @awaf/api | MVP |
-| ۸ | POST | `/api/v1/language/negotiate` | ۳-locale language negotiation | @awaf/api | MVP |
-| ۹ | GET | `/api/v1/memory/domain/:domain` | Read memory entries برای یک دامنه | @awaf/api | Sprint 2 |
-| ۱۰ | POST | `/api/v1/memory/ingest` | Ingest memory entry (OpenClaw) | @awaf/api | Sprint 2 |
-| ۱۱ | GET | `/api/v1/runtime/config` | Runtime configuration + feature flags | @awaf/api | MVP |
-| ۱۲ | POST | `/api/v1/auth/session` | Session creation — HttpOnly cookie | @awaf/api | MVP |
-| ۱۳ | GET | `/api/v1/admin/stats` | Dashboard stats — نیاز به Bearer auth | @awaf/api | Sprint 2 |
-| ۱۴ | PATCH | `/api/v1/admin/suggestion-weights` | Update suggestion weights — admin only | @awaf/api | Sprint 2 |
-| ۱۵ | GET | `/api/v1/admin/pulse-sources` | List Technology Pulse sources — admin | @awaf/api | Sprint 2 |
-| ۱۶ | POST | `/api/v1/feedback/intent` | Record intent feedback — positive/negative | @awaf/api | MVP |
+| ۱ | POST | `/api/v1/handshake` | ۶-phase context handshake — تولید visitorId و detection | @alphabet/api | MVP |
+| ۲ | GET | `/api/v1/visitor/:id` | Anonymous visitor profile — tier ۱ memory | @alphabet/api | MVP |
+| ۳ | POST | `/api/v1/visitor/consent` | Update consent — grant/revoke با tier | @alphabet/api | MVP |
+| ۴ | PATCH | `/api/v1/visitor/:id/profile` | Update visitor profile — tier ۲+ | @alphabet/api | MVP |
+| ۵ | GET | `/api/v1/technology-pulse` | Technology signals — با filter category/trust_tier | @alphabet/api | MVP |
+| ۶ | POST | `/api/v1/suggestion/rank` | Rank intent suggestions بر اساس context | @alphabet/api | MVP |
+| ۷ | GET | `/api/v1/intent/:type` | Get content برای یک intent مشخص | @alphabet/api | MVP |
+| ۸ | POST | `/api/v1/language/negotiate` | ۳-locale language negotiation | @alphabet/api | MVP |
+| ۹ | GET | `/api/v1/memory/domain/:domain` | Read memory entries برای یک دامنه | @alphabet/api | Sprint 2 |
+| ۱۰ | POST | `/api/v1/memory/ingest` | Ingest memory entry (OpenClaw) | @alphabet/api | Sprint 2 |
+| ۱۱ | GET | `/api/v1/runtime/config` | Runtime configuration + feature flags | @alphabet/api | MVP |
+| ۱۲ | POST | `/api/v1/auth/session` | Session creation — HttpOnly cookie | @alphabet/api | MVP |
+| ۱۳ | GET | `/api/v1/admin/stats` | Dashboard stats — نیاز به Bearer auth | @alphabet/api | Sprint 2 |
+| ۱۴ | PATCH | `/api/v1/admin/suggestion-weights` | Update suggestion weights — admin only | @alphabet/api | Sprint 2 |
+| ۱۵ | GET | `/api/v1/admin/pulse-sources` | List Technology Pulse sources — admin | @alphabet/api | Sprint 2 |
+| ۱۶ | POST | `/api/v1/feedback/intent` | Record intent feedback — positive/negative | @alphabet/api | MVP |
 
 **قوانین endpointها:**
 - تمام endpointها باید Content-Type: application/json را accept و return کنند.
@@ -1239,7 +1239,7 @@ export interface ErasureResult {
 
 ## UI Layers
 
-جدول زیر ۵ لایه UI AWAF را با قوانین capability detection فهرست می‌کند.
+جدول زیر ۵ لایه UI Alphabet را با قوانین capability detection فهرست می‌کند.
 
 | لایه | نام | Renderer | Capability Detection Rules | Fallback از لایه |
 |:-----|:----|:---------|:---------------------------|:----------------|
@@ -1250,7 +1250,7 @@ export interface ErasureResult {
 | ۵ | Text-Only | ARIA landmarks + screen reader optimized + no images | `prefersReducedMotion` + screen reader active | هیچ (minimum viable) |
 
 **قوانین capability detection:**
-- Detection فقط یکبار در ابتدای session اجرا می‌شود و نتیجه در `sessionStorage.setItem('awaf_layer', layer)` cache می‌شود.
+- Detection فقط یکبار در ابتدای session اجرا می‌شود و نتیجه در `sessionStorage.setItem('alphabet_layer', layer)` cache می‌شود.
 - در navigation بعدی، مقدار cache شده خوانده می‌شود (avoid repeated detection overhead).
 - `prefers-reduced-motion: reduce` → disable تمام animations در لایه ۱ و ۲ و ۳.
 - `prefers-contrast: high` → borderهای اضافی به interactive elements.
@@ -1273,7 +1273,7 @@ const Layer5TextOnly = React.lazy(() => import('../layers/Layer5TextOnly'));
 
 ### MCP (Model Context Protocol)
 
-MCP پروتکل Anthropic برای sharing context بین LLMها است. AWAF از MCP برای ارائه visitor context، memory entries، و Technology Briefs به agentهای خارجی استفاده می‌کند.
+MCP پروتکل Anthropic برای sharing context بین LLMها است. Alphabet از MCP برای ارائه visitor context، memory entries، و Technology Briefs به agentهای خارجی استفاده می‌کند.
 
 | capability | endpoint | description |
 |:-----------|:---------|:------------|
@@ -1284,15 +1284,15 @@ MCP پروتکل Anthropic برای sharing context بین LLMها است. AWAF 
 | prompts | `GET /mcp/prompts` | فهرست prompt templates |
 | prompt get | `GET /mcp/prompts/{name}` | دریافت یک prompt template |
 
-**resources AWAF:**
-- `awaf://visitor/{visitorId}/context` — visitor context کامل
-- `awaf://visitor/{visitorId}/memory/{domain}` — memory entries یک دامنه
-- `awaf://pulse/signals?category={cat}` — Technology signals
-- `awaf://pulse/brief?locale={loc}` — Technology brief محلی‌سازی‌شده
+**resources Alphabet:**
+- `alphabet://visitor/{visitorId}/context` — visitor context کامل
+- `alphabet://visitor/{visitorId}/memory/{domain}` — memory entries یک دامنه
+- `alphabet://pulse/signals?category={cat}` — Technology signals
+- `alphabet://pulse/brief?locale={loc}` — Technology brief محلی‌سازی‌شده
 
 ### A2A (Agent-to-Agent Protocol)
 
-A2A پروتکل Google برای communication بین agentهای autonomous است. AWAF از A2A برای coordination بین multi-agent systems استفاده می‌کند.
+A2A پروتکل Google برای communication بین agentهای autonomous است. Alphabet از A2A برای coordination بین multi-agent systems استفاده می‌کند.
 
 | capability | endpoint | description |
 |:-----------|:---------|:------------|
@@ -1302,7 +1302,7 @@ A2A پروتکل Google برای communication بین agentهای autonomous ا�
 | messages | `POST /a2a/tasks/{taskId}/messages` | ارسال message |
 | stream | `GET /a2a/tasks/{taskId}/stream` | SSE stream برای updates |
 
-**task types AWAF:**
+**task types Alphabet:**
 - `context_handshake` — اجرای handshake برای visitor جدید
 - `intent_detection` — detection intent از روی signals
 - `brief_generation` — تولید Technology Brief
@@ -1326,7 +1326,7 @@ QR Handoff برای transfer session بین devices استفاده می‌شود
 
 ### REST API Adapter
 
-REST API Adapter bridge بین internal AWAF services و external HTTP clients است.
+REST API Adapter bridge بین internal Alphabet services و external HTTP clients است.
 
 | feature | implementation |
 |:--------|:---------------|
@@ -1434,7 +1434,7 @@ REST API Adapter bridge بین internal AWAF services و external HTTP clients �
 
 ### معماری و وابستگی
 - [ ] **File size ≤ ۳۰۰ lines:** اگر فایل بزرگ‌تر شد، split شده است.
-- [ ] **Cross-package imports correct:** فقط از package name (مثلاً `@awaf/core`) import شده، نه از path نسبی.
+- [ ] **Cross-package imports correct:** فقط از package name (مثلاً `@alphabet/core`) import شده، نه از path نسبی.
 - [ ] **No circular dependencies:** `madge --circular src/` بدون cycle باشد.
 - [ ] **Barrel exports:** هر package یک `index.ts` barrel export دارد.
 
@@ -1454,7 +1454,7 @@ REST API Adapter bridge بین internal AWAF services و external HTTP clients �
 
 ### performance
 - [ ] **Lazy loading:** کامپوننت‌های layer با `React.lazy` و `Suspense` load می‌شوند.
-- [ ] **sessionStorage cache:** نتیجه layer detection در `awaf_layer` cache شده است.
+- [ ] **sessionStorage cache:** نتیجه layer detection در `alphabet_layer` cache شده است.
 - [ ] **Bundle size:** importها tree-shakeable هستند (no barrel import از libraryهای بزرگ).
 - [ ] **No memory leaks:** event listeners و intervals در `useEffect` cleanup می‌شوند.
 
@@ -1636,6 +1636,6 @@ export function useNewFeature(options: { apiBaseUrl: string }): UseNewFeatureRet
 
 ---
 
-*End of AGENTS.md — AWAF AI Agent Onboarding Guide v1.0.0*
+*End of AGENTS.md — Alphabet AI Agent Onboarding Guide v1.0.0*
 
 *هرگونه تغییر در این سند باید از طریق PR با review حداقل یک human reviewer انجام شود. AI Agents نباید این فایل را بدون approval انسانی تغییر دهند.*

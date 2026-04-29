@@ -1,7 +1,7 @@
 /**
  * @file App.tsx
  * @description
- * AWAF Demo — interactive playground showing how the Adaptive Render
+ * Alphabet Demo — interactive playground showing how the Adaptive Render
  * Layers SDK chooses a layer based on capability, accessibility, and
  * privacy signals.
  *
@@ -13,7 +13,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   AdaptiveSlot,
-  AwafProvider,
+  AlphabetProvider,
   ConsentBanner,
   TransparencyNotice,
   Canvas2DLayer,
@@ -21,9 +21,9 @@ import {
   StaticHtmlLayer,
   TextOnlyLayer,
   useAdaptiveLayer,
-  useAwafContext,
+  useAlphabetContext,
   type AdaptiveLayer,
-} from '@awaf/ui';
+} from '@alphabet/ui';
 
 type LocaleKey = 'en-US' | 'fa-IR' | 'ar-SA';
 
@@ -66,13 +66,13 @@ export function App(): JSX.Element {
   }, [localeMeta]);
 
   return (
-    <AwafProvider
+    <AlphabetProvider
       consent={{
         privacySignals: { dntEnabled: state.dnt, gpcEnabled: state.gpc },
       }}
     >
       <DemoShell state={state} setState={setState} localeDir={localeMeta.dir} localeKey={localeMeta.key} />
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }
 
@@ -84,10 +84,10 @@ interface ShellProps {
 }
 
 function DemoShell({ state, setState, localeDir, localeKey }: ShellProps): JSX.Element {
-  const ctx = useAwafContext();
-  // AwafProvider is always the parent here, so ctx is non-null. Fall back
+  const ctx = useAlphabetContext();
+  // AlphabetProvider is always the parent here, so ctx is non-null. Fall back
   // gracefully just in case the demo is restructured in the future.
-  if (ctx === null) throw new Error('DemoShell must be wrapped in AwafProvider');
+  if (ctx === null) throw new Error('DemoShell must be wrapped in AlphabetProvider');
   const { consent } = ctx;
 
   // Compute the effective overrides we hand to AdaptiveSlot / Transparency.
@@ -109,21 +109,21 @@ function DemoShell({ state, setState, localeDir, localeKey }: ShellProps): JSX.E
     setState({ ...state, [key]: value });
 
   return (
-    <div className="awaf-shell" dir={localeDir} lang={localeKey}>
+    <div className="alphabet-shell" dir={localeDir} lang={localeKey}>
       <header>
-        <h1>AWAF — Adaptive Render Layers</h1>
-        <p style={{ marginTop: '0.5rem', color: 'var(--awaf-muted)' }}>
-          Live demo of <code>@awaf/ui</code>. Toggle the inputs below to see how the
+        <h1>Alphabet — Adaptive Render Layers</h1>
+        <p style={{ marginTop: '0.5rem', color: 'var(--alphabet-muted)' }}>
+          Live demo of <code>@alphabet/ui</code>. Toggle the inputs below to see how the
           layer-selector picks a render layer and explains its choice.
         </p>
         <p style={{ margin: '0.5rem 0 0' }}>
-          Current layer: <span className="awaf-current-layer">{liveLayer.layer}</span>
+          Current layer: <span className="alphabet-current-layer">{liveLayer.layer}</span>
           {' '}· Reason code:{' '}
-          <span className="awaf-current-layer">{liveLayer.reasonCode}</span>
+          <span className="alphabet-current-layer">{liveLayer.reasonCode}</span>
         </p>
       </header>
 
-      <fieldset className="awaf-toggles">
+      <fieldset className="alphabet-toggles">
         <legend style={{ padding: '0 0.5rem', fontWeight: 600 }}>Simulation toggles</legend>
 
         <label>
@@ -241,7 +241,7 @@ function DemoShell({ state, setState, localeDir, localeKey }: ShellProps): JSX.E
 
       <TransparencyNotice {...layerOptions} />
 
-      <section aria-label="Adaptive render output" className="awaf-render-host">
+      <section aria-label="Adaptive render output" className="alphabet-render-host">
         <AdaptiveSlot
           {...layerOptions}
           r3fFallback={
@@ -300,7 +300,7 @@ function DemoShell({ state, setState, localeDir, localeKey }: ShellProps): JSX.E
         />
       </section>
 
-      <p className="awaf-footer-note">
+      <p className="alphabet-footer-note">
         DNT / GPC do <strong>not</strong> downgrade the visual layer — they only restrict
         consent and personalization. Verify it by toggling DNT with a high-capability layer
         active.

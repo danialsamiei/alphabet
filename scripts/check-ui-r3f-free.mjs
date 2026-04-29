@@ -2,7 +2,7 @@
 /**
  * @file scripts/check-ui-r3f-free.mjs
  * @description
- * Sanity check that the **base** `@awaf/ui` bundle does not import or inline
+ * Sanity check that the **base** `@alphabet/ui` bundle does not import or inline
  * `@react-three/fiber` or `three`. R3F is a multi-hundred-KB peer dependency
  * that must remain in the dedicated `./layers/r3f` subpath entry only.
  *
@@ -58,7 +58,7 @@ for (const rel of BASE_BUNDLES) {
 }
 
 if (failed) {
-  console.error('\n[check-ui-r3f-free] base @awaf/ui bundles must NOT import @react-three/fiber or three.');
+  console.error('\n[check-ui-r3f-free] base @alphabet/ui bundles must NOT import @react-three/fiber or three.');
   process.exit(1);
 }
-console.log(`[check-ui-r3f-free] ✅ ${checked} base @awaf/ui bundle(s) verified R3F-free.`);
+console.log(`[check-ui-r3f-free] ✅ ${checked} base @alphabet/ui bundle(s) verified R3F-free.`);

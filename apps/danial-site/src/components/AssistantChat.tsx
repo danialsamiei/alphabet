@@ -92,7 +92,7 @@ export const AssistantChat = forwardRef<AssistantChatHandle>(function AssistantC
         {
           id: nextId.current++,
           role: 'error',
-          content: `Couldn’t reach the assistant. ${detail}. Make sure the proxy is running (\`pnpm --filter @awaf/danial-site dev:proxy\`) and \`GITHUB_TOKEN\` is set.`,
+          content: `Couldn’t reach the assistant. ${detail}. Make sure the proxy is running (\`pnpm --filter @alphabet/danial-site dev:proxy\`) and \`GITHUB_TOKEN\` is set.`,
         },
       ]);
     } finally {

@@ -14,13 +14,13 @@
  * Run it with:
  *   GITHUB_TOKEN=ghp_... node apps/danial-site/server.mjs
  * or:
- *   GITHUB_TOKEN=ghp_... pnpm --filter @awaf/danial-site dev:proxy
+ *   GITHUB_TOKEN=ghp_... pnpm --filter @alphabet/danial-site dev:proxy
  *
  * Vite (`pnpm dev`) is configured to forward `/api/assistant` here
  * via its `server.proxy` setting (see vite.config.ts).
  *
  * No external HTTP framework is used so the demo stays buildable
- * inside the AWAF monorepo without adding new dependencies.
+ * inside the Alphabet monorepo without adding new dependencies.
  */
 
 import http from 'node:http';

@@ -1,19 +1,19 @@
 :root {
   color-scheme: light dark;
-  --awaf-bg: #f8fafc;
-  --awaf-fg: #0f172a;
-  --awaf-muted: #475569;
-  --awaf-border: rgba(15, 23, 42, 0.12);
-  --awaf-accent: #4f46e5;
+  --alphabet-bg: #f8fafc;
+  --alphabet-fg: #0f172a;
+  --alphabet-muted: #475569;
+  --alphabet-border: rgba(15, 23, 42, 0.12);
+  --alphabet-accent: #4f46e5;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --awaf-bg: #020617;
-    --awaf-fg: #f8fafc;
-    --awaf-muted: #94a3b8;
-    --awaf-border: rgba(248, 250, 252, 0.18);
-    --awaf-accent: #818cf8;
+    --alphabet-bg: #020617;
+    --alphabet-fg: #f8fafc;
+    --alphabet-muted: #94a3b8;
+    --alphabet-border: rgba(248, 250, 252, 0.18);
+    --alphabet-accent: #818cf8;
   }
 }
 
@@ -23,12 +23,12 @@ html, body, #root {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: var(--awaf-bg);
-  color: var(--awaf-fg);
+  background: var(--alphabet-bg);
+  color: var(--alphabet-fg);
   min-height: 100vh;
 }
 
-.awaf-shell {
+.alphabet-shell {
   max-width: 64rem;
   margin: 0 auto;
   padding: 2rem 1.25rem 6rem;
@@ -36,19 +36,19 @@ html, body, #root {
   gap: 1.5rem;
 }
 
-.awaf-shell h1 { margin: 0; font-size: 1.6rem; }
+.alphabet-shell h1 { margin: 0; font-size: 1.6rem; }
 
-.awaf-toggles {
+.alphabet-toggles {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid var(--awaf-border);
+  border: 1px solid var(--alphabet-border);
   border-radius: 0.75rem;
   background: rgba(15, 23, 42, 0.03);
 }
 
-.awaf-toggles label {
+.alphabet-toggles label {
   display: flex;
   gap: 0.5rem;
   align-items: center;
@@ -56,38 +56,38 @@ html, body, #root {
   cursor: pointer;
 }
 
-.awaf-toggles select,
-.awaf-toggles input[type="text"] {
+.alphabet-toggles select,
+.alphabet-toggles input[type="text"] {
   padding: 0.25rem 0.5rem;
   border-radius: 0.4rem;
-  border: 1px solid var(--awaf-border);
-  background: var(--awaf-bg);
+  border: 1px solid var(--alphabet-border);
+  background: var(--alphabet-bg);
   color: inherit;
   font: inherit;
 }
 
-.awaf-current-layer {
+.alphabet-current-layer {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   background: rgba(79, 70, 229, 0.12);
-  color: var(--awaf-accent);
+  color: var(--alphabet-accent);
   padding: 0.15rem 0.5rem;
   border-radius: 0.4rem;
   font-size: 0.95em;
 }
 
-.awaf-render-host {
-  border: 1px solid var(--awaf-border);
+.alphabet-render-host {
+  border: 1px solid var(--alphabet-border);
   border-radius: 0.75rem;
   overflow: hidden;
   min-height: 20rem;
-  background: var(--awaf-bg);
+  background: var(--alphabet-bg);
 }
 
-.awaf-footer-note {
+.alphabet-footer-note {
   font-size: 0.85rem;
-  color: var(--awaf-muted);
+  color: var(--alphabet-muted);
   text-align: center;
   margin-top: 1rem;
 }
 
-[dir="rtl"] .awaf-shell { text-align: right; }
+[dir="rtl"] .alphabet-shell { text-align: right; }

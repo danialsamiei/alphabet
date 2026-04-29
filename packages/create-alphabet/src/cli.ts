@@ -1,11 +1,11 @@
 /**
  * @file cli.ts
  * @description
- * `create-awaf` — minimal scaffolder for a new AWAF app.
+ * `create-alphabet` — minimal scaffolder for a new Alphabet app.
  *
  * Usage:
- *   npm create awaf@latest my-app
- *   npm create awaf@latest my-app -- --template vite-react
+ *   npm create alphabet@latest my-app
+ *   npm create alphabet@latest my-app -- --template vite-react
  *
  * Currently supported templates:
  *   - vite-react (default)
@@ -77,18 +77,18 @@ function isSupported(value: string): value is SupportedTemplate {
 }
 
 function printHelp(): void {
-  console.log(`create-awaf — scaffold a new AWAF app
+  console.log(`create-alphabet — scaffold a new Alphabet app
 
 Usage:
-  npm create awaf@latest <project-name> [options]
-  pnpm create awaf <project-name> [options]
+  npm create alphabet@latest <project-name> [options]
+  pnpm create alphabet <project-name> [options]
 
 Options:
   -t, --template <name>   Template to use. Default: vite-react.
   -h, --help              Show this help.
 
 Templates:
-  vite-react              Vite + React + AWAF (supported).
+  vite-react              Vite + React + Alphabet (supported).
   next-app-router         Next.js App Router (planned).
   astro-islands           Astro Islands (planned).
 `);
@@ -157,7 +157,7 @@ async function main(): Promise<void> {
   if (!existsSync(templateSrc)) {
     console.error(
       `Template "${args.template}" was not found at ${templateSrc}. ` +
-        `This is a packaging bug in create-awaf — please report it.`
+        `This is a packaging bug in create-alphabet — please report it.`
     );
     process.exit(2);
   }
@@ -174,6 +174,6 @@ async function main(): Promise<void> {
 
 main().catch((err: unknown) => {
   const message = err instanceof Error ? err.message : String(err);
-  console.error(`create-awaf: ${message}`);
+  console.error(`create-alphabet: ${message}`);
   process.exit(1);
 });

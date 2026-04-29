@@ -1,12 +1,12 @@
 # Adaptive Render Layers
 
-AWAF renders one of five fidelity layers per visitor. The choice is
+Alphabet renders one of five fidelity layers per visitor. The choice is
 driven by **device capability** and **accessibility preferences**, not
 by privacy signals or user-agent strings.
 
 > Earlier drafts called this concept "UI Degradation". The public name
 > is now **Adaptive Render Layers**. The TypeScript enum
-> (`CapabilityLayer` in `@awaf/core`) is unchanged for compatibility:
+> (`CapabilityLayer` in `@alphabet/core`) is unchanged for compatibility:
 > `R3F_IMMERSIVE`, `CSS_3D`, `CANVAS_2D`, `STATIC_HTML`, `TEXT_ONLY`.
 
 ---
@@ -70,7 +70,7 @@ layer:
   personalization — never rendering. A visitor with GPC enabled and a
   capable device still sees the immersive layer; they just don't get
   tracked.
-- **User-Agent strings.** AWAF does not branch on UA strings. It
+- **User-Agent strings.** Alphabet does not branch on UA strings. It
   branches on real capability probes and Media Queries.
 - **IP-based geo.** Layer choice is independent of `country` or
   `region`. (Geo influences `locale`, not `layer`.)
@@ -83,9 +83,9 @@ two independent decisions.
 
 ## Bundle behaviour
 
-The base `@awaf/ui` entrypoint is intentionally lightweight and **does
+The base `@alphabet/ui` entrypoint is intentionally lightweight and **does
 not import** `@react-three/fiber` or `three`. The R3F immersive layer is
-exposed under the subpath export `@awaf/ui/layers/r3f` and is loaded
+exposed under the subpath export `@alphabet/ui/layers/r3f` and is loaded
 **lazily** by `AdaptiveSlot` (via dynamic import) only when the
 handshake selects `R3F_IMMERSIVE`.
 
@@ -98,11 +98,11 @@ sites that never reach the immersive layer never pay its bytes.
 ## React API
 
 ```tsx
-import { AwafProvider, AdaptiveSlot } from '@awaf/ui';
+import { AlphabetProvider, AdaptiveSlot } from '@alphabet/ui';
 
 function App() {
   return (
-    <AwafProvider>
+    <AlphabetProvider>
       <AdaptiveSlot
         r3f={({ direction, locale }) => <Immersive />}
         css3d={({ direction, locale }) => <Css3dHero />}
@@ -110,7 +110,7 @@ function App() {
         staticHtml={({ direction, locale }) => <StaticHero />}
         textOnly={({ direction, locale }) => <TextHero />}
       />
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }
 ```
@@ -130,7 +130,7 @@ component, which renders the `reasons` array from the
 
 On the server, no real `navigator` exists, so the handshake degrades
 deterministically to `STATIC_HTML` (or `TEXT_ONLY` if explicitly
-requested). The first client-side render of `AwafProvider` then runs the
+requested). The first client-side render of `AlphabetProvider` then runs the
 handshake against the live `navigator` and may upgrade to a higher
 layer. To avoid hydration mismatch:
 

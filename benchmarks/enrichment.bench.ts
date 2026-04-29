@@ -7,7 +7,7 @@
  */
 
 import { Bench } from 'tinybench';
-import { EnrichmentPipeline, type DetectedSignals } from '@awaf/core';
+import { EnrichmentPipeline, type DetectedSignals } from '@alphabet/core';
 import { benchOptions, isSmokeRun, printSuite, runBench } from './helpers.js';
 
 const pipeline = new EnrichmentPipeline();
@@ -24,7 +24,7 @@ const baseSignals: DetectedSignals = {
   dntEnabled: false,
   gpcEnabled: false,
   prefersReducedMotion: false,
-  referrer: 'https://www.google.com/search?q=awaf',
+  referrer: 'https://www.google.com/search?q=alphabet',
   networkType: '4g',
 };
 

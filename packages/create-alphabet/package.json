@@ -1,11 +1,11 @@
 {
-  "name": "create-awaf",
+  "name": "create-alphabet",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Scaffolder for new AWAF apps. Currently supports a Vite + React starter; Next.js and Astro starters are planned.",
+  "description": "Scaffolder for new Alphabet apps. Currently supports a Vite + React starter; Next.js and Astro starters are planned.",
   "bin": {
-    "create-awaf": "./dist/cli.js"
+    "create-alphabet": "./dist/cli.js"
   },
   "files": ["dist", "templates", "README.md"],
   "scripts": {

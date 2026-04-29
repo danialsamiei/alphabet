@@ -1,10 +1,10 @@
-import { AdaptiveSlot, AwafProvider, ConsentBanner, TransparencyNotice } from '@awaf/ui';
+import { AdaptiveSlot, AlphabetProvider, ConsentBanner, TransparencyNotice } from '@alphabet/ui';
 
 export function App(): JSX.Element {
   return (
-    <AwafProvider>
+    <AlphabetProvider>
       <main style={{ maxWidth: '40rem', margin: '2rem auto', fontFamily: 'system-ui, sans-serif' }}>
-        <h1>Welcome to AWAF</h1>
+        <h1>Welcome to Alphabet</h1>
         <p>
           This page adapts itself to your device and accessibility preferences.
           Privacy signals (DNT/GPC) are honoured automatically.
@@ -27,6 +27,6 @@ export function App(): JSX.Element {
         <TransparencyNotice />
         <ConsentBanner />
       </main>
-    </AwafProvider>
+    </AlphabetProvider>
   );
 }

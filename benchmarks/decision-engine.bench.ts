@@ -12,7 +12,7 @@ import {
   HandshakeDecisionEngine,
   type DetectedSignals,
   type EnrichedContext,
-} from '@awaf/core';
+} from '@alphabet/core';
 import { benchOptions, isSmokeRun, printSuite, runBench } from './helpers.js';
 
 const engine = new HandshakeDecisionEngine();

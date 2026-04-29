@@ -1,26 +1,26 @@
 /**
- * @module @awaf/protocols/a2a
+ * @module @alphabet/protocols/a2a
  * @description
  * A2A-style adapter — normalizes task/artifact style messages (à la
- * Google A2A) into AWAF protocol requests. Dependency-light and
+ * Google A2A) into Alphabet protocol requests. Dependency-light and
  * extensible; we do not depend on any A2A SDK.
  */
 
-import { ok, err, type Result } from '@awaf/core';
+import { ok, err, type Result } from '@alphabet/core';
 import {
   protocolError,
-  type AwafProtocolError,
+  type AlphabetProtocolError,
 } from '../errors/index.js';
 import {
   ensureNoPIIInContext,
   validateConsentScope,
 } from '../normalizers/index.js';
 import type {
-  AwafProtocolRequest,
-  AwafToolContext,
-  AwafConsentScope,
+  AlphabetProtocolRequest,
+  AlphabetToolContext,
+  AlphabetConsentScope,
 } from '../contract.js';
-import type { PrivacySignals } from '@awaf/core';
+import type { PrivacySignals } from '@alphabet/core';
 
 // ─── A2A Message Shapes ──────────────────────────────────────────────────────
 
@@ -46,14 +46,14 @@ export interface A2ATask {
   readonly skill: string;
   readonly messages: readonly A2ATaskMessage[];
   readonly metadata?: {
-    readonly context?: AwafToolContext;
-    readonly consent?: AwafConsentScope;
+    readonly context?: AlphabetToolContext;
+    readonly consent?: AlphabetConsentScope;
     readonly correlationId?: string;
   };
 }
 
-/** Serializable agent card describing the AWAF A2A endpoint. */
-export interface AwafA2AAgentCard {
+/** Serializable agent card describing the Alphabet A2A endpoint. */
+export interface AlphabetA2AAgentCard {
   readonly name: string;
   readonly description: string;
   readonly version: string;
@@ -66,8 +66,8 @@ export interface AwafA2AAgentCard {
 }
 
 /** Default agent card published at `/.well-known/agent.json`. */
-export const AWAF_A2A_AGENT_CARD: AwafA2AAgentCard = {
-  name: 'AWAF Context Agent',
+export const ALPHABET_A2A_AGENT_CARD: AlphabetA2AAgentCard = {
+  name: 'Alphabet Context Agent',
   description:
     'Provides PII-free visitor context, consent status, and adaptive ' +
     'UI layer reasoning to other A2A agents.',
@@ -87,7 +87,7 @@ export const AWAF_A2A_AGENT_CARD: AwafA2AAgentCard = {
     },
     {
       id: 'memory.query',
-      description: 'Read AWAF memory entries (consent-gated).',
+      description: 'Read Alphabet memory entries (consent-gated).',
       inputModes: ['text'] as const,
       outputModes: ['text', 'data'] as const,
     },
@@ -99,7 +99,7 @@ export const AWAF_A2A_AGENT_CARD: AwafA2AAgentCard = {
 /** Options accepted by `A2AAdapter`. */
 export interface A2AAdapterOptions {
   /**
-   * Map A2A skill identifiers to AWAF logical operation names. Allows
+   * Map A2A skill identifiers to Alphabet logical operation names. Allows
    * downstream consumers to extend or override the default mapping
    * without subclassing.
    */
@@ -114,7 +114,7 @@ const DEFAULT_SKILL_MAP: Readonly<Record<string, string>> = Object.freeze({
 
 /**
  * A2A adapter. Converts an `A2ATask` into a normalized
- * `AwafProtocolRequest`. The adapter is dependency-light by design —
+ * `AlphabetProtocolRequest`. The adapter is dependency-light by design —
  * every transport concern (HTTP, SSE, streaming) is left to the caller.
  */
 export class A2AAdapter {
@@ -125,19 +125,19 @@ export class A2AAdapter {
   }
 
   /** Returns the agent card to publish at `/.well-known/agent.json`. */
-  getAgentCard(): AwafA2AAgentCard {
-    return AWAF_A2A_AGENT_CARD;
+  getAgentCard(): AlphabetA2AAgentCard {
+    return ALPHABET_A2A_AGENT_CARD;
   }
 
   /**
-   * Normalize an A2A task into an `AwafProtocolRequest`. Validates
+   * Normalize an A2A task into an `AlphabetProtocolRequest`. Validates
    * structure, looks up the skill mapping, and runs consent + PII
    * validation against the authoritative state.
    */
   normalizeTask(
     task: A2ATask,
-    authoritative: { tier: AwafConsentScope['tier']; privacy: PrivacySignals }
-  ): Result<AwafProtocolRequest<{ readonly messages: readonly A2ATaskMessage[] }>, AwafProtocolError> {
+    authoritative: { tier: AlphabetConsentScope['tier']; privacy: PrivacySignals }
+  ): Result<AlphabetProtocolRequest<{ readonly messages: readonly A2ATaskMessage[] }>, AlphabetProtocolError> {
     if (!task || typeof task !== 'object') {
       return err(protocolError('TASK_INVALID', 'Task must be an object'));
     }
@@ -170,11 +170,11 @@ export class A2AAdapter {
       );
     }
 
-    const consent: AwafConsentScope = { ...md.consent, tier: authoritative.tier };
+    const consent: AlphabetConsentScope = { ...md.consent, tier: authoritative.tier };
     const consentResult = validateConsentScope(consent, authoritative);
     if (!consentResult.success) return consentResult;
 
-    const sanitizedContext: AwafToolContext = {
+    const sanitizedContext: AlphabetToolContext = {
       ...md.context,
       consentTier: authoritative.tier,
       privacyRestricted:
