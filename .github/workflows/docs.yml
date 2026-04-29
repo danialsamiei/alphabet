@@ -15,16 +15,19 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
+          cache-dependency-path: apps/docs/package.json
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile --ignore-workspace
+        run: pnpm install --no-frozen-lockfile
+        working-directory: apps/docs
 
-      - name: Run Docs
-        run: pnpm run docs
+      - name: Build Docs
+        run: pnpm run build
+        working-directory: apps/docs
