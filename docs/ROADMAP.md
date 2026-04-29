@@ -74,6 +74,24 @@
 - Demo app runs `pnpm dev` and shows Layer 4 by default, Layer 5 when reduced motion is set.
 - `IMPLEMENTATION_STATUS.md` updated; ✅ row count goes up, 🟠 rows for `@alphabet/ui` shrink.
 
+### Phase 2 acceleration plan (4-week roadmap)
+
+The Phase-2 work above is sequenced into a four-week acceleration plan with explicit deliverable IDs. PR-1 implements the W1.1 + W1.2 + W1.3 + W1.6 slice:
+
+| ID | Deliverable | Status (post-PR-1) |
+|---|---|---|
+| **W1.1** | `Validator<T>` runtime validator + envelope schemas (`@alphabet/core/contracts/runtime`) | ✅ Shipped |
+| **W1.2** | In-process mock server, all 16 endpoints, deterministic seeded RNG (`@alphabet/api/mock`) | ✅ Shipped |
+| **W1.3** | Resilient transport: retry + decorrelated jitter, rate-limit parsing, idempotency keys (`@alphabet/api/transport`) | ✅ Shipped |
+| W1.4 | Internal `Task<R, E, A>` effect helper | ⚪ Planned (W1 follow-up) |
+| W1.5 | CI matrix hardening (Node 20/22 × ubuntu/macos, codecov, release flow) | 🟡 Partial (audit step added) |
+| **W1.6** | Reconcile `IMPLEMENTATION_STATUS.md` against actual source tree | ✅ Shipped |
+| W2.1–W2.7 | `LayerSelector` cache, Layer 4/5, Suspense hooks, `<ConsentBanner />`, SSE for `postInteract`, demo wired to mock server, signed consent receipts | ⚪ Planned |
+| W3.1–W3.7 | `@alphabet/next`, `@alphabet/astro`, `@alphabet/vite`, Storybook + Chromatic, Pulse forecaster (Bayesian), Protocols v0 (REST + MCP), benchmarks | ⚪ Planned |
+| W4.1–W4.8 | Differential Privacy, prompt-injection defense (3 layers), cost guardian, NIST AI RMF mapping, A2A + QR, WASM signal acceleration, `@alphabet/cli`, 1.0-RC | ⚪ Planned |
+
+The full plan with hard backward-compat invariants is in this PR's description.
+
 ---
 
 ## Phase 3 — React / Next.js / Vite / Astro adapters
@@ -158,3 +176,36 @@
 - v1.0.0 published to npm under `@alphabet/*`.
 - Public docs site live.
 - `IMPLEMENTATION_STATUS.md` shows ✅ for every feature listed in `README.md`'s "What is implemented" section, and any remaining ⚪ rows are explicitly described as post-1.0 enhancements.
+
+---
+
+## Phase 6 — Ecosystem & Marketplace
+
+**Goal.** Move Alphabet from "framework you install" to "foundational layer of the respectful web": let third parties publish adaptive components and protocol adapters, give every Alphabet site a live public Trust Score, advance an open W3C standard for the context handshake, and recognise the maintainers who meet the bar.
+
+This phase is intentionally additive — it ships as a separate package (`@alphabet/marketplace`) and a set of docs; existing packages and their public surface do not change.
+
+**Scope.**
+
+- **`@alphabet/marketplace` package** (new, additive)
+  - `ComponentManifest` + `ProtocolAdapterManifest` schema, validated at the boundary by `@alphabet/core/contracts/runtime`.
+  - `Registry` interface + `InMemoryRegistry` implementation: publish, get, list (filter by kind, tag, max consent tier, official-only, text), remove. SemVer monotonicity enforced.
+  - **Public Trust Score API**: `computeTrustScore({ manifest, telemetry? })` returns a deterministic `[0, 100]` score, a letter grade, and an itemised reasons list. Telemetry inputs are coarse 24h aggregates; `sanitizeTelemetry` strips anything that would let PII enter.
+  - **Trust Badge**: `renderTrustBadge` emits a self-contained SVG (no script, no external font) and a shields.io-shaped JSON envelope.
+  - **Alphabet Certified Builder**: `evaluateCertification` returns Bronze / Silver / Gold + criteriaMet / criteriaMissing for full transparency.
+  - First **official** entries seeded in `@alphabet/marketplace/official`: `consent-banner`, `layer-selector`, `language-negotiator`, `mcp-adapter`.
+- **W3C "Respectful Context Handshake" (RCH) proposal**
+  - `docs/W3C_RESPECTFUL_CONTEXT_HANDSHAKE.md` published as the seed text for incubation in a Privacy CG / WICG community group.
+  - Reference implementation: the same manifest schema validated by `@alphabet/marketplace`.
+- **Developer programme**
+  - `docs/CERTIFICATION.md` documenting Bronze / Silver / Gold criteria, all enforced by `evaluateCertification` (no closed-room review in the criteria).
+  - `docs/MARKETPLACE.md` documenting architecture, manifest format, scoring formula, governance.
+- **Hosted services** (follow-on, not in this PR)
+  - REST registry backend with the same `Registry` interface.
+  - Public CDN edge function for `/api/v1/trust-badge?id=…` returning the SVG.
+  - `alphabet publish` CLI command.
+
+**Exit criteria.**
+- `@alphabet/marketplace` ships at `0.1.0`, builds + typechecks + tests on CI, and is sub-5KB gzipped on its primary entry.
+- The four official manifests round-trip through `validateManifest` and `computeTrustScore`, and at least one reaches the Silver certification level by the rules in `evaluateCertification`.
+- The W3C RCH proposal is filed for incubation, with the marketplace manifest schema as its reference implementation.

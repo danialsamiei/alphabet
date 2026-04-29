@@ -1,0 +1,120 @@
+/*
+ * @alphabet/ui/styles/tokens.css
+ * ---------------------------------------------------------------
+ * Optional, opt-in design-token stylesheet for Alphabet components.
+ *
+ * Importing this file is *side-effecting* (it sets CSS custom
+ * properties on `:root` and `[data-alphabet-theme="dark"]`). The base
+ * `@alphabet/ui` package is `"sideEffects": false` and never imports
+ * this stylesheet implicitly — consumers opt in:
+ *
+ *     import '@alphabet/ui/styles/tokens.css';
+ *
+ * Tokens cover surfaces, borders, accents, and motion. Components
+ * fall back to sensible defaults when these variables are absent.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces */
+  --alphabet-bg: #f8fafc;
+  --alphabet-fg: #0f172a;
+  --alphabet-muted: #475569;
+  --alphabet-surface: rgba(15, 23, 42, 0.03);
+  --alphabet-surface-elevated: rgba(255, 255, 255, 0.92);
+  --alphabet-border: rgba(15, 23, 42, 0.12);
+  --alphabet-border-strong: rgba(15, 23, 42, 0.24);
+
+  /* Accent */
+  --alphabet-accent: #4f46e5;
+  --alphabet-accent-fg: #ffffff;
+  --alphabet-success: #10b981;
+  --alphabet-warning: #f59e0b;
+  --alphabet-danger: #ef4444;
+
+  /* Glass surface */
+  --alphabet-glass-bg: rgba(255, 255, 255, 0.55);
+  --alphabet-glass-border: rgba(255, 255, 255, 0.8);
+  --alphabet-glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  --alphabet-glass-blur: 18px;
+
+  /* Motion */
+  --alphabet-duration-fast: 150ms;
+  --alphabet-duration-base: 240ms;
+  --alphabet-duration-slow: 420ms;
+  --alphabet-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Radii */
+  --alphabet-radius-sm: 0.4rem;
+  --alphabet-radius-md: 0.6rem;
+  --alphabet-radius-lg: 0.85rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --alphabet-bg: #020617;
+    --alphabet-fg: #f8fafc;
+    --alphabet-muted: #94a3b8;
+    --alphabet-surface: rgba(248, 250, 252, 0.04);
+    --alphabet-surface-elevated: rgba(15, 23, 42, 0.7);
+    --alphabet-border: rgba(248, 250, 252, 0.18);
+    --alphabet-border-strong: rgba(248, 250, 252, 0.32);
+
+    --alphabet-accent: #818cf8;
+    --alphabet-accent-fg: #0f172a;
+
+    --alphabet-glass-bg: rgba(15, 23, 42, 0.55);
+    --alphabet-glass-border: rgba(148, 163, 184, 0.2);
+    --alphabet-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  }
+}
+
+[data-alphabet-theme='dark'] {
+  --alphabet-bg: #020617;
+  --alphabet-fg: #f8fafc;
+  --alphabet-muted: #94a3b8;
+  --alphabet-surface: rgba(248, 250, 252, 0.04);
+  --alphabet-surface-elevated: rgba(15, 23, 42, 0.7);
+  --alphabet-border: rgba(248, 250, 252, 0.18);
+  --alphabet-border-strong: rgba(248, 250, 252, 0.32);
+  --alphabet-accent: #818cf8;
+  --alphabet-accent-fg: #0f172a;
+  --alphabet-glass-bg: rgba(15, 23, 42, 0.55);
+  --alphabet-glass-border: rgba(148, 163, 184, 0.2);
+  --alphabet-glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+[data-alphabet-theme='light'] {
+  --alphabet-bg: #f8fafc;
+  --alphabet-fg: #0f172a;
+  --alphabet-muted: #475569;
+  --alphabet-surface: rgba(15, 23, 42, 0.03);
+  --alphabet-surface-elevated: rgba(255, 255, 255, 0.92);
+  --alphabet-border: rgba(15, 23, 42, 0.12);
+  --alphabet-border-strong: rgba(15, 23, 42, 0.24);
+  --alphabet-accent: #4f46e5;
+  --alphabet-accent-fg: #ffffff;
+  --alphabet-glass-bg: rgba(255, 255, 255, 0.55);
+  --alphabet-glass-border: rgba(255, 255, 255, 0.8);
+  --alphabet-glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-alphabet-theme='dark'],
+  [data-alphabet-theme='light'] {
+    --alphabet-duration-fast: 0ms;
+    --alphabet-duration-base: 0ms;
+    --alphabet-duration-slow: 0ms;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root,
+  [data-alphabet-theme='dark'],
+  [data-alphabet-theme='light'] {
+    --alphabet-border: rgba(15, 23, 42, 0.45);
+    --alphabet-border-strong: rgba(15, 23, 42, 0.7);
+  }
+}

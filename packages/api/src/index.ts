@@ -11,6 +11,7 @@ export type { AlphabetRequest, AlphabetResponse } from '@alphabet/core';
 export {
   API_VERSION_PREFIX,
   LEGACY_API_PREFIX,
+  LEGACY_AWAF_API_PREFIX,
   ALPHABET_ROUTES,
   ALPHABET_ROUTE_STATUS,
   fullRoute,

@@ -1,0 +1,30 @@
+{
+  "name": "@alphabet/docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Documentation site for the Alphabet SDK. Built with Nextra v3 (Next.js + MDX). Canonical content lives in /docs at the monorepo root and is synced into apps/docs/pages/docs/ by scripts/sync-docs.mjs — never edit the synced copies; edit the source instead.",
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/sync-docs.mjs",
+    "prebuild": "node scripts/sync-docs.mjs",
+    "dev": "next dev --port 4321",
+    "build": "next build",
+    "start": "next start --port 4321",
+    "export": "next build",
+    "typecheck": "tsc --noEmit",
+    "sync-docs": "node scripts/sync-docs.mjs"
+  },
+  "dependencies": {
+    "next": "^15.5.15",
+    "nextra": "^3.3.1",
+    "nextra-theme-docs": "^3.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.0"
+  }
+}

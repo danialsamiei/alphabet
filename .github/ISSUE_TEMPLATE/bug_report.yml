@@ -1,0 +1,102 @@
+name: 🐛 Bug report
+description: Report a defect in an `@alphabet/*` package or the demo apps.
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! Please fill in the
+        template below — the more detail, the faster we can fix it.
+
+        For **security vulnerabilities**, do not file a public issue. Use the
+        private channels in [`SECURITY.md`](../SECURITY.md).
+
+  - type: input
+    id: package
+    attributes:
+      label: Affected package
+      description: Which `@alphabet/*` package is affected (or `apps/demo`)?
+      placeholder: "@alphabet/core"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version (or commit SHA)
+      placeholder: "0.2.0 or 4f3e2a1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear and concise description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: |
+        A failing test, code snippet, or a link to a runnable example.
+        Reports without a reproduction may be closed.
+      render: typescript
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Which UI layer (if applicable)?
+      options:
+        - "Not UI-related"
+        - "Layer 1 — R3F immersive"
+        - "Layer 2 — CSS 3D"
+        - "Layer 3 — Canvas 2D"
+        - "Layer 4 — Static HTML"
+        - "Layer 5 — Text-only / ARIA"
+
+  - type: dropdown
+    id: consent_tier
+    attributes:
+      label: Consent tier (if applicable)?
+      options:
+        - "Not consent-related"
+        - "Tier 0 — No memory"
+        - "Tier 1 — Anonymous session"
+        - "Tier 2 — Personalized profile"
+        - "Tier 3 — Enriched experience"
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Node version, pnpm version, browser, OS.
+      placeholder: |
+        - Node: 20.11.0
+        - pnpm: 9.1.0
+        - Browser: Chrome 124
+        - OS: macOS 14.4
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have read [`AGENTS.md`](../AGENTS.md) and [`docs/CONTRIBUTING.md`](../docs/CONTRIBUTING.md).
+          required: true
+        - label: This is not a security vulnerability (those go through [`SECURITY.md`](../SECURITY.md)).
+          required: true

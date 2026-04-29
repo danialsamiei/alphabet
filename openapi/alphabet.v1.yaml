@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Alphabet — Alefba Web-Aware Framework HTTP API
+  title: Alphabet (Alefba Web-Aware Framework) HTTP API
   version: 1.0.0
   summary: Canonical HTTP surface for Alphabet context handshake, suggestions, Alphabet Pulse, and consent-aware memory.
   description: |

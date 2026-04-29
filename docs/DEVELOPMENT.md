@@ -1,7 +1,7 @@
 # راهنمای توسعه Alphabet SDK
 # Alphabet SDK Development Guide
 
-> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/alphabet`
+> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/awaf`
 > **زبان:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
 
 ---
@@ -241,7 +241,7 @@ packages:
 
 ```bash
 # 1. Clone مخزن
-git clone https://github.com/danialsamiei/alphabet.git
+git clone https://github.com/danialsamiei/awaf.git
 cd alphabet
 
 # 2. نصب وابستگی‌ها

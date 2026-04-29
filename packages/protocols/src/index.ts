@@ -66,7 +66,7 @@ export type {
 
 export {
   A2AAdapter,
-  ALPHABET_A2A_AGENT_CARD,
+  Alphabet_A2A_AGENT_CARD,
 } from './a2a/index.js';
 export type {
   A2AAdapterOptions,
@@ -89,3 +89,11 @@ export type {
   AlphabetAiResponse,
   AlphabetAiProviderAdapter,
 } from './ai-sdk/index.js';
+
+// ─── AlphabetProtocol v2 (streaming + providers + consent proof + pulse v2) ─────
+// v2 is additive; the v1 contract above remains the canonical legacy
+// surface. Consumers wanting streaming AI, built-in providers, the
+// fallback chain, privacy-preserving prompt engineering, predictive
+// capability forecasting, or cryptographic consent proofs should import
+// from `@alphabet/protocols/v2`.
+export * as v2 from './v2/index.js';

@@ -18,6 +18,8 @@ jobs:
     name: install + typecheck + lint + test + build + benchmark + size + openapi
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,13 +56,30 @@ jobs:
         run: pnpm benchmark:smoke
 
       - name: Bundle size — size-limit
-        run: pnpm size
+        run: pnpm size --json > size-report.json || pnpm size
 
       - name: Bundle size — base @alphabet/ui must stay R3F-free
         run: pnpm size:check-r3f-free
 
+      - name: Bundle visualizer — per-file raw/gzip/brotli treemap report
+        run: pnpm bundle:visualize
+
       - name: OpenAPI spec validation
         run: pnpm openapi:lint
+
+      - name: Security audit (non-blocking, surfaces high-severity advisories)
+        run: pnpm audit --audit-level=high || echo "::warning::pnpm audit found high-severity advisories — review docs/SECURITY.md"
+
+      # Snyk runs only when the repo has SNYK_TOKEN configured. On forks and
+      # community PRs without the secret, this step is skipped so CI stays green.
+      - name: Snyk — open-source vulnerability scan (optional)
+        if: ${{ env.SNYK_TOKEN != '' }}
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --all-projects --severity-threshold=high
 
       - name: Upload coverage reports
         if: always()
@@ -69,5 +88,33 @@ jobs:
           name: coverage
           path: |
             packages/*/coverage/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload bundle size report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-size-report
+          path: size-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload bundle visualizer report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-visualizer
+          path: bundle-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload built packages (dist tarballs preview)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-dists
+          path: |
+            packages/*/dist/
           if-no-files-found: ignore
           retention-days: 7

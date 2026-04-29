@@ -1,7 +1,7 @@
 {
   "name": "@alphabet/core",
   "version": "1.0.0",
-  "description": "Core of the Alphabet (Alefba Web-Aware Framework) SDK: types, config, logger, event hub, context-handshake primitives (signal collector, enrichment pipeline, decision engine), and the privacy permission helpers (canStoreMemory, canPersonalize, canUseAnalytics, canUsePreciseGeo). Privacy-first, dependency-free, edge-safe.",
+  "description": "Core of the Alphabet SDK (danial.ai Edition): types, config, logger, event hub, context-handshake primitives (signal collector, enrichment pipeline, decision engine), and the privacy permission helpers (canStoreMemory, canPersonalize, canUseAnalytics, canUsePreciseGeo). Privacy-first, dependency-free, edge-safe.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -18,19 +18,53 @@
       "import": "./dist/types/index.js",
       "require": "./dist/types/index.cjs"
     },
+    "./contracts/runtime": {
+      "types": "./dist/contracts/runtime/index.d.ts",
+      "import": "./dist/contracts/runtime/index.js",
+      "require": "./dist/contracts/runtime/index.cjs"
+    },
+    "./effect": {
+      "types": "./dist/effect/index.d.ts",
+      "import": "./dist/effect/index.js",
+      "require": "./dist/effect/index.cjs"
+    },
+    "./memory": {
+      "types": "./dist/memory/index.d.ts",
+      "import": "./dist/memory/index.js",
+      "require": "./dist/memory/index.cjs"
+    },
+    "./oracle": {
+      "types": "./dist/oracle/index.d.ts",
+      "import": "./dist/oracle/index.js",
+      "require": "./dist/oracle/index.cjs"
+    },
+    "./privacy-wasm": {
+      "types": "./dist/privacy-wasm/index.d.ts",
+      "import": "./dist/privacy-wasm/index.js",
+      "require": "./dist/privacy-wasm/index.cjs"
+    },
+    "./orchestrator": {
+      "types": "./dist/orchestrator/index.d.ts",
+      "import": "./dist/orchestrator/index.js",
+      "require": "./dist/orchestrator/index.cjs"
+    },
     "./package.json": "./package.json"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "bench": "vitest bench --run"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.1",
+    "fake-indexeddb": "^6.2.5",
     "jsdom": "^29.1.0",
     "typescript": "^5.4.0",
     "vite": "^5.0.0",

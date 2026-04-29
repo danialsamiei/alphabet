@@ -128,12 +128,12 @@ const response = await adapter.invoke(
 ## A2A adapter
 
 Normalizes A2A task/artifact messages into Alphabet protocol requests.
-Serve `ALPHABET_A2A_AGENT_CARD` from `/.well-known/agent.json`.
+Serve `Alphabet_A2A_AGENT_CARD` from `/.well-known/agent.json`.
 
 ```ts
-import { A2AAdapter, ALPHABET_A2A_AGENT_CARD } from '@alphabet/protocols/a2a';
+import { A2AAdapter, Alphabet_A2A_AGENT_CARD } from '@alphabet/protocols/a2a';
 
-app.get('/.well-known/agent.json', (_req, res) => res.json(ALPHABET_A2A_AGENT_CARD));
+app.get('/.well-known/agent.json', (_req, res) => res.json(Alphabet_A2A_AGENT_CARD));
 
 const adapter = new A2AAdapter();
 

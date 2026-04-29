@@ -17,4 +17,4 @@ npm run dev
   lazily by Alphabet when the device can support it).
 * `<ConsentBanner>` (honours DNT/GPC) and `<TransparencyNotice>`.
 
-See [the Alphabet docs](https://github.com/danialsamiei/alphabet) for the full API.
+See [the Alphabet docs](https://github.com/danialsamiei/awaf) for the full API.

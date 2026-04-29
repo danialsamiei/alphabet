@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Alphabet — Open Graph social card (1200×630).
+  Brand palette derived from logo.png and README badges:
+    navy   #1c2432
+    teal   #00d4c8
+    yellow #ffd93d
+  Typography uses generic 'system-ui, sans-serif' so the card renders
+  consistently across crawlers without bundling a font file. RTL support is
+  not required for OG cards (consumers like Twitter/Slack render LTR).
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1200 630"
+     width="1200" height="630"
+     role="img"
+     aria-label="Alphabet — The Alphabet of Your Web. A privacy-first, context-aware, adaptive web SDK.">
+  <title>Alphabet — The Alphabet of Your Web</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c2432"/>
+      <stop offset="100%" stop-color="#0f1620"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00d4c8"/>
+      <stop offset="100%" stop-color="#ffd93d"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.15" r="0.6">
+      <stop offset="0%" stop-color="#00d4c8" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#00d4c8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <g stroke="#ffffff" stroke-opacity="0.04" stroke-width="1">
+    <line x1="0" y1="105" x2="1200" y2="105"/>
+    <line x1="0" y1="210" x2="1200" y2="210"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/>
+    <line x1="0" y1="525" x2="1200" y2="525"/>
+  </g>
+
+  <g transform="translate(80, 80)">
+    <circle cx="22" cy="22" r="22" fill="#ffd93d"/>
+    <text x="22" y="32" text-anchor="middle"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+          font-size="26" font-weight="800" fill="#1c2432">A</text>
+    <text x="60" y="30" font-family="system-ui, sans-serif"
+          font-size="22" font-weight="600" fill="#f4f6f8">alphabet</text>
+    <text x="60" y="52" font-family="system-ui, sans-serif"
+          font-size="13" font-weight="400" fill="#9aa3b2">v1.0 · danial.ai Edition</text>
+  </g>
+
+  <g transform="translate(80, 240)">
+    <text font-family="system-ui, sans-serif" font-size="68" font-weight="800" fill="#f4f6f8">
+      <tspan x="0" dy="0">The Alphabet</tspan>
+      <tspan x="0" dy="80">of Your Web.</tspan>
+    </text>
+    <text x="0" y="200"
+          font-family="system-ui, sans-serif" font-size="26" font-weight="500" fill="#9aa3b2">
+      A privacy-first, context-aware, adaptive web SDK.
+    </text>
+    <text x="0" y="234"
+          font-family="system-ui, sans-serif" font-size="22" font-weight="400" fill="#9aa3b2">
+      Five render layers · Four consent tiers · Zero invasive tracking.
+    </text>
+  </g>
+
+  <rect x="80" y="540" width="220" height="6" rx="3" fill="url(#accent)"/>
+
+  <g transform="translate(80, 580)">
+    <text font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+          font-size="16" font-weight="500" fill="#9aa3b2">
+      alphabet.alef.ba · github.com/danialsamiei/alphabet
+    </text>
+  </g>
+
+  <g transform="translate(900, 200)" opacity="0.95">
+    <rect x="0"  y="0"   width="220" height="48" rx="6" fill="#00d4c8" fill-opacity="0.15" stroke="#00d4c8" stroke-width="1"/>
+    <text x="16" y="30" font-family="ui-monospace, monospace" font-size="14" font-weight="600" fill="#00d4c8">L1 · R3F immersive</text>
+
+    <rect x="0"  y="56"  width="220" height="48" rx="6" fill="#00d4c8" fill-opacity="0.12" stroke="#00d4c8" stroke-width="1"/>
+    <text x="16" y="86" font-family="ui-monospace, monospace" font-size="14" font-weight="600" fill="#00d4c8">L2 · CSS 3D</text>
+
+    <rect x="0"  y="112" width="220" height="48" rx="6" fill="#ffd93d" fill-opacity="0.10" stroke="#ffd93d" stroke-width="1"/>
+    <text x="16" y="142" font-family="ui-monospace, monospace" font-size="14" font-weight="600" fill="#ffd93d">L3 · Canvas 2D</text>
+
+    <rect x="0"  y="168" width="220" height="48" rx="6" fill="#ffd93d" fill-opacity="0.10" stroke="#ffd93d" stroke-width="1"/>
+    <text x="16" y="198" font-family="ui-monospace, monospace" font-size="14" font-weight="600" fill="#ffd93d">L4 · Static HTML</text>
+
+    <rect x="0"  y="224" width="220" height="48" rx="6" fill="#f4f6f8" fill-opacity="0.06" stroke="#f4f6f8" stroke-width="1" stroke-opacity="0.4"/>
+    <text x="16" y="254" font-family="ui-monospace, monospace" font-size="14" font-weight="600" fill="#f4f6f8">L5 · Text-only / ARIA</text>
+  </g>
+</svg>

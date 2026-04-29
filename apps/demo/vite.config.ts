@@ -13,11 +13,17 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      '@alphabet/ui': resolve(__dirname, '../../packages/ui/src/index.ts'),
-      '@alphabet/core': resolve(__dirname, '../../packages/core/src/index.ts'),
-      '@alphabet/api': resolve(__dirname, '../../packages/api/src/index.ts'),
-    },
+    alias: [
+      // Order matters: subpaths must come before the bare package alias so
+      // that `@alphabet/api/mock` does not get rewritten to
+      // `<src/index.ts>/mock`.
+      { find: '@alphabet/api/mock', replacement: resolve(__dirname, '../../packages/api/src/mock/index.ts') },
+      { find: '@alphabet/api/transport', replacement: resolve(__dirname, '../../packages/api/src/transport/index.ts') },
+      { find: '@alphabet/ui/styles/tokens.css', replacement: resolve(__dirname, '../../packages/ui/styles/tokens.css') },
+      { find: '@alphabet/ui', replacement: resolve(__dirname, '../../packages/ui/src/index.ts') },
+      { find: '@alphabet/core', replacement: resolve(__dirname, '../../packages/core/src/index.ts') },
+      { find: '@alphabet/api', replacement: resolve(__dirname, '../../packages/api/src/index.ts') },
+    ],
   },
   build: {
     sourcemap: true,

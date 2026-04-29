@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Changesets — version PR or publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.1.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # `pnpm version-packages` runs `changeset version`
+          version: pnpm version-packages
+          # `pnpm release:publish` runs `changeset publish --no-git-tag` with
+          # npm provenance enabled. Build runs in the preceding step so we do
+          # not double-build inside the publish action.
+          publish: pnpm release:publish
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # `id-token: write` is granted at the workflow level so npm can mint
+          # an OIDC token for `--provenance` attestation.
+          NPM_CONFIG_PROVENANCE: "true"
+
+      - name: Aggregate top-level CHANGELOG.md (post-publish)
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          node scripts/aggregate-changelog.mjs
+          if ! git diff --quiet -- CHANGELOG.md; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add CHANGELOG.md
+            git commit -m "chore(release): aggregate CHANGELOG.md [skip ci]"
+            git push
+          else
+            echo "CHANGELOG.md unchanged — skipping commit."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -63,7 +63,7 @@ export const profile: Profile = {
     'without sacrificing privacy or accessibility.',
     '',
     'I lead and contribute to open-source projects — including the',
-    'Alefba Web-Aware Framework (Alphabet) — which explores how websites',
+    'Alphabet (Alefba Web-Aware Framework) (Alphabet) — which explores how websites',
     'can degrade gracefully across five render layers while honouring',
     'consent and locale.',
   ].join(' '),

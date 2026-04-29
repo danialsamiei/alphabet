@@ -1,0 +1,63 @@
+name: ✨ Feature request
+description: Propose a new feature or enhancement for Alphabet.
+title: "[feat] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a feature! Please make sure your idea aligns with
+        Alphabet's mission (privacy-first, consent-tiered, capability-adaptive)
+        before filing.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this feature solve? Who is affected?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: |
+        Describe the proposed API or behaviour. Include type signatures,
+        sample usage, or pseudo-code where helpful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Target package
+      options:
+        - "@alphabet/core"
+        - "@alphabet/api"
+        - "@alphabet/ui"
+        - "@alphabet/protocols"
+        - "@alphabet/security"
+        - "tooling / docs / CI"
+        - "new package"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: alignment
+    attributes:
+      label: Alignment
+      options:
+        - label: This feature respects the consent ladder and DNT/GPC handling.
+          required: true
+        - label: This feature does not introduce PII persistence at tier 0/1.
+          required: true
+        - label: I have read [`AGENTS.md`](../AGENTS.md) and the relevant `docs/*` files.
+          required: true

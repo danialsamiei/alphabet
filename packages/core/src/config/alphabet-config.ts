@@ -59,7 +59,7 @@ const DEFAULTS: AlphabetConfigOptions = {
 
 /**
  * کلاس مدیریت پیکربندی Alphabet SDK.
- * Reads from environment variables (ALPHABET_*) and merges with defaults.
+ * Reads from environment variables (Alphabet_*) and merges with defaults.
  *
  * @example
  * const config = AlphabetConfig.fromEnv();
@@ -83,7 +83,7 @@ export class AlphabetConfig {
 
   /**
    * ساخت AlphabetConfig از environment variables.
-   * Reads ALPHABET_* environment variables with fallback to defaults.
+   * Reads Alphabet_* environment variables with fallback to defaults.
    *
    * @param overrides - override دستی options
    * @returns Result<AlphabetConfig, AlphabetError>
@@ -128,7 +128,7 @@ export class AlphabetConfig {
   }
 
   /**
-   * خواندن environment variables ALPHABET_*.
+   * خواندن environment variables Alphabet_*.
    * Works in both Node.js and browser environments.
    */
   private static readEnv(): AlphabetConfigOverrides {

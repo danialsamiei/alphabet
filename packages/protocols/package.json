@@ -47,6 +47,46 @@
       "types": "./dist/ai-sdk/index.d.ts",
       "import": "./dist/ai-sdk.js",
       "require": "./dist/ai-sdk.cjs"
+    },
+    "./v2": {
+      "types": "./dist/v2/index.d.ts",
+      "import": "./dist/v2.js",
+      "require": "./dist/v2.cjs"
+    },
+    "./v2/providers": {
+      "types": "./dist/v2/providers/index.d.ts",
+      "import": "./dist/v2-providers.js",
+      "require": "./dist/v2-providers.cjs"
+    },
+    "./v2/sdk": {
+      "types": "./dist/v2/sdk/index.d.ts",
+      "import": "./dist/v2-sdk.js",
+      "require": "./dist/v2-sdk.cjs"
+    },
+    "./v2/consent-proof": {
+      "types": "./dist/v2/consent-proof/index.d.ts",
+      "import": "./dist/v2-consent-proof.js",
+      "require": "./dist/v2-consent-proof.cjs"
+    },
+    "./v2/privacy": {
+      "types": "./dist/v2/privacy/index.d.ts",
+      "import": "./dist/v2-privacy.js",
+      "require": "./dist/v2-privacy.cjs"
+    },
+    "./v2/compression": {
+      "types": "./dist/v2/compression/index.d.ts",
+      "import": "./dist/v2-compression.js",
+      "require": "./dist/v2-compression.cjs"
+    },
+    "./v2/pulse": {
+      "types": "./dist/v2/pulse/index.d.ts",
+      "import": "./dist/v2-pulse.js",
+      "require": "./dist/v2-pulse.cjs"
+    },
+    "./v2/xr": {
+      "types": "./dist/v2/xr/index.d.ts",
+      "import": "./dist/v2-xr.js",
+      "require": "./dist/v2-xr.cjs"
     }
   },
   "scripts": {

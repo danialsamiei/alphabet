@@ -1,0 +1,40 @@
+{
+  "name": "@alphabet/marketplace",
+  "version": "0.1.0",
+  "description": "Alphabet Ecosystem & Marketplace primitives: manifest schema and registry for publishable adaptive components and protocol adapters; the Public Trust Score API and embeddable Trust Badge; the Alphabet Certified Builder verification rules; and the seed of official components. Additive package — no existing exports change.",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./official": {
+      "types": "./dist/official/index.d.ts",
+      "import": "./dist/official/index.js",
+      "require": "./dist/official/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
+    "dev": "vite build --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "dependencies": {
+    "@alphabet/core": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.0.0"
+  }
+}

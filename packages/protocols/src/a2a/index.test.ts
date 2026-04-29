@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { A2AAdapter, ALPHABET_A2A_AGENT_CARD, type A2ATask } from './index.js';
+import { A2AAdapter, Alphabet_A2A_AGENT_CARD, type A2ATask } from './index.js';
 import { makeConsentScope } from '../normalizers/index.js';
 import type { AlphabetToolContext } from '../contract.js';
 
@@ -35,7 +35,7 @@ describe('A2AAdapter.getAgentCard', () => {
   it('returns a frozen agent card with the documented skills', () => {
     const adapter = new A2AAdapter();
     const card = adapter.getAgentCard();
-    expect(card).toBe(ALPHABET_A2A_AGENT_CARD);
+    expect(card).toBe(Alphabet_A2A_AGENT_CARD);
     expect(card.skills.map((s) => s.id).sort()).toEqual([
       'consent.status',
       'context.handshake',

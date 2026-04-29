@@ -66,7 +66,7 @@ export interface AlphabetA2AAgentCard {
 }
 
 /** Default agent card published at `/.well-known/agent.json`. */
-export const ALPHABET_A2A_AGENT_CARD: AlphabetA2AAgentCard = {
+export const Alphabet_A2A_AGENT_CARD: AlphabetA2AAgentCard = {
   name: 'Alphabet Context Agent',
   description:
     'Provides PII-free visitor context, consent status, and adaptive ' +
@@ -126,7 +126,7 @@ export class A2AAdapter {
 
   /** Returns the agent card to publish at `/.well-known/agent.json`. */
   getAgentCard(): AlphabetA2AAgentCard {
-    return ALPHABET_A2A_AGENT_CARD;
+    return Alphabet_A2A_AGENT_CARD;
   }
 
   /**

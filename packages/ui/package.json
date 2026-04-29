@@ -33,33 +33,56 @@
       "import": "./dist/runtime.js",
       "require": "./dist/runtime.cjs"
     },
+    "./primitives": {
+      "types": "./dist/primitives/index.d.ts",
+      "import": "./dist/primitives.js",
+      "require": "./dist/primitives.cjs"
+    },
+    "./styles/tokens.css": "./styles/tokens.css",
+    "./styles/primitives.css": "./styles/primitives.css",
     "./package.json": "./package.json"
   },
-  "files": ["dist"],
+  "files": ["dist", "styles"],
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook-static"
   },
   "dependencies": {
     "@alphabet/core": "workspace:*",
-    "@alphabet/api": "workspace:*"
+    "@alphabet/api": "workspace:*",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-switch": "^1.1.3",
+    "@radix-ui/react-tabs": "^1.1.3",
+    "@radix-ui/react-tooltip": "^1.1.8",
+    "clsx": "^2.1.1"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "^8.6.17",
+    "@storybook/addon-essentials": "^8.6.17",
+    "@storybook/addon-interactions": "^8.6.17",
+    "@storybook/react": "^8.6.17",
+    "@storybook/react-vite": "^8.6.17",
+    "@storybook/test": "^8.6.17",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^24.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "storybook": "^8.6.17",
     "typescript": "^5.4.0",
     "vite": "^5.0.0",
     "vitest": "^1.0.0"
