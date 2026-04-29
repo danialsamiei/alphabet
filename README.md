@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/logo.png" alt="Alphabet — The Alphabet of Your Web" width="220" />
+<img src="./logo.png" alt="Alphabet — The Alphabet of Your Web" width="220" />
 
 # Alphabet
 
