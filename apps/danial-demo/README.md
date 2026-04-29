@@ -21,6 +21,11 @@ the first website that truly understands you **without tracking you**.
 
 ---
 
+## This is the canonical deployable demo
+
+`apps/danial-demo` is the **single canonical deployable demo** for the Alphabet SDK.
+If you need one stable path for CI/CD pipelines, docs, onboarding, or production preview, use this directory.
+
 ## What this is
 
 A flagship, production-grade interactive demo of the [Alphabet SDK](../../README.md)
