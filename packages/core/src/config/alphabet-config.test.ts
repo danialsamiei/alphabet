@@ -8,12 +8,12 @@ import { AlphabetConfig } from './alphabet-config.js';
 
 // Helper para acceder a process.env de forma tipo-segura en tests
 const getTestEnv = (): Record<string, string | undefined> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   return (globalThis as any)['process']?.['env'] ?? {};
 };
 
 const setTestEnv = (key: string, value: string | undefined): void => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const env = (globalThis as any)['process']?.['env'];
   if (env) {
     if (value === undefined) {

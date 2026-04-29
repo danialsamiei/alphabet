@@ -29,7 +29,7 @@ function captureProvider(): {
   const adapter: AlphabetProviderAdapter = {
     id: 'mock',
     name: 'mock',
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     stream: async function* (req): AsyncIterable<AlphabetStreamChunk> {
       last = req;
       yield { type: 'text-delta', text: 'ok' };

@@ -42,12 +42,15 @@
     "./styles/primitives.css": "./styles/primitives.css",
     "./package.json": "./package.json"
   },
-  "files": ["dist", "styles"],
+  "files": [
+    "dist",
+    "styles"
+  ],
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint . --max-warnings=0",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",

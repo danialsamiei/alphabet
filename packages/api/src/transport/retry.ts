@@ -125,7 +125,7 @@ export function withRetry(
 
       // First try.
       // We loop attempt=0..maxRetries inclusive (so up to maxRetries+1 calls).
-      // eslint-disable-next-line no-constant-condition
+       
       while (true) {
         if (init.signal?.aborted === true) {
           throw new DOMException(

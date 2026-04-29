@@ -27,7 +27,7 @@ function failProvider(id: string, status: number | undefined = undefined): Alpha
   return {
     id,
     name: id,
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     stream: async function* () {
       yield {
         type: 'error',
@@ -44,7 +44,7 @@ function okProvider(id: string, text: string): AlphabetProviderAdapter {
   return {
     id,
     name: id,
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     stream: async function* () {
       yield { type: 'text-delta', text } as AlphabetStreamChunk;
       yield { type: 'finish', reason: 'stop' } as AlphabetStreamChunk;
@@ -105,7 +105,7 @@ describe('createFallbackChain', () => {
     const probe: AlphabetProviderAdapter = {
       id: 'a',
       name: 'a',
-      // eslint-disable-next-line @typescript-eslint/require-await
+       
       stream: async function* (req) {
         receivedModel = req.model;
         yield { type: 'text-delta', text: '.' };

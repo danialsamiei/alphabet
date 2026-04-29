@@ -131,7 +131,7 @@ describe('retry', () => {
   });
 
   it('does not retry plain succeed effects', async () => {
-    let calls = 0;
+    const calls = 0;
     const e = succeed(0);
     void calls;
     const exit = await runEffect(retry(e, scheduleRecurs(3)), undefined);

@@ -135,7 +135,7 @@ export class AlphabetConfig {
     // در browser environment، process.env ممکن است وجود نداشته باشد
     const getEnv = (key: string): string | undefined => {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         const env = (globalThis as any)['process']?.['env'] as Record<string, string | undefined> | undefined;
         return env?.[key];
       } catch {

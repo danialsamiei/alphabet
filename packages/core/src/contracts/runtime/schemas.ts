@@ -19,7 +19,7 @@
 
 import { v, type Infer } from './structural.js';
 import type { Validator } from './validator.js';
-import type { AlphabetRequest, AlphabetResponse, ResponseMeta } from '../../types/api.js';
+import type { AlphabetRequest, AlphabetResponse } from '../../types/api.js';
 
 // ─── Building blocks ──────────────────────────────────────────────────────────
 
