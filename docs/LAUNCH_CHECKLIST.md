@@ -162,3 +162,28 @@ revert the release commit and cut a 1.0.0-rc.N from the same branch.
 ---
 
 *End of Alphabet 1.0 Launch Checklist.*
+
+## 10. danial-demo deploy verification (preview/staging/production)
+
+### Pre-deploy
+
+- [ ] Confirm selected profile: `preview`, `staging`, or `production`.
+- [ ] Verify matching env file exists in `apps/danial-demo` (`.env.preview`, `.env.staging`, `.env.production`).
+- [ ] Verify `VITE_ALPHABET_API_BASE_URL` points to the right backend for that profile.
+- [ ] Verify telemetry/feature flags are correct for release window.
+- [ ] Verify fallback policy:
+  - [ ] `VITE_ALPHABET_ENABLE_MOCK_FALLBACK`
+  - [ ] `VITE_ALPHABET_ENABLE_GRACEFUL_DEGRADE`
+- [ ] Run smoke build with profile mode:
+  - `pnpm --filter '@alphabet/danial-demo' build --mode <profile>`
+
+### Post-deploy
+
+- [ ] Check static health probe returns 200:
+  - `GET /healthz.json`
+- [ ] Open Protocol Playground and verify transport mode label is expected for profile.
+- [ ] Force backend outage (temporary wrong origin or blocked network) and verify fallback behavior:
+  - [ ] Auto-switch to mock mode when enabled.
+  - [ ] Graceful degraded message when mock fallback is disabled.
+- [ ] Verify no white-screen crash occurs when backend is unavailable.
+- [ ] Capture deployment timestamp, profile, and smoke result in release notes.

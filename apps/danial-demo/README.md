@@ -77,6 +77,51 @@ pnpm --filter '@alphabet/danial-demo' build     # → dist/
 pnpm --filter '@alphabet/danial-demo' preview   # serve dist/
 ```
 
+
+## Environment profiles
+
+The app ships with three Vite profiles:
+
+- `preview` → `.env.preview`
+- `staging` → `.env.staging`
+- `production` → `.env.production`
+
+### Env matrix
+
+| Variable | preview | staging | production |
+|---|---|---|---|
+| `VITE_ALPHABET_PROFILE` | `preview` | `staging` | `production` |
+| `VITE_ALPHABET_API_BASE_URL` | `https://preview-api.alphabet.alef.ba` | `https://staging-api.alphabet.alef.ba` | `https://api.alphabet.alef.ba` |
+| `VITE_ALPHABET_ENABLE_TELEMETRY` | `false` | `true` | `true` |
+| `VITE_ALPHABET_ENABLE_EXPERIMENTAL_CHIPS` | `true` | `true` | `false` |
+| `VITE_ALPHABET_ENABLE_PROTOCOL_PLAYGROUND` | `true` | `true` | `true` |
+| `VITE_ALPHABET_ENABLE_MOCK_FALLBACK` | `true` | `true` | `false` |
+| `VITE_ALPHABET_ENABLE_GRACEFUL_DEGRADE` | `true` | `true` | `true` |
+
+Run with a profile:
+
+```bash
+pnpm --filter '@alphabet/danial-demo' dev --mode preview
+pnpm --filter '@alphabet/danial-demo' dev --mode staging
+pnpm --filter '@alphabet/danial-demo' build --mode production
+```
+
+## Backend fallback behavior
+
+Protocol Playground can use backend transport or in-process mock transport.
+
+1. It starts in `mock` for preview/staging and `backend` for production profile.
+2. If backend request fails and `VITE_ALPHABET_ENABLE_MOCK_FALLBACK=true`, it automatically switches to mock mode.
+3. If fallback is disabled but `VITE_ALPHABET_ENABLE_GRACEFUL_DEGRADE=true`, UI shows a degraded UX error state instead of crashing.
+
+## Smoke health endpoint
+
+A static probe is available after deploy:
+
+- `GET /healthz.json`
+
+Expected payload includes `{"status":"ok","service":"@alphabet/danial-demo"}` for lightweight smoke checks in CI/CD.
+
 ## Embedding on danial.ai
 
 The demo ships an embeddable React component — drop it into any page on

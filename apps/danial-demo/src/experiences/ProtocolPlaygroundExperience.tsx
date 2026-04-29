@@ -15,6 +15,7 @@
 import { useMemo, useState } from 'react';
 import { createMockServer, type MockServerHandle } from '@alphabet/api/mock';
 import { ALPHABET_ROUTES, API_VERSION_PREFIX } from '@alphabet/core';
+import { runtimeProfile } from '../runtimeProfile.js';
 
 interface PresetOperation {
   readonly id: string;
@@ -118,6 +119,9 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
     () => createMockServer({ seed: 7, latencyMs: 12 }),
     [],
   );
+  const [transportMode, setTransportMode] = useState<'backend' | 'mock'>(
+    runtimeProfile.profile === 'production' ? 'backend' : 'mock',
+  );
 
   const [presetId, setPresetId] = useState<string>(PRESETS[0]!.id);
   const preset = PRESETS.find((p) => p.id === presetId) ?? PRESETS[0]!;
@@ -133,6 +137,12 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
       setBody(next.bodyTemplate);
       setError(null);
     }
+  };
+
+
+  const executeBackendRequest = async (path: string, init: RequestInit): Promise<Response> => {
+    const response = await fetch(`${runtimeProfile.apiBaseUrl}${path}`, init);
+    return response;
   };
 
   const handleSend = async (): Promise<void> => {
@@ -157,7 +167,10 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
 
     const t0 = performance.now();
     try {
-      const res = await server.request(preset.path, init);
+      const res =
+        transportMode === 'backend'
+          ? await executeBackendRequest(preset.path, init)
+          : await server.request(preset.path, init);
       const durationMs = performance.now() - t0;
       const text = await res.text();
       let pretty = text;
@@ -191,7 +204,14 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
         ].slice(0, 12),
       );
     } catch (e) {
-      setError((e as Error).message);
+      if (transportMode === 'backend' && runtimeProfile.fallback.mockMode) {
+        setTransportMode('mock');
+        setError('Backend unavailable — switched to mock mode automatically.');
+      } else if (runtimeProfile.fallback.gracefulDegrade) {
+        setError('Service unavailable right now. UI is running in graceful degraded mode.');
+      } else {
+        setError((e as Error).message);
+      }
     } finally {
       setPending(false);
     }
@@ -202,8 +222,9 @@ export function ProtocolPlaygroundExperience(): JSX.Element {
       <div className="alphabet-card">
         <h3 className="alphabet-card-heading">Compose request</h3>
         <p className="alphabet-muted-text">
-          Issued against an in-process <code>createMockServer</code>{' '}
-          (deterministic, seeded). No network calls are made.
+          Profile: <strong>{runtimeProfile.profile}</strong> · transport:{' '}
+          <strong>{transportMode}</strong> · API base:{' '}
+          <code>{runtimeProfile.apiBaseUrl}</code>
         </p>
 
         <label className="alphabet-field">
