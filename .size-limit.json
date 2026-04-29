@@ -10,7 +10,9 @@
     "path": "packages/api/dist/index.js",
     "limit": "8 KB",
     "brotli": true,
-    "ignore": ["@alphabet/core"]
+    "ignore": [
+      "@alphabet/core"
+    ]
   },
   {
     "name": "@alphabet/ui base entry (ESM, brotli, ignoring peers; MUST stay R3F-free)",
@@ -57,6 +59,23 @@
       "@radix-ui/react-tabs",
       "@radix-ui/react-tooltip"
     ]
+  },
+  {
+    "name": "apps/danial-demo initial JS bundle",
+    "path": "apps/danial-demo/dist/assets/index-*.js",
+    "limit": "200 KB",
+    "gzip": true
+  },
+  {
+    "name": "apps/danial-demo largest JS chunk",
+    "path": "apps/danial-demo/dist/assets/*.js",
+    "limit": "280 KB",
+    "gzip": true
+  },
+  {
+    "name": "apps/danial-demo total CSS bundle",
+    "path": "apps/danial-demo/dist/assets/*.css",
+    "limit": "45 KB",
+    "gzip": true
   }
 ]
-

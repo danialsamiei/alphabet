@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   ci:
-    name: install + typecheck + lint + test + build + benchmark + size + openapi
+    name: install + typecheck + lint + test + build + benchmark + bundle-budget + openapi
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -55,13 +55,14 @@ jobs:
       - name: Benchmark smoke check
         run: pnpm benchmark:smoke
 
-      - name: Bundle size — size-limit
-        run: pnpm size --json > size-report.json || pnpm size
+      - name: Bundle budget check — size-limit (blocking)
+        run: pnpm size --json > size-report.json
 
       - name: Bundle size — base @alphabet/ui must stay R3F-free
         run: pnpm size:check-r3f-free
 
-      - name: Bundle visualizer — per-file raw/gzip/brotli treemap report
+      - name: Bundle visualizer — on budget failure
+        if: failure()
         run: pnpm bundle:visualize
 
       - name: OpenAPI spec validation
