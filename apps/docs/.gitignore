@@ -1,0 +1,6 @@
+# Synced from canonical docs/*.md by scripts/sync-docs.mjs.
+pages/docs/
+.next/
+out/
+node_modules/
+next-env.d.ts

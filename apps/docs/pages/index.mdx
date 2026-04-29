@@ -1,0 +1,47 @@
+---
+title: Alphabet — The Alphabet of Your Web
+---
+
+# Alphabet
+
+**The Alphabet of Your Web** &nbsp;·&nbsp; <span style={{ opacity: 0.65, fontStyle: 'italic', fontSize: '0.9em' }}>الفبای وب تو</span>
+
+A privacy-first, context-aware, adaptive web SDK. Five render layers,
+four monotonic consent tiers, zero invasive tracking. Part of the
+[**Alefba International AI Research & Development Program**](https://alef.ba).
+
+[Quickstart →](/docs/quickstart) &nbsp; · &nbsp; [Architecture →](/docs/overview) &nbsp; · &nbsp; [GitHub →](https://github.com/danialsamiei/alphabet)
+
+---
+
+## What Alphabet does
+
+Most websites today force a binary choice: a **static one-size-fits-all
+page** that ignores the visitor entirely, or **heavy client-side
+personalization** built on cookies, fingerprints, and dark consent
+patterns. Alphabet provides a third path.
+
+It reads only **passive browser signals** — `Accept-Language`, IANA
+timezone, viewport, a WebGL probe, the network class, motion preferences,
+DNT, and GPC — and turns them into a **typed UI configuration**: locale,
+writing direction (including full RTL for Persian and Arabic), theme, and
+one of five **Adaptive Render Layers** ranging from a React Three Fiber
+immersive scene down to a text-only ARIA mode.
+
+## Five packages
+
+| Package                | What it ships                                                                |
+| :--------------------- | :--------------------------------------------------------------------------- |
+| `@alphabet/core`       | Models, handshake pipeline, intent detection, language negotiation.          |
+| `@alphabet/api`        | HTTP client, transport (retry + idempotency), MSW-based mock server.         |
+| `@alphabet/ui`         | React hooks, layer router, `LayerRouter` and `FloatingChipsGroup`, primitives. |
+| `@alphabet/protocols`  | MCP, A2A, encrypted QR handoff, REST adapters; v2 proactive Pulse + XR.       |
+| `@alphabet/security`   | Consent state machine, PII redaction, output guard, DP primitives, audit.    |
+
+## Read next
+
+* [**Architecture overview**](/docs/overview) — the eight-layer model.
+* [**Core concepts**](/docs/concepts/core) — handshake, memory mesh, layer detection.
+* [**Privacy model**](/docs/security/privacy-model) — consent tiers and DNT/GPC.
+* [**Launch security review**](/docs/security/launch-review) — OWASP / GDPR / NIST.
+* [**Roadmap**](/docs/roadmap) — what's next after v1.0.
