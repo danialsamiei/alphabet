@@ -1,0 +1,6 @@
+{
+  "status": "ok",
+  "service": "@alphabet/danial-demo",
+  "profile": "static-probe",
+  "version": "1.0.0"
+}
