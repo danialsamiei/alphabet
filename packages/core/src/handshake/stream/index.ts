@@ -11,3 +11,12 @@ export type {
   SignalSnapshot,
 } from './context-stream.js';
 export { createContextStream, toAsyncIterable } from './context-stream.js';
+export {
+  MulticastContextStream,
+  selectStream,
+  type ContextStreamListener,
+  type MulticastContextStreamOptions,
+  type SubscribeOptions,
+  type SubscriptionHandle,
+} from './multicast.js';
+

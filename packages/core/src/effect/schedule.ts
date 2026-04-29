@@ -42,7 +42,13 @@ const defaultRandom: ScheduleRandom = (): number => {
     (globalThis as { crypto: Crypto }).crypto.getRandomValues(buf);
     return ((buf[0] ?? 0) >>> 0) / 0x1_0000_0000;
   }
-  return 0.5;
+  // Fail loudly rather than silently degrade jitter to a constant — a
+  // deterministic 0.5 here would defeat the very purpose of jitter
+  // (thundering-herd avoidance) without telling the caller.
+  throw new Error(
+    'effect/schedule: crypto.getRandomValues is unavailable. Pass an explicit ' +
+      'ScheduleRandom to exponentialJitter()/withJitter() in environments without WebCrypto.',
+  );
 };
 
 // ─── Concrete schedules ──────────────────────────────────────────────────────

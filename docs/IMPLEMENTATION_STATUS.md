@@ -171,3 +171,31 @@ The `README.md` rewrite to align with this status document is tracked separately
 **Hard invariants honored:** zero edits to existing `@alphabet/core` or `@alphabet/api` source files except subpath wiring (`vite.config.ts`, `package.json`, `tsconfig.json`); `AlphabetClient` constructor signature unchanged; no new runtime peer deps.
 
 **Test totals**: `@alphabet/core` 184 → 222; `@alphabet/api` 77 → 104; full monorepo green (16/16 packages).
+
+---
+
+## 8. PR-A — Research-grade additive subpaths (2026-04-29)
+
+PR-A elevates `@alphabet/core` toward "research-grade" capabilities **without touching the v1 default barrel**. Every item ships under a new subpath export so existing consumers (`@alphabet/api`, `@alphabet/ui`, `@alphabet/protocols`, `apps/demo`, `apps/danial-site`) are unaffected. **No new runtime dependencies** were added — the dependency-free, edge-safe posture of `@alphabet/core` is preserved.
+
+| Deliverable | Subpath | Status | Honest scope |
+|---|---|---|---|
+| Effect-style runtime (`Effect<R,E,A>`, `Cause`, `Exit`, `Schedule`, `Layer`, `Schema`) + adapters for `SignalCollector`/`EnrichmentPipeline`/`HandshakeDecisionEngine` | `@alphabet/core/effect` | ✅ Implemented | In-house ~400-LOC interpreter (iterative, stack-safe). Authoring shape modeled on Effect-TS v3 but with **zero runtime deps** to preserve the `@alphabet/core` zero-deps contract. Adapters re-express handshake primitives as Effects without rewriting them. |
+| Encrypted Living Memory Engine (AES-GCM-256, per-record IV, PBKDF2, domain isolation, ECDSA P-256 consent receipts) | `@alphabet/core/memory` | ✅ Implemented (ECDSA receipts) / ⚪ zk-SNARK proofs | Consent proofs are **ECDSA P-256 signed receipts**, *not* zk-SNARKs. A real Groth16 implementation requires a circom circuit, trusted-setup ceremony, and verifier WASM — deferred to PR-B `@alphabet/zk-consent`. Browser-side storage adapter (`IndexedDBStore`) tested via `fake-indexeddb`. |
+| Capability Oracle contract + Heuristic + WebNN fallback | `@alphabet/core/oracle` | 🟡 Contract + heuristic only | `HeuristicOracle` wraps the existing `CapabilityPredictor` (EWMA + signal heuristics). `WebNNOracle` feature-detects `navigator.ml` and accepts a caller-supplied `OracleModelProvider`. **No ONNX runtime is bundled, no model is shipped.** Real WebNN/ONNX inference deferred to PR-B `@alphabet/oracle-model` (needs trained model + corpus + license). |
+| Reactive Multicast Context Stream (multi-subscriber tee, bounded replay, per-subscriber back-pressure, `selectStream` projection helper) | `@alphabet/core/handshake/stream` (extended) | ✅ Implemented | Additive — does **not** modify `createContextStream` / `toAsyncIterable`. The multicast bus reads once and fans out into per-subscriber bounded queues, so a slow listener cannot stall the broadcast. |
+| BLAKE3 WASM loader contract + Anonymity-Set primitive (counting Bloom filter + k-anonymity gate) | `@alphabet/core/privacy-wasm` | 🟡 SHA-256 default + WASM loader contract | Default hash is **WebCrypto SHA-256** (audited, available everywhere, deps-free). BLAKE3 is offered via opt-in `setBlake3WasmLoader()` — `@alphabet/core` deliberately **does not bundle** a `.wasm` artifact (would break `"sideEffects": false` and bundle-size budget). The WASM build is deferred to PR-B `@alphabet/blake3-wasm`. |
+| XState-v5-shaped state-machine interpreter + `consentLadderMachine` + `adaptiveRenderMachine` (both export `toMermaid`) | `@alphabet/core/orchestrator` | ✅ Implemented | Hand-rolled ~300-LOC interpreter with the same authoring shape as XState v5 (`createMachine({ states, on, guards, actions })`), but **no `xstate` dep**. Consent ladder integrates with `ConsentTierManager` semantics; adaptive render orchestrates `CapabilityLayer` transitions. |
+
+**PR-A invariants honored:**
+- Default `import … from '@alphabet/core'` exports are unchanged.
+- `vite.config.ts` adds five new entries (`effect`, `memory`, `oracle`, `privacy-wasm`, `orchestrator`); `package.json` exports map adds matching subpaths.
+- One dev-only dependency added: `fake-indexeddb` (used solely by `IndexedDBStore.test.ts`).
+- `@alphabet/core` test totals: 222 → **476 passing**; full monorepo build: 9/9 packages ✅.
+
+**PR-B (out of scope — explicitly deferred):**
+- `@alphabet/zk-consent` — circom `consent_v1.circom` + Groth16 prover/verifier + browser verifier WASM + ceremony attestation.
+- `@alphabet/oracle-model` — trained ONNX model + WebNN execution path + licensed training corpus + bench vs. heuristic.
+- `@alphabet/blake3-wasm` — Rust→WASM BLAKE3 build with reference-vector tests and bundle-size budget.
+
+> **Why PR-A and PR-B are split.** Items 2 (zk-SNARK consent), 3 (WebNN/ONNX oracle), and 5 (WASM BLAKE3) cannot be shipped *honestly* in one session: each requires assets (circuits + ceremony, trained model + corpus, WASM artifact) that need their own validation pipeline. Shipping a stub labeled as a research-grade implementation would mislead consumers about the privacy and capability guarantees of `@alphabet/core`. PR-A delivers the *contracts* and the production-grade *honest defaults*; PR-B will deliver the research-grade artifacts behind those contracts.

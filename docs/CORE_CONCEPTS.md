@@ -380,3 +380,151 @@ See [`docs/PROTOCOLS.md`](./PROTOCOLS.md) and
 A useful one-liner: **Alphabet turns "what does this browser tell me?"
 into a typed UI configuration, a typed consent posture, and a typed
 protocol envelope — and then gets out of your way.**
+
+---
+
+## Research-grade additive subpaths (PR-A, 2026-04-29)
+
+The five concepts above describe `@alphabet/core` v1 — what every
+consumer gets out of the default `import … from '@alphabet/core'` barrel.
+PR-A adds five **additive subpaths** that elevate the package toward a
+research-grade posture without touching the default exports. They are
+all opt-in.
+
+### 1. `@alphabet/core/effect` — in-house Effect-style runtime
+
+`Effect<R, E, A>` is a lazy, cancellable, never-throws-public-API
+description of a computation. It encodes failures (`Cause<E>`) versus
+defects, supports `flatMap`/`map`/`zip`/`all`/`race`/`catchAll`, and
+runs through an iterative interpreter that does not blow the JS stack.
+`Schedule` provides exponential + jittered retry policies; `Layer<R>` is
+small DI; `Schema<A>` is a thin façade over the existing
+`contracts/runtime/structural` validators. Adapters re-express
+`SignalCollector`/`EnrichmentPipeline`/`HandshakeDecisionEngine` as
+`Effect`s — the legacy classes are unchanged, the Effect view is
+purely additive.
+
+```mermaid
+sequenceDiagram
+  participant U as Consumer
+  participant L as Layer<R>
+  participant E as Effect<R,E,A>
+  participant I as Interpreter
+  U->>L: provide(EnrichmentLayer)
+  L->>E: bind R
+  U->>I: runPromiseExit(effect)
+  I->>I: flatMap loop (iterative, stack-safe)
+  I-->>U: Exit<E,A> → Result<A, Error>
+```
+
+### 2. `@alphabet/core/memory` — Encrypted Living Memory Engine
+
+`MemoryEngine` is a domain-isolated, tier-gated, transparently-encrypted
+key-value store. Storage adapters are pluggable (`InMemoryStore`,
+`IndexedDBStore`); the `EncryptedMemoryStore` decorator transparently
+encrypts every put with WebCrypto AES-GCM-256 (per-record IV). Every
+write is co-signed by an **ECDSA P-256 consent receipt** over
+`{visitorIdHash, domain, tier, policyVersion, ts}` so a third party can
+audit consent without seeing the value or the visitor id.
+
+```mermaid
+sequenceDiagram
+  participant App
+  participant Engine as MemoryEngine
+  participant Sign as ECDSA P-256 Signer
+  participant Enc as AES-GCM-256
+  participant Store as IndexedDBStore
+  App->>Engine: put(visitorId, domain, tier, key, value)
+  Engine->>Engine: tier ≥ minTier(domain) ?
+  Engine->>Sign: mintConsentReceipt({visitorIdHash, domain, tier, policyVersion})
+  Engine->>Enc: encrypt(value, sessionKey)
+  Engine->>Store: put(prefix:key, {ciphertext, iv, receipt})
+```
+
+> **Honesty note.** The receipt is an ECDSA signed envelope, *not* a
+> zero-knowledge proof. A real Groth16 implementation requires a circom
+> circuit and trusted-setup ceremony — deferred to `@alphabet/zk-consent`.
+
+### 3. `@alphabet/core/oracle` — Capability Oracle (contract + heuristic)
+
+`CapabilityOracle` is a tiny interface (`{id, predict(input)}`) over
+`featurize(snapshot) → {features, cohort}` — a 5-element Float32 vector
+made anonymous by Laplace DP noise (default ε = 1.0) and bucketed via a
+SHA-256 cohort id (default k = 5). `HeuristicOracle` wraps the existing
+`CapabilityPredictor`. `WebNNOracle` feature-detects `navigator.ml` and
+accepts a caller-supplied model provider; no model is shipped.
+
+```mermaid
+flowchart LR
+  Snap[PredictorSnapshot] --> F[featurize]
+  F -->|"DP noise + cohort"| FV["{features, cohort}"]
+  FV --> Heur[HeuristicOracle]
+  FV --> WebNN[WebNNOracle]
+  WebNN -.fallback.-> Heur
+  Heur --> Pred[Predicted Layer]
+  WebNN --> Pred
+```
+
+### 4. `@alphabet/core/handshake/stream` — Multicast + projection
+
+`MulticastContextStream` is a multi-subscriber wrapper over the
+single-consumer `ContextStream`: each subscriber gets a bounded queue
+and a configurable replay window; a slow listener cannot stall the
+broadcast. `selectStream` is a one-call projection over the bus.
+
+```mermaid
+flowchart LR
+  Src[ContextStream source] --> Bus((MulticastContextStream))
+  Bus --> Q1[queue: subscriber A]
+  Bus --> Q2[queue: subscriber B]
+  Bus --> Q3[queue: subscriber C - slow]
+  Q1 --> A[listener A]
+  Q2 --> B[listener B]
+  Q3 -. drops oldest .- B
+```
+
+### 5. `@alphabet/core/privacy-wasm` — anonymity-set primitives
+
+Default hash is WebCrypto **SHA-256**. BLAKE3 is offered via an opt-in
+`setBlake3WasmLoader()` — the actual WASM artifact lives out of tree
+(`@alphabet/blake3-wasm`, planned PR-B). `AnonymitySet` is a 4-bit
+counting Bloom filter with `gate(key, k)` exposing only a boolean,
+never the underlying counts.
+
+```mermaid
+flowchart LR
+  K[key] --> H[SHA-256]
+  H -->|"split into n indices"| F[counters[]]
+  F --> G{ min(counters) >= k }
+  G -- yes --> Pass[gate = true]
+  G -- no --> Fail[gate = false]
+```
+
+### 6. `@alphabet/core/orchestrator` — XState-shaped machines
+
+`createMachine({ states, on, guards, actions })` + `interpret()` is a
+~300-LOC, dependency-free, XState-v5-compatible interpreter. Two
+machines ship: `consentLadderMachine` (`pending → granted → revoked`)
+and `adaptiveRenderMachine` (`detecting → resolving → ready → degrading
+→ restoring`). Both export `toMermaid()`.
+
+```mermaid
+stateDiagram-v2
+  [*] --> pending
+  pending --> granted: GRANT [isValidTier]
+  granted --> granted: GRANT [isUpgrade]
+  granted --> revoked: REVOKE
+  granted --> pending: POLICY_UPDATED
+  revoked --> pending: RESET
+```
+
+```mermaid
+stateDiagram-v2
+  [*] --> detecting
+  detecting --> resolving: DETECTED
+  resolving --> ready: RESOLVED
+  ready --> degrading: WARNING [isLowerTier]
+  ready --> restoring: RESTORE [isHigherTier]
+  degrading --> ready: DEGRADE_DONE
+  restoring --> ready: RESTORE_DONE
+```

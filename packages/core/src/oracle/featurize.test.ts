@@ -80,34 +80,6 @@ describe('featurize / DP noise', () => {
   });
 
   it('larger ε ⇒ smaller average noise across many samples', async () => {
-    function magnitude(eps: number): number {
-      let total = 0;
-      for (let s = 1; s <= 32; s += 1) {
-        const rb = detRandomBytes(s);
-        // Snapshot with no info → "raw" value is 0.5 for everything.
-        // Noise is detectable as the deviation from 0.5.
-        const blank: PredictorSnapshot = { at: 0 };
-        // Synchronously run featurize (it's async because of digest, but
-        // we just await one at a time).
-        // Note: this loop is fine for 32 samples in a unit test.
-        // We sum first feature only; behaviour is identical across dims.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // (kept as plain await to avoid promise overhead concerns)
-        // eslint-disable-next-line no-await-in-loop
-        // @ts-ignore — top-level await not allowed inside nested func
-        // eslint-disable-next-line no-restricted-syntax
-        // (we use Promise.then to avoid await-in-loop lint complaints)
-        // simpler: inline await
-        // (we are inside an async test, but `magnitude` itself is sync;
-        // refactor below.)
-        // -------- end lint chatter ----------
-        void blank;
-        void rb;
-        // sentinel: replaced by async impl below
-      }
-      return total;
-    }
-    void magnitude;
     async function avgAbsDev(eps: number, samples: number): Promise<number> {
       let total = 0;
       for (let s = 1; s <= samples; s += 1) {
