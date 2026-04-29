@@ -38,6 +38,38 @@ A privacy-first, context-aware, adaptive web SDK
 
 ---
 
+## ✨ Try the Live Demo on danial.ai
+
+> **The flagship public face of Alphabet** lives on **[danial.ai/alphabet](https://danial.ai/alphabet)** — a production-grade interactive showcase built by [Danial Samiei](https://danial.ai), founder of the Alefba program.
+
+<p align="center">
+  <a href="https://danial.ai/alphabet"><img src="https://img.shields.io/badge/▶_Try_the_live_demo-danial.ai/alphabet-00D4C8?style=for-the-badge&labelColor=04111f" alt="Try the live demo on danial.ai" /></a>
+  &nbsp;
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdanialsamiei%2Falphabet&project-name=alphabet-danial-demo&root-directory=apps%2Fdanial-demo&build-command=cd+..%2F..+%26%26+pnpm+install+--frozen-lockfile+%26%26+pnpm+--filter+%27%40alphabet%2Fdanial-demo...%27+build&output-directory=dist"><img src="https://vercel.com/button" alt="Deploy with Vercel" /></a>
+</p>
+
+The demo lives in [`apps/danial-demo`](apps/danial-demo/) and ships **six live interactive proofs** plus the floating **Invisible Ethical Alef Agent**:
+
+1. **Render Layers** — seamless degradation R3F → CSS 3D → Canvas 2D → Static HTML → Text-only.
+2. **Context Handshake** — real-time `collect → enrich → decide` stream with phase timings.
+3. **Consent Ladder** — interactive 4-tier consent state machine with live event log.
+4. **Trust Pulse Dashboard** — live 0–100 privacy score, signals used, memory tier.
+5. **Living Memory Engine** — six on-device memory domains with consent-tier gating.
+6. **AI Protocol Playground** — Alphabet Protocol v2 against the in-process mock server.
+
+Embed it on your own site in one line:
+
+```tsx
+import { AlphabetDemo } from '@alphabet/danial-demo';
+import '@alphabet/danial-demo/styles';
+
+<AlphabetDemo defaultTab="layers" />;
+```
+
+See [`apps/danial-demo/README.md`](apps/danial-demo/README.md) for full embed, deployment, and customization docs.
+
+---
+
 > **Alphabet** treats *language*, *direction*, *device*, *network*, and *consent*
 > as the elementary letters of an experience — the **alphabet of the web** —
 > that any page assembles itself from at runtime.
