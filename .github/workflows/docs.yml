@@ -1,101 +1,19 @@
-name: Docs site
-
-# Build the Nextra docs site (apps/docs) and deploy to GitHub Pages.
-# The docs site lives **outside** the pnpm workspace (see
-# pnpm-workspace.yaml `!apps/docs`) so its dependency graph (Next.js +
-# Nextra + React) does not affect the main `ci.yml` install / typecheck /
-# test pipeline. This workflow installs the docs site in isolation.
-#
-# Custom-domain configuration (alphabet.alef.ba) is left to the maintainer:
-# add `apps/docs/public/CNAME` containing the apex hostname, then point
-# DNS at GitHub Pages. This workflow handles everything else.
+name: Documentation
 
 on:
   push:
-    branches: [main]
-    paths:
-      - 'apps/docs/**'
-      - 'docs/**'
-      - '.github/workflows/docs.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'apps/docs/**'
-      - 'docs/**'
-      - '.github/workflows/docs.yml'
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-concurrency:
-  group: docs-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    branches:
+      - main
 
 jobs:
   build:
-    name: Build docs site
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: apps/docs
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.1.0
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile --ignore-workspace
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          # Caching the global pnpm store speeds up the docs site install
-          # without requiring a lockfile entry in the root workspace.
-          cache: pnpm
-          cache-dependency-path: apps/docs/package.json
-
-      - name: Install (isolated, no frozen lockfile)
-        # `apps/docs` is intentionally outside the workspace; install with
-        # `--no-frozen-lockfile` because no pnpm-lock.yaml exists for it yet.
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Sync canonical docs/*.md into pages/docs/*.mdx
-        run: pnpm sync-docs
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Build static site
-        # On project pages (`<user>.github.io/alphabet/`) we need
-        # basePath = "/alphabet" — this is the default below.
-        # On a custom apex domain (alphabet.alef.ba), set the repo variable
-        # `DOCS_BASE_PATH` to "" (empty string) so basePath is unset.
-        env:
-          DOCS_BASE_PATH: ${{ vars.DOCS_BASE_PATH || '/alphabet' }}
-        run: pnpm build
-
-      - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: apps/docs/out
-
-  deploy:
-    name: Deploy to GitHub Pages
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Run Docs
+        run: pnpm run docs

@@ -62,8 +62,9 @@ Notable points:
 
 - The handshake runs in a Server Component or Route Handler.
 - The first paint is locale- and direction-correct.
-- `<AlphabetProvider initialDecision={…}>` skips a re-handshake on the
-  client.
+- `<AlphabetProvider handshake={{ decision: serverDecision }}>` skips a
+  re-handshake on the client by hydrating the server-computed decision
+  through `useAlphabetHandshake`'s consume mode.
 - The `STATIC_HTML` layer is what SSR emits; client hydration may
   upgrade to `CSS_3D` / `R3F_IMMERSIVE` if the device qualifies.
 

@@ -124,6 +124,15 @@ describe('normalizeApiBaseUrl()', () => {
     );
   });
 
+  it('preserves the legacy /api/awaf/v1 prefix from the pre-rename build', () => {
+    expect(normalizeApiBaseUrl('https://example.com/api/awaf/v1')).toBe(
+      'https://example.com/api/awaf/v1',
+    );
+    expect(normalizeApiBaseUrl('https://example.com/api/awaf/v1/')).toBe(
+      'https://example.com/api/awaf/v1',
+    );
+  });
+
   it('is idempotent', () => {
     const inputs = [
       'https://example.com',
@@ -132,6 +141,8 @@ describe('normalizeApiBaseUrl()', () => {
       'https://example.com/api/',
       'https://example.com/api/alphabet/v1',
       'https://example.com/api/alphabet/v1/',
+      'https://example.com/api/awaf/v1',
+      'https://example.com/api/awaf/v1/',
     ];
     for (const input of inputs) {
       const once = normalizeApiBaseUrl(input);

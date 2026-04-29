@@ -2,7 +2,7 @@
 # Alphabet SDK System Architecture
 
 > **نسخه:** 1.0.0 | **تاریخ:** 2026-04-27
-> **مخزن:** `github.com/danialsamiei/awaf`
+> **مخزن:** `github.com/danialsamiei/alphabet`
 > **زبان مستندات:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
 
 ---

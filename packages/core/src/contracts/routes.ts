@@ -41,6 +41,14 @@ export const API_VERSION_PREFIX = '/api/alphabet/v1' as const;
  */
 export const LEGACY_API_PREFIX = '/api' as const;
 
+/**
+ * Legacy versioned prefix from the pre-rename `awaf` build.
+ * Accepted by {@link normalizeApiBaseUrl} so callers pinned to the
+ * old base URL keep working without a code change.
+ * @deprecated Use {@link API_VERSION_PREFIX} (`/api/alphabet/v1`) instead.
+ */
+export const LEGACY_AWAF_API_PREFIX = '/api/awaf/v1' as const;
+
 // ─── Route Constants (relative to API_VERSION_PREFIX) ────────────────────────
 
 /**
@@ -183,6 +191,9 @@ export function normalizeApiBaseUrl(rawBase: string): string {
   }
   const trimmed = end === rawBase.length ? rawBase : rawBase.slice(0, end);
   if (trimmed.endsWith(API_VERSION_PREFIX)) return trimmed;
+  // Legacy `/api/awaf/v1` prefix from the pre-rename build is preserved
+  // so existing callers pinned to that base URL keep working.
+  if (trimmed.endsWith(LEGACY_AWAF_API_PREFIX)) return trimmed;
   // Legacy `/api` suffix kept as-is for backwards compatibility.
   if (trimmed === '/api' || trimmed.endsWith('/api')) {
     // Only treat `/api` as legacy when it is a full path segment, not

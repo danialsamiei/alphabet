@@ -20,6 +20,13 @@ import type { SyncConsentStorageAdapter } from './types.js';
 /** کلید پیش‌فرض ذخیره‌سازی در `Storage` */
 export const DEFAULT_CONSENT_STORAGE_KEY = 'alphabet:consent:v1';
 
+/**
+ * کلید پیش‌فرض قدیمی — صرفاً برای مهاجرت یک‌باره از نسخه‌ی پیش از rename خوانده می‌شود.
+ * Legacy default key kept only for one-shot read migration from the
+ * pre-rename `awaf:` namespace. Never written.
+ */
+const LEGACY_CONSENT_STORAGE_KEY = 'awaf:consent:v1';
+
 /** نسخه schema snapshot — برای migrate در آینده */
 const SCHEMA_VERSION = 1 as const;
 
@@ -96,6 +103,17 @@ export class WebStorageConsentStorage implements SyncConsentStorageAdapter {
       raw = this.storage.getItem(this.key);
     } catch {
       return null;
+    }
+    // One-shot legacy migration: if the canonical key is empty but the
+    // pre-rename `awaf:consent:v1` key has a snapshot, read it through
+    // so callers upgrading from the old build keep their consent state.
+    // The next save() will persist under the canonical key automatically.
+    if ((raw === null || raw === '') && this.key === DEFAULT_CONSENT_STORAGE_KEY) {
+      try {
+        raw = this.storage.getItem(LEGACY_CONSENT_STORAGE_KEY);
+      } catch {
+        return null;
+      }
     }
     if (raw === null || raw === '') return null;
 

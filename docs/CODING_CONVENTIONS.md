@@ -1,7 +1,7 @@
 # قراردادهای کدنویسی — Alphabet SDK
 # Alphabet SDK Coding Conventions
 
-> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/awaf`
+> **نسخه:** 1.0.0 | **مخزن:** `github.com/danialsamiei/alphabet`
 > **زبان:** فارسی با اصطلاحات انگلیسی (Farsi with English terms)
 
 ---
