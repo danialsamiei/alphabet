@@ -38,6 +38,25 @@
       "@react-three/fiber",
       "three"
     ]
+  },
+  {
+    "name": "@alphabet/ui primitives entry (ESM, brotli, ignoring peers)",
+    "path": "packages/ui/dist/primitives.js",
+    "limit": "4 KB",
+    "brotli": true,
+    "ignore": [
+      "@alphabet/core",
+      "@alphabet/api",
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "clsx",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-switch",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-tooltip"
+    ]
   }
 ]
 

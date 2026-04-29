@@ -13,7 +13,7 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx", "src/__tests__/**"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx", "**/*.stories.ts", "**/*.stories.tsx", "src/__tests__/**", ".storybook/**"],
   "references": [
     { "path": "../core" },
     { "path": "../api" }
