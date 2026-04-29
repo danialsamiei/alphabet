@@ -82,6 +82,11 @@
       "types": "./dist/v2/pulse/index.d.ts",
       "import": "./dist/v2-pulse.js",
       "require": "./dist/v2-pulse.cjs"
+    },
+    "./v2/xr": {
+      "types": "./dist/v2/xr/index.d.ts",
+      "import": "./dist/v2-xr.js",
+      "require": "./dist/v2-xr.cjs"
     }
   },
   "scripts": {

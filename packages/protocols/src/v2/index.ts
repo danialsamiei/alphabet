@@ -70,8 +70,33 @@ export type {
 export { ProactiveLayerForecaster } from './pulse/index.js';
 export type {
   LayerForecastHint,
+  EthicsObservation,
   ProactiveLayerForecasterOptions,
 } from './pulse/index.js';
+
+// ─── XR (Cross-Reality Orchestrator) ─────────────────────────────────────────
+export {
+  CrossRealityOrchestrator,
+  probeXrCapabilities,
+  createInMemorySpatialLayer0Adapter,
+} from './xr/index.js';
+export type {
+  XRRealityMode,
+  XRPrivacyPosture,
+  XRCapabilitySnapshot,
+  XRSpatialAnchor,
+  XRDecisionReason,
+  XRRealityDecision,
+  XRRealityHint,
+  XROrchestratorEventName,
+  XROrchestratorEventMap,
+  XROrchestratorListener,
+  CrossRealityOrchestratorOptions,
+  XRDecideInput,
+  ProbeXrCapabilitiesOptions,
+  SpatialLayer0Adapter,
+  InMemorySpatialLayer0Options,
+} from './xr/index.js';
 
 // ─── Providers ───────────────────────────────────────────────────────────────
 export * from './providers/index.js';

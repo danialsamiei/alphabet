@@ -56,4 +56,59 @@ describe('ProactiveLayerForecaster', () => {
     // After reset, no warnings -> no-change.
     expect(hints.every((h) => h.kind === 'no-change')).toBe(true);
   });
+
+  // ─── Ethics-aware downgrades ───────────────────────────────────────────────
+
+  it('emits ethical-downgrade on consent revocation, ahead of capability hints', () => {
+    const fc = new ProactiveLayerForecaster({ minConfidence: 0 });
+    fc.observe({ at: 0, currentLayer: 'R3F_IMMERSIVE', networkType: '4g' });
+    fc.observe({ at: 1000, currentLayer: 'R3F_IMMERSIVE', networkType: '3g' });
+    fc.observeEthics({ consentTierChange: 'revoked' });
+    const hints = fc.forecast();
+    expect(hints[0]?.kind).toBe('ethical-downgrade');
+    if (hints[0]?.kind === 'ethical-downgrade') {
+      expect(hints[0].reason).toBe('consent-revoked');
+      expect(hints[0].to).toBe('STATIC_HTML');
+      expect(hints[0].urgency).toBe('high');
+    }
+  });
+
+  it('emits ethical-downgrade on jurisdiction-restriction', () => {
+    const fc = new ProactiveLayerForecaster({ minConfidence: 0 });
+    fc.observe({ at: 0, currentLayer: 'R3F_IMMERSIVE' });
+    fc.observeEthics({ jurisdictionRisk: 'high' });
+    const hints = fc.forecast();
+    expect(
+      hints.some((h) => h.kind === 'ethical-downgrade' && h.reason === 'jurisdiction-restriction'),
+    ).toBe(true);
+  });
+
+  it('emits ethical-downgrade on flagged content', () => {
+    const fc = new ProactiveLayerForecaster({ minConfidence: 0 });
+    fc.observe({ at: 0, currentLayer: 'R3F_IMMERSIVE' });
+    fc.observeEthics({ contentFlag: 'flagged' });
+    const hints = fc.forecast();
+    expect(
+      hints.some((h) => h.kind === 'ethical-downgrade' && h.reason === 'content-sensitivity'),
+    ).toBe(true);
+  });
+
+  it('emits pause-animation (not downgrade) for content caution', () => {
+    const fc = new ProactiveLayerForecaster({ minConfidence: 0 });
+    fc.observe({ at: 0, currentLayer: 'R3F_IMMERSIVE' });
+    fc.observeEthics({ contentFlag: 'caution' });
+    const hints = fc.forecast();
+    expect(hints.some((h) => h.kind === 'pause-animation')).toBe(true);
+    expect(hints.some((h) => h.kind === 'ethical-downgrade')).toBe(false);
+  });
+
+  it('clears ethics state on reset', () => {
+    const fc = new ProactiveLayerForecaster({ minConfidence: 0 });
+    fc.observe({ at: 0, currentLayer: 'R3F_IMMERSIVE' });
+    fc.observeEthics({ consentTierChange: 'revoked' });
+    fc.reset();
+    fc.observe({ at: 0, currentLayer: 'R3F_IMMERSIVE' });
+    const hints = fc.forecast();
+    expect(hints.some((h) => h.kind === 'ethical-downgrade')).toBe(false);
+  });
 });
