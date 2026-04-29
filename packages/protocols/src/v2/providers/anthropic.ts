@@ -178,7 +178,7 @@ async function* decode(
   structured: boolean,
 ): AsyncIterable<AwafStreamChunk> {
   if (res.body === null) {
-    yield { type: 'error', error: protocolError('CRYPTO_FAILURE', 'Response body is null') };
+    yield { type: 'error', error: protocolError('ADAPTER_NOT_CONFIGURED', 'Response body is null') };
     return;
   }
   const blockKinds = new Map<number, 'text' | 'tool_use'>();

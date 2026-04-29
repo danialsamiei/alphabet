@@ -283,19 +283,22 @@ components:
         code:
           type: string
           enum:
-            - VALIDATION_FAILED
+            - INVALID_PROTOCOL_REQUEST
+            - INVALID_PROTOCOL_PAYLOAD
             - CONSENT_INSUFFICIENT
-            - PRIVACY_RESTRICTED
+            - CONSENT_REVOKED
+            - MEMORY_PERMISSION_DENIED
+            - PII_DETECTED
             - AUDIENCE_MISMATCH
             - PAYLOAD_EXPIRED
             - PAYLOAD_TAMPERED
-            - SIGNATURE_INVALID
+            - NONCE_INVALID
             - CRYPTO_UNAVAILABLE
             - CRYPTO_FAILURE
-            - PROTOCOL_NOT_SUPPORTED
-            - OPERATION_NOT_FOUND
+            - TOOL_NOT_FOUND
+            - TASK_INVALID
             - ADAPTER_NOT_CONFIGURED
-            - INTERNAL_ERROR
+            - UNSUPPORTED_PROTOCOL
         message: { type: string }
         details: { type: object }
 

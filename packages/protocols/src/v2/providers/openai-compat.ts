@@ -170,7 +170,7 @@ async function* decodeSse(
   structured: boolean,
 ): AsyncIterable<AwafStreamChunk> {
   if (res.body === null) {
-    yield { type: 'error', error: protocolError('CRYPTO_FAILURE', 'Response body is null') };
+    yield { type: 'error', error: protocolError('ADAPTER_NOT_CONFIGURED', 'Response body is null') };
     return;
   }
   // Track partial tool calls keyed by index so deltas can accumulate.

@@ -132,7 +132,7 @@ export async function POST(req: Request): Promise<Response> {
       } catch (e) {
         controller.enqueue(
           encoder.encode(
-            `data: ${JSON.stringify({ type: 'error', error: { code: 'INTERNAL_ERROR', message: (e as Error).message } })}\n\n`,
+            `data: ${JSON.stringify({ type: 'error', error: { code: 'ADAPTER_NOT_CONFIGURED', message: (e as Error).message } })}\n\n`,
           ),
         );
         controller.close();

@@ -30,10 +30,12 @@ const NON_ASCII_PENALTY = 1.5;
  * token ≈ 4 ASCII chars; non-ASCII strings are inflated by 1.5× to
  * account for multi-byte tokenizers.
  */
+// eslint-disable-next-line no-control-regex
+const ASCII_RE = /^[\x00-\x7F]*$/;
+
 export function estimateTokens(text: string): number {
   if (text.length === 0) return 0;
-  // eslint-disable-next-line no-control-regex
-  const isAscii = /^[\x00-\x7F]*$/.test(text);
+  const isAscii = ASCII_RE.test(text);
   const factor = isAscii ? 1 : NON_ASCII_PENALTY;
   return Math.max(1, Math.ceil((text.length * factor) / CHARS_PER_TOKEN));
 }
