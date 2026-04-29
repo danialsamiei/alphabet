@@ -23,6 +23,8 @@ const BASE_BUNDLES = [
   'packages/ui/dist/hooks.cjs',
   'packages/ui/dist/layers.js',
   'packages/ui/dist/layers.cjs',
+  'packages/ui/dist/primitives.js',
+  'packages/ui/dist/primitives.cjs',
   'packages/ui/dist/runtime.js',
   'packages/ui/dist/runtime.cjs',
 ];
