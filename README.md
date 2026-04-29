@@ -629,7 +629,7 @@ A few rules specific to this stage of the project:
 
 <div align="center">
 
-<img src="./assets/logo-small.png" alt="Alphabet" width="80" />
+<img src="./logo-small.png" alt="Alphabet" width="80" />
 
 **Alphabet 1.0 (danial.ai Edition)**
 
