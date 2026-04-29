@@ -59,11 +59,14 @@ function utf8(s: string): Uint8Array {
   return new TextEncoder().encode(s);
 }
 
-function asBufferSource(bytes: Uint8Array): Uint8Array {
+function asBufferSource(bytes: Uint8Array): BufferSource {
   // Some runtimes (jsdom + Node webcrypto realm mismatch) reject foreign-realm
   // ArrayBuffers. Returning the Uint8Array itself is a valid `BufferSource`
-  // and works in every WebCrypto-compatible runtime we target.
-  return bytes;
+  // and works in every WebCrypto-compatible runtime we target. The cast is
+  // needed because TS strict + lib.dom narrows BufferSource to
+  // `ArrayBufferView<ArrayBuffer>` whereas Uint8Array's underlying buffer is
+  // typed as `ArrayBufferLike`.
+  return bytes as unknown as BufferSource;
 }
 
 function getSubtle(): SubtleCrypto {

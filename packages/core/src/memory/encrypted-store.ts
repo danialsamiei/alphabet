@@ -43,8 +43,8 @@ function defaultRandomBytes(n: number): Uint8Array {
   return out;
 }
 
-function asBufferSource(bytes: Uint8Array): Uint8Array {
-  return bytes;
+function asBufferSource(bytes: Uint8Array): BufferSource {
+  return bytes as unknown as BufferSource;
 }
 
 // ─── Key derivation ──────────────────────────────────────────────────────────
