@@ -91,6 +91,13 @@ const TIER_ORDER: Record<ConsentTier, number> = {
 };
 
 /**
+ * Battery level below which the orchestrator refuses to enter an XR
+ * mode. WebXR sessions are GPU/sensor heavy and continuing them on a
+ * device with < 15% battery degrades the visitor experience.
+ */
+const BATTERY_LOW_THRESHOLD = 0.15;
+
+/**
  * `CrossRealityOrchestrator` — see module-level docs.
  *
  * Stateful: tracks the current decision, attached anchors, and event
@@ -137,7 +144,7 @@ export class CrossRealityOrchestrator {
     if (this.jurisdictionRestrictsXr) reasons.push('jurisdiction-restriction');
     if (hasPrivacySignal(privacy)) reasons.push('privacy-signal-active');
     if (snapshot.prefersReducedMotion) reasons.push('reduced-motion');
-    if (typeof snapshot.batteryLevel === 'number' && snapshot.batteryLevel < 0.15) {
+    if (typeof snapshot.batteryLevel === 'number' && snapshot.batteryLevel < BATTERY_LOW_THRESHOLD) {
       reasons.push('battery-low');
     }
     if (

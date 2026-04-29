@@ -108,12 +108,15 @@ export function createInMemorySpatialLayer0Adapter(
           ),
         );
       }
-      // Layer-0 data is always personal-context; refuse below ANONYMOUS.
-      if (anchor.requiredTier === 'NO_MEMORY') {
+      // Layer-0 data is always personal-context; refuse below CONSENTED.
+      // Per module docs, both NO_MEMORY and ANONYMOUS are hard refusals —
+      // Spatial Web Layer 0 anchors carry pose data that is personal context
+      // and must only be persisted once the visitor has explicitly consented.
+      if (anchor.requiredTier === 'NO_MEMORY' || anchor.requiredTier === 'ANONYMOUS') {
         return err(
           protocolError(
             'CONSENT_INSUFFICIENT',
-            'Spatial Layer 0 anchors require at least ANONYMOUS consent tier',
+            'Spatial Layer 0 anchors require at least CONSENTED tier',
             { anchorId: anchor.id, requiredTier: anchor.requiredTier },
           ),
         );

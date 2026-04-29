@@ -41,6 +41,12 @@ describe('in-memory SpatialLayer0Adapter', () => {
     expect(r.success).toBe(false);
   });
 
+  it('refuses ANONYMOUS tier anchors (personal-context data)', async () => {
+    const a = createInMemorySpatialLayer0Adapter();
+    const r = await a.attach(anchor({ requiredTier: 'ANONYMOUS' }), 'session-ephemeral');
+    expect(r.success).toBe(false);
+  });
+
   it('allows world scope under session-ephemeral', async () => {
     const a = createInMemorySpatialLayer0Adapter();
     const r = await a.attach(anchor({ scope: 'world' }), 'session-ephemeral');

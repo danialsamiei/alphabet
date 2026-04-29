@@ -24,9 +24,11 @@ import {
   createOpenAiProvider,
   createAnthropicProvider,
   createGeminiProvider,
+  CrossRealityOrchestrator,
   type AlphabetGenerationRequest,
-  type AlphabetStreamChunk,
 } from '@alphabet/protocols/v2';
+import { toAiSdkResponse } from '../../../lib/to-ai-sdk';
+import { decideXrPayload } from '../../../lib/xr-bridge';
 
 export const runtime = 'edge';
 
@@ -119,36 +121,27 @@ export async function POST(req: Request): Promise<Response> {
     };
   }
 
-  const encoder = new TextEncoder();
-  const sse = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      try {
-        for await (const chunk of client.stream(generationRequest, callOptions)) {
-          controller.enqueue(encoder.encode(`data: ${serializeChunk(chunk)}\n\n`));
-          if (chunk.type === 'finish' || chunk.type === 'error') break;
-        }
-        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-        controller.close();
-      } catch (e) {
-        controller.enqueue(
-          encoder.encode(
-            `data: ${JSON.stringify({ type: 'error', error: { code: 'ADAPTER_NOT_CONFIGURED', message: (e as Error).message } })}\n\n`,
-          ),
-        );
-        controller.close();
-      }
-    },
+  // Ask the Cross-Reality Orchestrator how this response should render.
+  // The bridge reads `x-alphabet-xr-snapshot` / `x-alphabet-consent-tier`
+  // / DNT / GPC headers from the request. The orchestrator never reaches
+  // the network — it's pure capability + privacy bookkeeping.
+  const xrOrchestrator = new CrossRealityOrchestrator();
+  const xrResult = await decideXrPayload(req, xrOrchestrator);
+
+  // Bridge the AlphabetAiClient stream to a Vercel-AI-SDK-compatible
+  // response. SSE is the safest default; switch to mode: 'text-only' if
+  // your client uses the Vercel AI Stream protocol instead.
+  const response = toAiSdkResponse(client.stream(generationRequest, callOptions), {
+    mode: 'sse',
   });
 
-  return new Response(sse, {
-    headers: {
-      'content-type': 'text/event-stream; charset=utf-8',
-      'cache-control': 'no-cache, no-transform',
-      'x-accel-buffering': 'no',
-    },
-  });
-}
+  // Surface the renderer recommendation + downgrade flag so the client
+  // transparency UI can show why it received a leaner payload.
+  const headers = new Headers(response.headers);
+  headers.set('x-alphabet-renderer', xrResult.recommendedRenderer);
+  headers.set('x-alphabet-xr-mode', xrResult.decision.mode);
+  headers.set('x-alphabet-xr-posture', xrResult.decision.privacyPosture);
+  headers.set('x-alphabet-xr-downgraded', String(xrResult.downgraded));
 
-function serializeChunk(chunk: AlphabetStreamChunk): string {
-  return JSON.stringify(chunk);
+  return new Response(response.body, { status: response.status, headers });
 }
