@@ -176,3 +176,36 @@ The full plan with hard backward-compat invariants is in this PR's description.
 - v1.0.0 published to npm under `@alphabet/*`.
 - Public docs site live.
 - `IMPLEMENTATION_STATUS.md` shows ✅ for every feature listed in `README.md`'s "What is implemented" section, and any remaining ⚪ rows are explicitly described as post-1.0 enhancements.
+
+---
+
+## Phase 6 — Ecosystem & Marketplace
+
+**Goal.** Move Alphabet from "framework you install" to "foundational layer of the respectful web": let third parties publish adaptive components and protocol adapters, give every Alphabet site a live public Trust Score, advance an open W3C standard for the context handshake, and recognise the maintainers who meet the bar.
+
+This phase is intentionally additive — it ships as a separate package (`@alphabet/marketplace`) and a set of docs; existing packages and their public surface do not change.
+
+**Scope.**
+
+- **`@alphabet/marketplace` package** (new, additive)
+  - `ComponentManifest` + `ProtocolAdapterManifest` schema, validated at the boundary by `@alphabet/core/contracts/runtime`.
+  - `Registry` interface + `InMemoryRegistry` implementation: publish, get, list (filter by kind, tag, max consent tier, official-only, text), remove. SemVer monotonicity enforced.
+  - **Public Trust Score API**: `computeTrustScore({ manifest, telemetry? })` returns a deterministic `[0, 100]` score, a letter grade, and an itemised reasons list. Telemetry inputs are coarse 24h aggregates; `sanitizeTelemetry` strips anything that would let PII enter.
+  - **Trust Badge**: `renderTrustBadge` emits a self-contained SVG (no script, no external font) and a shields.io-shaped JSON envelope.
+  - **Alphabet Certified Builder**: `evaluateCertification` returns Bronze / Silver / Gold + criteriaMet / criteriaMissing for full transparency.
+  - First **official** entries seeded in `@alphabet/marketplace/official`: `consent-banner`, `layer-selector`, `language-negotiator`, `mcp-adapter`.
+- **W3C "Respectful Context Handshake" (RCH) proposal**
+  - `docs/W3C_RESPECTFUL_CONTEXT_HANDSHAKE.md` published as the seed text for incubation in a Privacy CG / WICG community group.
+  - Reference implementation: the same manifest schema validated by `@alphabet/marketplace`.
+- **Developer programme**
+  - `docs/CERTIFICATION.md` documenting Bronze / Silver / Gold criteria, all enforced by `evaluateCertification` (no closed-room review in the criteria).
+  - `docs/MARKETPLACE.md` documenting architecture, manifest format, scoring formula, governance.
+- **Hosted services** (follow-on, not in this PR)
+  - REST registry backend with the same `Registry` interface.
+  - Public CDN edge function for `/api/v1/trust-badge?id=…` returning the SVG.
+  - `alphabet publish` CLI command.
+
+**Exit criteria.**
+- `@alphabet/marketplace` ships at `0.1.0`, builds + typechecks + tests on CI, and is sub-5KB gzipped on its primary entry.
+- The four official manifests round-trip through `validateManifest` and `computeTrustScore`, and at least one reaches the Silver certification level by the rules in `evaluateCertification`.
+- The W3C RCH proposal is filed for incubation, with the marketplace manifest schema as its reference implementation.

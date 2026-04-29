@@ -215,6 +215,22 @@ importers:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@20.19.39)(jsdom@29.1.0)
 
+  packages/marketplace:
+    dependencies:
+      '@alphabet/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      typescript:
+        specifier: ^5.4.0
+        version: 5.9.3
+      vite:
+        specifier: ^5.0.0
+        version: 5.4.21(@types/node@25.6.0)
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@25.6.0)(jsdom@29.1.0)
+
   packages/protocols:
     dependencies:
       '@alphabet/api':
