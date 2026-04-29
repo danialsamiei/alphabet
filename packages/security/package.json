@@ -13,6 +13,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./privacy": {
+      "types": "./dist/privacy/index.d.ts",
+      "import": "./dist/privacy/index.js",
+      "require": "./dist/privacy/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "files": ["dist"],

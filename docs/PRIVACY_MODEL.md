@@ -170,6 +170,87 @@ A visitor with `gpcEnabled: true` and a capable device receives:
   memoryAllowed: false, personalizationAllowed: false,
   preciseGeoAllowed: false }`
 
+## Differential privacy primitives (`@alphabet/security/privacy`)
+
+> Status: **Implemented (W1 P1 of the Bold Roadmap)** — additive subpath, no
+> breaking change. See `packages/security/src/privacy/`.
+
+The `@alphabet/security/privacy` subpath ships the formal building blocks
+that turn Alphabet's *promise* of "no individual visitor is ever recoverable
+from a published aggregate" into a *mathematical guarantee*.
+
+### What is shipped
+
+- **Cryptographic randomness** (`sampleUniformUnitInterval`, `sampleStandardNormal`,
+  `sampleLaplace`) — backed exclusively by `crypto.getRandomValues`. Web Crypto
+  is available in browsers, Node ≥ 18, Cloudflare Workers, Vercel Edge, Deno,
+  and Bun. **`Math.random` is never used** for privacy-critical noise.
+- **Laplace mechanism** (`applyLaplaceMechanism`, `computeLaplaceScale`) for
+  *pure* ε-DP queries (counts, sums, means). Adds noise drawn from
+  `Lap(0, Δf / ε)` where `Δf` is the L1 sensitivity supplied by the caller.
+- **Gaussian mechanism** (`applyGaussianMechanism`, `computeGaussianStdDev`)
+  for `(ε, δ)`-DP queries. Uses the closed-form
+  `σ = Δ₂f · √(2·ln(1.25/δ)) / ε` and rejects `ε > 1` with
+  `EPSILON_OUT_OF_RANGE` to avoid silently shipping a weaker bound. Callers
+  who need ε > 1 must compose smaller-ε queries via the budget ledger.
+- **k-anonymity gate** (`kAnonymityGate`) — a cheap pre-DP check that
+  refuses cohorts smaller than `DEFAULT_K_ANONYMITY_THRESHOLD` (5). Returns
+  `Result<KAnonymityPass, AlphabetError>` so the decision plugs straight
+  into the rest of the Alphabet stack.
+- **`PrivacyBudgetLedger`** — the *enforcement point* for `(ε, δ)` spend.
+  Sealed, append-only, monotonic accountant under basic sequential
+  composition. Refuses any spend that would exceed the operator-supplied
+  cap with `BUDGET_EXHAUSTED`, atomically (failed spends never appear in
+  the ledger).
+
+### Privacy guarantees
+
+| Property | Guaranteed by | Enforcement |
+|---|---|---|
+| ε-DP for L1-sensitivity-bounded queries | Laplace mechanism | Code |
+| (ε,δ)-DP for L2-sensitivity-bounded queries, ε ∈ (0, 1] | Gaussian mechanism | Code |
+| Cohorts smaller than k=5 are never published | `kAnonymityGate` | Code |
+| Cumulative `(ε, δ)` spend ≤ cap | `PrivacyBudgetLedger` | Code (basic composition) |
+| Budget ledger is append-only | Sealed class — no `reset()`, no `delete()` | Code |
+| No PII in budget entries | 256-character query-label cap + `INVALID_QUERY_LABEL` validation | Code |
+| Cryptographic randomness | `crypto.getRandomValues` — `Math.random` is never called | Code (`spy(Math, 'random')` test) |
+
+### Usage example
+
+```ts
+import {
+  PrivacyBudgetLedger,
+  applyLaplaceMechanism,
+  kAnonymityGate,
+} from '@alphabet/security/privacy';
+
+const ledger = new PrivacyBudgetLedger({
+  cap: { epsilon: 1.0, delta: 0 },
+});
+
+function publishDailyPageviews(rawCount: number, cohortSize: number) {
+  const gate = kAnonymityGate(cohortSize);
+  if (!gate.success) return gate; // refuse — too few visitors
+
+  const cfg = { sensitivity: 1, params: { epsilon: 0.1, delta: 0 } };
+  const spend = ledger.spend('daily-pageviews', 'laplace', cfg);
+  if (!spend.success) return spend; // refuse — budget exhausted
+
+  return applyLaplaceMechanism(rawCount, cfg);
+}
+```
+
+### Limitations
+
+- `PrivacyBudgetLedger` uses **basic sequential composition**, which is
+  conservative. Future releases may add a pluggable `Accountant` for
+  Rényi-DP / zero-concentrated-DP accounting.
+- Sensitivity (`Δf`) is the operator's responsibility to bound correctly.
+  Alphabet validates that the supplied sensitivity is finite and ≥ 0, but
+  cannot verify it is the true L1/L2 sensitivity of an arbitrary query.
+- The k-anonymity gate is a *necessary* but not *sufficient* condition.
+  Always pair it with one of the noise mechanisms.
+
 ## Out of scope
 
 - Alphabet does **not** set cookies. It uses ephemeral, in-memory state and
