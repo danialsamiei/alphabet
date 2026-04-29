@@ -57,7 +57,7 @@
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint . --max-warnings=0",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "bench": "vitest bench --run"

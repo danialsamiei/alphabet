@@ -42,9 +42,9 @@ jobs:
         run: pnpm typecheck
 
       # `pnpm lint` runs across all packages that declare a lint script.
-      # It is allowed to no-op for packages without one (turbo skips them).
-      - name: Lint (best-effort)
-        run: pnpm lint || echo "lint not configured everywhere — skipping (see docs/RELEASE.md)"
+      # The shared ESLint flat config lives at the workspace root.
+      - name: Lint
+        run: pnpm lint
 
       - name: Test (with coverage where configured)
         run: pnpm test:coverage

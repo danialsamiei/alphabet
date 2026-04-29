@@ -94,7 +94,7 @@ export async function runBench(bench: Bench, options: SuiteOptions): Promise<Sui
 /** Pretty-print a SuiteResult to stdout. */
 export function printSuite(result: SuiteResult): void {
   const headerLabel = `── ${result.name} ${'─'.repeat(Math.max(2, 60 - result.name.length))}`;
-  // eslint-disable-next-line no-console
+   
   console.log(`\n${headerLabel}`);
   for (const row of result.rows) {
     const mean = row.meanMs.toFixed(4);
@@ -106,7 +106,7 @@ export function printSuite(result: SuiteResult): void {
         : row.withinBudget
           ? `  ✅ <${row.budgetMs}ms`
           : `  ❌ >=${row.budgetMs}ms`;
-    // eslint-disable-next-line no-console
+     
     console.log(`  ${row.name.padEnd(38, ' ')} mean=${mean}ms  ops/s=${ops}  n=${samples}${budget}`);
   }
 }

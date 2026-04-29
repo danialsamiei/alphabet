@@ -18,7 +18,7 @@ import { runSignalCollectionSuite } from './signal-collection.bench.js';
 
 async function main(): Promise<void> {
   const startedAt = Date.now();
-  // eslint-disable-next-line no-console
+   
   console.log('Alphabet benchmarks — engineering targets, not guaranteed claims.\n');
   await runSignalCollectionSuite();
   await runEnrichmentSuite();
@@ -27,10 +27,10 @@ async function main(): Promise<void> {
   await runConsentPolicySuite();
   await runLayerSelectionSuite();
   const elapsed = ((Date.now() - startedAt) / 1000).toFixed(2);
-  // eslint-disable-next-line no-console
+   
   console.log(`\nDone in ${elapsed}s`);
   if (process.exitCode === 1) {
-    // eslint-disable-next-line no-console
+     
     console.error('\n⚠  One or more declared budgets were exceeded. See ❌ rows above.');
   }
 }
