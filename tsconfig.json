@@ -24,7 +24,8 @@
     { "path": "./packages/api" },
     { "path": "./packages/ui" },
     { "path": "./packages/protocols" },
-    { "path": "./packages/security" }
+    { "path": "./packages/security" },
+    { "path": "./packages/marketplace" }
   ],
   "exclude": ["node_modules", "dist"]
 }

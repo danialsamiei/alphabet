@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@alphabet/core": ["../core/dist/index.d.ts"],
+      "@alphabet/core/contracts/runtime": ["../core/dist/contracts/runtime/index.d.ts"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts"],
+  "references": [
+    { "path": "../core" }
+  ]
+}
