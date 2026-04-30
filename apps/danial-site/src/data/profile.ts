@@ -69,7 +69,7 @@ export const profile: Profile = {
     'consent and locale.',
   ].join(' '),
   email: 'danial.samiei@gmail.com',
-  contactEmail?: 'danial.samiei@iau.ac.ir',
+  contactEmail: 'danial.samiei@iau.ac.ir',
   githubUrl: 'https://github.com/danialsamiei',
   scholarUrl: 'https://scholar.google.com/',
   orcid: '0000-0000-0000-0000',
