@@ -275,6 +275,13 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   min-height: calc(100vh - 100px);
   overflow-y: auto;
   position: relative;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.cli-terminal-content::-webkit-scrollbar {
+  display: none;
 }
 
 /* ================================================================
