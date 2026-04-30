@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
-    "tinybench": "^2.9.0",
+    "tinybench": "^6.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.4.0"
   }
