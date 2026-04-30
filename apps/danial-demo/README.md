@@ -148,6 +148,8 @@ export default function AlphabetPage() {
 The component owns its own `<AlphabetProvider>`, `<LayerProvider>`, and
 `<ConsentBanner>`, so you don't need to wire anything up.
 
+For an operator-focused deployment/rollback procedure, see [`docs/DEMO_DEPLOY_RUNBOOK.md`](../../docs/DEMO_DEPLOY_RUNBOOK.md).
+
 ## Deploying to Vercel
 
 The repository is a pnpm workspace, so Vercel needs to install from the

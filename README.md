@@ -67,6 +67,7 @@ import '@alphabet/danial-demo/styles';
 ```
 
 See [`apps/danial-demo/README.md`](apps/danial-demo/README.md) for full embed, deployment, and customization docs.
+For deploy operations, follow [`docs/DEMO_DEPLOY_RUNBOOK.md`](docs/DEMO_DEPLOY_RUNBOOK.md).
 
 **Canonical demo path for CI/CD and contributors:** [`apps/danial-demo`](apps/danial-demo/)
 
