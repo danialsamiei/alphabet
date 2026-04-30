@@ -15,15 +15,18 @@ import {
   AdaptiveSlot,
   AlphabetProvider,
   Canvas2DLayer,
+  ConsentBanner,
   Css3DLayer,
   StaticHtmlLayer,
   TextOnlyLayer,
+  useAlphabetContext,
 } from '@alphabet/ui';
 
 import { profile } from './data/profile.js';
 import { Hero } from './components/Hero.js';
 import { About, Contact, Publications, Research, Teaching } from './components/Sections.js';
 import { AssistantChat, type AssistantChatHandle } from './components/AssistantChat.js';
+import { VisitorContext } from './components/VisitorContext.js';
 
 /**
  * Delay before stealing focus after a smooth-scroll. Most browsers
@@ -98,12 +101,23 @@ export function App(): JSX.Element {
 
       <main id="ds-main" className="ds-main">
         <About profile={profile} />
+        <VisitorContext />
         <Research profile={profile} />
         <Publications profile={profile} />
         <Teaching profile={profile} />
         <AssistantChat ref={assistantRef} />
         <Contact profile={profile} />
       </main>
+
+      {/* Consent Banner — نمایش فقط در صورت pending بودن وضعیت consent */}
+      <ConsentBanner
+        title="حریم خصوصی شما / Your Privacy"
+        description="این وب‌سایت از Alphabet SDK برای تطبیق تجربه با قابلیت‌های مرورگر شما استفاده می‌کند. هیچ ردیابی یا فینگرپرینتی انجام نمی‌شود. / This site uses Alphabet SDK to adapt the experience to your browser capabilities. No tracking or fingerprinting."
+        acceptLabel="پذیرش / Accept"
+        rejectLabel="رد / Reject"
+        showEnriched
+        enrichedLabel="شخصی‌سازی / Personalize"
+      />
 
       <footer className="ds-footer">
         <p>
