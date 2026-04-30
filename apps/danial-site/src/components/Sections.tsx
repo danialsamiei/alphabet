@@ -1,18 +1,16 @@
 /**
  * @file Sections.tsx
- * @description About / Research / Publications / Teaching / Contact —
- * grouped together because each is small and they share styling.
- * Enhanced with Alphabet SDK context awareness for RTL/locale support.
+ * @description
+ * CLI-themed content sections with RTL/locale support via Alphabet SDK.
  */
 
 import { useAlphabetContext } from '@alphabet/ui';
 import type { Profile } from '../data/profile.js';
 
-/** برچسب‌های دوزبانه */
 const LABELS = {
   about: { en: 'About', fa: 'درباره' },
   research: { en: 'Research', fa: 'پژوهش' },
-  publications: { en: 'Selected Publications', fa: 'انتشارات منتخب' },
+  publications: { en: 'Publications', fa: 'انتشارات' },
   teaching: { en: 'Teaching', fa: 'تدریس' },
   contact: { en: 'Contact', fa: 'تماس' },
   email: { en: 'Email', fa: 'ایمیل' },
@@ -23,9 +21,6 @@ const LABELS = {
   graduate: { en: 'graduate', fa: 'تحصیلات تکمیلی' },
 } as const;
 
-/**
- * Hook برای دسترسی به زبان فعلی
- */
 function useLocaleInfo(): { isRTL: boolean; lang: 'en' | 'fa' } {
   const ctx = useAlphabetContext();
   const decision = ctx?.handshake?.decision;
@@ -48,8 +43,13 @@ export function About({ profile }: { readonly profile: Profile }): JSX.Element {
       dir={isRTL ? 'rtl' : 'ltr'}
       lang={lang}
     >
-      <h2 id="ds-about">{LABELS.about[lang]}</h2>
-      <p>{profile.bio}</p>
+      <div className="cli-section-header">
+        <span className="cli-section-icon">#</span>
+        <h2 id="ds-about">{LABELS.about[lang]}</h2>
+      </div>
+      <p className="ds-muted" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+        {profile.bio}
+      </p>
     </section>
   );
 }
@@ -64,7 +64,10 @@ export function Research({ profile }: { readonly profile: Profile }): JSX.Elemen
       dir={isRTL ? 'rtl' : 'ltr'}
       lang={lang}
     >
-      <h2 id="ds-research">{LABELS.research[lang]}</h2>
+      <div className="cli-section-header">
+        <span className="cli-section-icon">~</span>
+        <h2 id="ds-research">{LABELS.research[lang]}</h2>
+      </div>
       <ul className="ds-cards">
         {profile.researchAreas.map((area) => (
           <li key={area.title} className="ds-card">
@@ -72,9 +75,7 @@ export function Research({ profile }: { readonly profile: Profile }): JSX.Elemen
             <p>{area.summary}</p>
             <p className="ds-keywords">
               {area.keywords.map((k) => (
-                <span key={k} className="ds-keyword">
-                  {k}
-                </span>
+                <span key={k} className="ds-keyword">{k}</span>
               ))}
             </p>
           </li>
@@ -94,7 +95,10 @@ export function Publications({ profile }: { readonly profile: Profile }): JSX.El
       dir={isRTL ? 'rtl' : 'ltr'}
       lang={lang}
     >
-      <h2 id="ds-pubs">{LABELS.publications[lang]}</h2>
+      <div className="cli-section-header">
+        <span className="cli-section-icon">&gt;</span>
+        <h2 id="ds-pubs">{LABELS.publications[lang]}</h2>
+      </div>
       <ol className="ds-pub-list">
         {profile.publications.map((p) => (
           <li key={`${p.year}-${p.title}`}>
@@ -125,11 +129,15 @@ export function Teaching({ profile }: { readonly profile: Profile }): JSX.Elemen
       dir={isRTL ? 'rtl' : 'ltr'}
       lang={lang}
     >
-      <h2 id="ds-teaching">{LABELS.teaching[lang]}</h2>
+      <div className="cli-section-header">
+        <span className="cli-section-icon">$</span>
+        <h2 id="ds-teaching">{LABELS.teaching[lang]}</h2>
+      </div>
       <ul className="ds-course-list">
         {profile.courses.map((c) => (
           <li key={c.code}>
-            <strong>{c.code}</strong> — {c.title}{' '}
+            <strong style={{ color: 'var(--cli-green)' }}>{c.code}</strong>
+            <span>{c.title}</span>
             <span className="ds-muted">
               ({LABELS[c.level][lang]}, {c.term})
             </span>
@@ -150,33 +158,39 @@ export function Contact({ profile }: { readonly profile: Profile }): JSX.Element
       dir={isRTL ? 'rtl' : 'ltr'}
       lang={lang}
     >
-      <h2 id="ds-contact">{LABELS.contact[lang]}</h2>
+      <div className="cli-section-header">
+        <span className="cli-section-icon">@</span>
+        <h2 id="ds-contact">{LABELS.contact[lang]}</h2>
+      </div>
       <ul className="ds-contact-list">
         <li>
-          <strong>{LABELS.email[lang]}:</strong>{' '}
+          <strong style={{ color: 'var(--cli-yellow)' }}>{LABELS.email[lang]}:</strong>
           <a href={`mailto:${profile.email}`}>{profile.email}</a>
         </li>
-        {profile.contactEmail !== undefined ? (
+        {profile.contactEmail !== undefined && (
           <li>
-            <strong>{LABELS.email[lang]}:</strong>{' '}
+            <strong style={{ color: 'var(--cli-yellow)' }}>{LABELS.email[lang]} (2):</strong>
             <a href={`mailto:${profile.contactEmail}`}>{profile.contactEmail}</a>
           </li>
-        ) : null}
-        {profile.office !== undefined ? (
+        )}
+        {profile.office !== undefined && (
           <li>
-            <strong>{LABELS.office[lang]}:</strong> {profile.office}
+            <strong style={{ color: 'var(--cli-cyan)' }}>{LABELS.office[lang]}:</strong>
+            <span>{profile.office}</span>
           </li>
-        ) : null}
-        {profile.officeHours !== undefined ? (
+        )}
+        {profile.officeHours !== undefined && (
           <li>
-            <strong>{LABELS.officeHours[lang]}:</strong> {profile.officeHours}
+            <strong style={{ color: 'var(--cli-purple)' }}>{LABELS.officeHours[lang]}:</strong>
+            <span>{profile.officeHours}</span>
           </li>
-        ) : null}
-        {profile.orcid !== undefined ? (
+        )}
+        {profile.orcid !== undefined && (
           <li>
-            <strong>{LABELS.orcid[lang]}:</strong> {profile.orcid}
+            <strong style={{ color: 'var(--cli-green)' }}>{LABELS.orcid[lang]}:</strong>
+            <span>{profile.orcid}</span>
           </li>
-        ) : null}
+        )}
       </ul>
     </section>
   );

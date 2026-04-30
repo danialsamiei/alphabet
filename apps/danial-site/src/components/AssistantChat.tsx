@@ -231,7 +231,12 @@ export const AssistantChat = forwardRef<AssistantChatHandle>(function AssistantC
       aria-labelledby="ds-assistant-h"
     >
       <div className="ds-assistant-header">
-        <h2 id="ds-assistant-h">Ask the assistant / از دستیار بپرسید</h2>
+        <h2 id="ds-assistant-h">
+          <span style={{ color: 'var(--cli-green, #3fb950)' }}>$</span> assistant
+          <span style={{ color: 'var(--cli-muted, #8b949e)', fontWeight: 'normal', fontSize: '0.8rem' }}>
+            {' '}--interactive --model=gpt-4o
+          </span>
+        </h2>
         {messages.length > 1 && (
           <button
             type="button"
@@ -239,14 +244,12 @@ export const AssistantChat = forwardRef<AssistantChatHandle>(function AssistantC
             onClick={clearHistory}
             aria-label="Clear conversation history"
           >
-            Clear history
+            clear
           </button>
         )}
       </div>
-      <p className="ds-muted">
-        Powered by GitHub Models. The assistant is grounded on this page — it does not
-        invent facts. For anything else, please email{' '}
-        <a href={`mailto:${profile.email}`}>{profile.email}</a>.
+      <p className="ds-muted" style={{ fontSize: '0.85rem' }}>
+        <span style={{ color: 'var(--cli-cyan, #39c5cf)' }}>[INFO]</span> Powered by GitHub Models LLM API. Grounded on profile data only.
       </p>
 
       {/* Quick Actions */}
@@ -280,7 +283,7 @@ export const AssistantChat = forwardRef<AssistantChatHandle>(function AssistantC
               dir={messageIsRtl ? 'rtl' : 'ltr'}
             >
               <span className="ds-chat-role">
-                {m.role === 'user' ? 'You / شما' : m.role === 'assistant' ? 'AI' : m.role}
+                {m.role === 'user' ? '> user' : m.role === 'assistant' ? '< ai' : `! ${m.role}`}
               </span>
               <span className="ds-chat-content">
                 {m.content}
@@ -317,7 +320,7 @@ export const AssistantChat = forwardRef<AssistantChatHandle>(function AssistantC
           className="ds-btn ds-btn-primary"
           disabled={pending || input.trim() === ''}
         >
-          {pending ? 'Thinking… / در حال فکر…' : 'Send / ارسال'}
+          {pending ? '...' : '↵'}
         </button>
       </form>
     </section>

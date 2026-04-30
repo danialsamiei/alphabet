@@ -1,31 +1,18 @@
 /**
  * @file Hero.tsx
  * @description
- * Top-of-page hero — name, title, tagline, primary CTAs.
- * Enhanced with Alphabet SDK context awareness for RTL/locale support.
+ * CLI-themed hero section with Alphabet SDK context awareness.
  */
 
 import { useAlphabetContext } from '@alphabet/ui';
 import type { Profile } from '../data/profile.js';
 
-/** محتوای دوزبانه برای Hero */
-const BILINGUAL_CONTENT = {
-  askAssistant: {
-    en: 'Ask the assistant',
-    fa: 'از دستیار بپرسید',
-  },
-  email: {
-    en: 'Email',
-    fa: 'ایمیل',
-  },
-  github: {
-    en: 'GitHub',
-    fa: 'گیت‌هاب',
-  },
-  scholar: {
-    en: 'Google Scholar',
-    fa: 'گوگل اسکالر',
-  },
+const BILINGUAL = {
+  askAssistant: { en: './ask-assistant', fa: 'پرسش از دستیار' },
+  email: { en: 'mail', fa: 'ایمیل' },
+  github: { en: 'github', fa: 'گیت‌هاب' },
+  scholar: { en: 'scholar', fa: 'اسکالر' },
+  renderLayer: { en: 'Render Layer', fa: 'لایه رندر' },
 } as const;
 
 export interface HeroProps {
@@ -33,9 +20,6 @@ export interface HeroProps {
   readonly onAskAssistant: () => void;
 }
 
-/**
- * تشخیص زبان فارسی از locale
- */
 function isPersian(locale: string | null): boolean {
   if (locale === null) return false;
   return locale.startsWith('fa') || locale.startsWith('ar');
@@ -49,10 +33,7 @@ export function Hero({ profile, onAskAssistant }: HeroProps): JSX.Element {
   const direction = decision?.uiConfig?.direction ?? 'ltr';
   const isRTL = direction === 'rtl' || isPersian(locale);
   
-  // انتخاب متن بر اساس زبان
-  const t = (key: keyof typeof BILINGUAL_CONTENT): string => {
-    return BILINGUAL_CONTENT[key][isRTL ? 'fa' : 'en'];
-  };
+  const t = (key: keyof typeof BILINGUAL): string => BILINGUAL[key][isRTL ? 'fa' : 'en'];
 
   return (
     <section 
@@ -61,41 +42,65 @@ export function Hero({ profile, onAskAssistant }: HeroProps): JSX.Element {
       dir={isRTL ? 'rtl' : 'ltr'}
       lang={isRTL ? 'fa' : 'en'}
     >
-      <p className="ds-hero-eyebrow">{profile.title}</p>
-      <h1 id="ds-hero-name">{profile.name}</h1>
-      <p className="ds-hero-affiliation">{profile.affiliation}</p>
-      <p className="ds-hero-tagline">{profile.tagline}</p>
-      
-      {/* نمایش heroCopy از Alphabet SDK اگر موجود باشد */}
-      {decision?.uiConfig?.heroCopy !== undefined && decision.uiConfig.heroCopy !== profile.tagline && (
-        <p className="ds-hero-adaptive-copy" dir={isRTL ? 'rtl' : 'ltr'}>
-          {decision.uiConfig.heroCopy}
+      <div className="cli-output">
+        {/* System info style display */}
+        <p style={{ margin: 0 }}>
+          <span style={{ color: 'var(--cli-cyan)' }}>user</span>
+          <span style={{ color: 'var(--cli-muted)' }}>@</span>
+          <span style={{ color: 'var(--cli-purple)' }}>danial.ai</span>
         </p>
-      )}
+        <p style={{ margin: '0.25rem 0', color: 'var(--cli-border)' }}>{'─'.repeat(30)}</p>
+        
+        <p style={{ margin: '0.25rem 0' }}>
+          <span style={{ color: 'var(--cli-accent)' }}>Name:</span>{' '}
+          <span className="ds-hero-name">{profile.name}</span>
+        </p>
+        
+        <p style={{ margin: '0.25rem 0' }}>
+          <span style={{ color: 'var(--cli-accent)' }}>Title:</span>{' '}
+          <span className="ds-hero-title">{profile.title}</span>
+        </p>
+        
+        <p style={{ margin: '0.25rem 0' }}>
+          <span style={{ color: 'var(--cli-accent)' }}>Affiliation:</span>{' '}
+          <span className="ds-hero-affiliation">{profile.affiliation}</span>
+        </p>
+        
+        <p style={{ margin: '0.25rem 0', color: 'var(--cli-border)' }}>{'─'.repeat(30)}</p>
+        
+        <p className="ds-hero-tagline">{profile.tagline}</p>
+        
+        {/* Adaptive copy from Alphabet SDK */}
+        {decision?.uiConfig?.heroCopy !== undefined && decision.uiConfig.heroCopy !== profile.tagline && (
+          <p className="ds-hero-adaptive-copy" dir={isRTL ? 'rtl' : 'ltr'}>
+            {decision.uiConfig.heroCopy}
+          </p>
+        )}
+      </div>
       
+      {/* Action buttons styled as CLI commands */}
       <div className="ds-hero-cta">
         <button type="button" className="ds-btn ds-btn-primary" onClick={onAskAssistant}>
-          {t('askAssistant')}
+          <span style={{ color: 'var(--cli-bg)' }}>$</span> {t('askAssistant')}
         </button>
         <a className="ds-btn" href={`mailto:${profile.email}`}>
-          {t('email')}
+          <span style={{ color: 'var(--cli-yellow)' }}>@</span> {t('email')}
         </a>
         <a className="ds-btn" href={profile.githubUrl} rel="noopener noreferrer" target="_blank">
-          {t('github')}
+          <span style={{ color: 'var(--cli-purple)' }}>&gt;</span> {t('github')}
         </a>
-        {profile.scholarUrl !== undefined ? (
+        {profile.scholarUrl !== undefined && (
           <a className="ds-btn" href={profile.scholarUrl} rel="noopener noreferrer" target="_blank">
-            {t('scholar')}
+            <span style={{ color: 'var(--cli-cyan)' }}>#</span> {t('scholar')}
           </a>
-        ) : null}
+        )}
       </div>
 
-      {/* نشانگر لایه رندر فعلی */}
+      {/* Render layer indicator */}
       {decision?.selectedLayer !== undefined && (
         <div className="ds-hero-layer-indicator" aria-hidden="true">
           <span className="ds-hero-layer-badge" data-layer={decision.selectedLayer}>
-            {isRTL ? 'لایه رندر: ' : 'Render Layer: '}
-            <code>{decision.selectedLayer}</code>
+            {t('renderLayer')}: <code>{decision.selectedLayer}</code>
           </span>
         </div>
       )}
