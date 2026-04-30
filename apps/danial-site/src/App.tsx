@@ -11,7 +11,6 @@ import {
   AlphabetProvider,
   Canvas2DLayer,
   ConsentBanner,
-  Css3DLayer,
   StaticHtmlLayer,
   TextOnlyLayer,
 } from '@alphabet/ui';
@@ -77,17 +76,6 @@ export function App(): JSX.Element {
           <header className="ds-header">
             <AdaptiveSlot
               r3fFallback={<HeroFallback onAskAssistant={focusAssistant} />}
-              css3d={(ctx) => (
-                <div className="ds-adaptive ds-adaptive-css3d" dir={ctx.direction}>
-                  <Css3DLayer
-                    heading={profile.name}
-                    description={profile.tagline}
-                    direction={ctx.direction}
-                    {...(ctx.locale !== null ? { locale: ctx.locale } : {})}
-                  />
-                  <Hero profile={profile} onAskAssistant={focusAssistant} />
-                </div>
-              )}
               canvas2d={(ctx) => (
                 <div className="ds-adaptive ds-adaptive-canvas" dir={ctx.direction}>
                   <Canvas2DLayer
