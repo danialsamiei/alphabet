@@ -114,6 +114,45 @@ Protocol Playground can use backend transport or in-process mock transport.
 2. If backend request fails and `VITE_ALPHABET_ENABLE_MOCK_FALLBACK=true`, it automatically switches to mock mode.
 3. If fallback is disabled but `VITE_ALPHABET_ENABLE_GRACEFUL_DEGRADE=true`, UI shows a degraded UX error state instead of crashing.
 
+
+## LLM demo relay (GitHub Models / OpenAI / OpenRouter)
+
+For a live LLM demo (not only mock endpoints), run the local relay server
+that ships with this app:
+
+```bash
+# terminal 1: secure relay (keeps tokens server-side)
+GITHUB_TOKEN=... OPENAI_API_KEY=... OPENROUTER_API_KEY=... \
+pnpm --filter '@alphabet/danial-demo' dev:relay
+
+# terminal 2: frontend
+pnpm --filter '@alphabet/danial-demo' dev
+```
+
+Then POST from the browser app (or curl) to `http://localhost:8790/api/llm/chat`:
+
+```bash
+curl -sS http://localhost:8790/api/llm/chat \
+  -H 'content-type: application/json' \
+  -d '{
+    "provider":"github",
+    "model":"openai/gpt-4o-mini",
+    "messages":[{"role":"user","content":"Summarize Alphabet in 3 bullets."}]
+  }'
+```
+
+### Provider controls
+
+- `provider`: `github` | `openai` | `openrouter`
+- `*_ALLOWED_MODELS`: allow-list per provider (comma-separated)
+- API keys are read only from server env vars:
+  - `GITHUB_TOKEN`
+  - `OPENAI_API_KEY`
+  - `OPENROUTER_API_KEY`
+
+This relay intentionally prevents arbitrary model usage by enforcing
+allow-lists per provider.
+
 ## Smoke health endpoint
 
 A static probe is available after deploy:
