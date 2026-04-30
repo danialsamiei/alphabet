@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Alphabet 1.0 (danial.ai Edition) \u2014 flagship interactive demo for danial.ai. Showcases the full Alphabet SDK: Adaptive Render Layers, Consent Ladder, Live Context Handshake, Trust Pulse, Living Memory, the Invisible Alef Agent, and the AI Protocol Playground.",
+  "description": "Alphabet 1.0 (danial.ai Edition) — flagship interactive demo for danial.ai. Showcases the full Alphabet SDK: Adaptive Render Layers, Consent Ladder, Live Context Handshake, Trust Pulse, Living Memory, the Invisible Alef Agent, and the AI Protocol Playground.",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

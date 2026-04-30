@@ -1,6 +1,6 @@
 {
   "name": "@alphabet/benchmarks",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "description": "Microbenchmarks for Alphabet core hot paths (signal collection, enrichment, decision engine, route normalization, consent policy, layer selection).",

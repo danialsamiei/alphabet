@@ -1,6 +1,6 @@
 {
   "name": "@alphabet/example-astro-islands-basic",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Minimal Astro Islands example showing Alphabet on a React island. Documentation-only snippet pack — see README for install steps.",
   "scripts": {

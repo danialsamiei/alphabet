@@ -1,6 +1,6 @@
 {
   "name": "@alphabet/api",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "HTTP client for the Alphabet SDK. Exposes one method per documented endpoint of the /api/alphabet/v1 contract, returns Promise<Result<T, AlphabetError>>, uses fetch + AbortController, and shares route constants with @alphabet/core.",
   "type": "module",
   "sideEffects": false,

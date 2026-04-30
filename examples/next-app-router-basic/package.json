@@ -1,6 +1,6 @@
 {
   "name": "@alphabet/example-next-app-router-basic",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Minimal Next.js (App Router) example showing Alphabet handshake, AdaptiveSlot, consent and transparency. See README — this is a documented snippet pack rather than a full standalone Next.js install to keep the Alphabet monorepo lightweight.",
   "scripts": {
