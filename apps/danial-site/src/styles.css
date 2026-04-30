@@ -165,6 +165,59 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 
 /* ─── Chat ─── */
 .ds-assistant { background: var(--ds-card); border-radius: var(--ds-radius); padding: 1.25rem; }
+
+/* Assistant header with clear button */
+.ds-assistant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.ds-assistant-header h2 { margin: 0; }
+
+/* Quick actions */
+.ds-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.ds-quick-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.ds-quick-action:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ds-accent) 10%, var(--ds-bg));
+  border-color: var(--ds-accent);
+}
+.ds-quick-action-en { font-weight: 500; }
+.ds-quick-action-fa { 
+  font-size: 0.75rem; 
+  color: var(--ds-muted);
+  direction: rtl;
+}
+
+/* Small button variant */
+.ds-btn-small {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+}
+.ds-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ds-muted);
+}
+.ds-btn-ghost:hover:not(:disabled) {
+  background: var(--ds-bg);
+  border-color: var(--ds-border);
+  color: var(--ds-fg);
+}
+
 .ds-chat-log {
   list-style: none;
   margin: 1rem 0;
@@ -174,6 +227,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   gap: 0.5rem;
   max-height: 24rem;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 .ds-chat-msg {
   display: grid;
@@ -183,9 +237,22 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   border-radius: 0.5rem;
   background: var(--ds-bg);
   border: 1px solid var(--ds-border);
+  transition: opacity 0.2s ease;
+}
+.ds-chat-msg[dir="rtl"] {
+  grid-template-columns: 1fr 5.5rem;
+  text-align: right;
+}
+.ds-chat-msg[dir="rtl"] .ds-chat-role {
+  order: 2;
+  text-align: left;
 }
 .ds-chat-msg.ds-chat-user { background: color-mix(in srgb, var(--ds-accent) 12%, var(--ds-bg)); }
 .ds-chat-msg.ds-chat-error { border-color: #ef4444; color: #b91c1c; }
+.ds-chat-msg.ds-chat-streaming { 
+  border-color: var(--ds-accent);
+  background: color-mix(in srgb, var(--ds-accent) 5%, var(--ds-bg));
+}
 .ds-chat-role {
   text-transform: uppercase;
   font-size: 0.7rem;
@@ -194,7 +261,19 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   align-self: start;
   padding-top: 0.15rem;
 }
-.ds-chat-content { white-space: pre-wrap; word-break: break-word; }
+.ds-chat-content { white-space: pre-wrap; word-break: break-word; line-height: 1.6; }
+
+/* Typing indicator animation */
+.ds-typing-indicator {
+  display: inline-block;
+  animation: ds-blink 0.8s infinite;
+  color: var(--ds-accent);
+  font-weight: bold;
+}
+@keyframes ds-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
 
 .ds-chat-form {
   display: flex;
@@ -209,6 +288,13 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   background: var(--ds-bg);
   color: inherit;
   font: inherit;
+  transition: border-color 0.15s ease;
+}
+.ds-chat-form input[type='text']:focus {
+  border-color: var(--ds-accent);
+}
+.ds-chat-form input[type='text'][dir="rtl"] {
+  text-align: right;
 }
 
 /* ─── Footer ─── */
