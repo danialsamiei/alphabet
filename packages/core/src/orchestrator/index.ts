@@ -44,3 +44,12 @@ export {
   type AdaptiveRenderContext,
   type AdaptiveRenderEvent,
 } from './adaptive-render.js';
+
+export {
+  ORCHESTRATOR_TELEMETRY_EVENTS,
+  type OrchestratorTelemetryEventName,
+  type OrchestratorTelemetryEvent,
+  type LayerSelectedEvent,
+  type ConsentTransitionEvent,
+  type HandshakePhaseTimingEvent,
+} from './telemetry.js';

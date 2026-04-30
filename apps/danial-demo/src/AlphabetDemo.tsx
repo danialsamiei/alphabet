@@ -28,6 +28,8 @@ import { ContextDashboardExperience } from './experiences/ContextDashboardExperi
 import { LayerSwitcherExperience } from './experiences/LayerSwitcherExperience.js';
 import { ProtocolPlaygroundExperience } from './experiences/ProtocolPlaygroundExperience.js';
 import { TrustPulseExperience } from './experiences/TrustPulseExperience.js';
+import { TelemetryDashboardExperience } from './experiences/TelemetryDashboardExperience.js';
+import { pushTelemetry } from './telemetry.js';
 import { LivingMemoryExperience } from './experiences/LivingMemoryExperience.js';
 import { Hero } from './components/Hero.js';
 import { AlefAgent, type AlefSuggestion, type AlefSuggestionAction } from './components/AlefAgent.js';
@@ -72,7 +74,8 @@ export type AlphabetDemoTab =
   | 'context'
   | 'trust'
   | 'memory'
-  | 'protocols';
+  | 'protocols'
+  | 'telemetry';
 
 const TABS: ReadonlyArray<{
   readonly id: AlphabetDemoTab;
@@ -85,6 +88,7 @@ const TABS: ReadonlyArray<{
   { id: 'trust',     label: 'Trust Pulse',   description: 'Live privacy score, signals used, memory tier.' },
   { id: 'memory',    label: 'Living Memory', description: 'Six on-device memory domains with consent gating.' },
   { id: 'protocols', label: 'AI Protocols',  description: 'Offline AI protocol playground.' },
+  { id: 'telemetry', label: 'Telemetry', description: 'Non-PII aggregate telemetry dashboard.' },
 ];
 
 export interface AlphabetDemoProps {
@@ -191,6 +195,10 @@ function Shell({
   const [activeTab, setActiveTab] = useState<AlphabetDemoTab>(defaultTab);
   const layer = useLayer();
   const tabPanelId = useId();
+
+  useEffect(() => {
+    pushTelemetry({ event: 'layer_selected', at: Date.now(), layer: layer.layer, reasonCode: layer.reasonCode, source: 'ui-layer-provider' });
+  }, [layer.layer, layer.reasonCode]);
 
   const update = useCallback(
     <K extends keyof DemoState>(key: K, value: DemoState[K]): void =>
@@ -473,6 +481,7 @@ function Shell({
             ) : null}
             {activeTab === 'memory' ? <LivingMemoryExperience /> : null}
             {activeTab === 'protocols' ? <ProtocolPlaygroundExperience /> : null}
+            {activeTab === 'telemetry' ? <TelemetryDashboardExperience /> : null}
           </div>
         </section>
 

@@ -260,3 +260,13 @@ function publishDailyPageviews(rawCount: number, cohortSize: number) {
   no WebGL renderer string capture.
 - Alphabet does **not** store PII. Email, name, phone, IP — none of these
   ever enter the pipeline.
+
+
+## Explicit Non-Logging Guarantees
+
+Alphabet telemetry and demo sinks **do not log**:
+- PII (name, email, phone, postal address, messages).
+- Raw IP addresses.
+- Persistent/stable identifiers that can track a person across sessions/devices.
+- Full user-agent strings or high-entropy fingerprint material.
+- Exact latitude/longitude.
