@@ -9,7 +9,6 @@ import { useRef } from 'react';
 import {
   AdaptiveSlot,
   AlphabetProvider,
-  Canvas2DLayer,
   ConsentBanner,
   StaticHtmlLayer,
   TextOnlyLayer,
@@ -76,17 +75,6 @@ export function App(): JSX.Element {
           <header className="ds-header">
             <AdaptiveSlot
               r3fFallback={<HeroFallback onAskAssistant={focusAssistant} />}
-              canvas2d={(ctx) => (
-                <div className="ds-adaptive ds-adaptive-canvas" dir={ctx.direction}>
-                  <Canvas2DLayer
-                    heading={profile.name}
-                    description={profile.tagline}
-                    direction={ctx.direction}
-                    {...(ctx.locale !== null ? { locale: ctx.locale } : {})}
-                  />
-                  <Hero profile={profile} onAskAssistant={focusAssistant} />
-                </div>
-              )}
               staticHtml={() => (
                 <div className="ds-adaptive ds-adaptive-static">
                   <StaticHtmlLayer
