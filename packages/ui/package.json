@@ -1,6 +1,6 @@
 {
   "name": "@alphabet/ui",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "React surface for the Alphabet SDK: AlphabetProvider, AdaptiveSlot (the five Adaptive Render Layers — R3F immersive / CSS 3D / Canvas 2D / static HTML / text-only), ConsentBanner, TransparencyNotice, and hooks. The base bundle is intentionally R3F-free; the immersive layer is loaded lazily only when selected.",
   "type": "module",
   "sideEffects": false,

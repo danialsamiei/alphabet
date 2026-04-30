@@ -1,6 +1,6 @@
 {
   "name": "@alphabet/danial-site",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "description": "Personal & professional interactive site for Danial Samiei — researcher and assistant professor. Built on the Alphabet SDK and powered by GitHub Models for the in-page assistant.",
