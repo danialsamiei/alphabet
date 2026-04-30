@@ -36,6 +36,7 @@ export interface Profile {
   readonly tagline: string;
   readonly bio: string;
   readonly email: string;
+  readonly contactEmail?: string;
   readonly githubUrl: string;
   readonly scholarUrl?: string;
   readonly orcid?: string;
@@ -67,7 +68,8 @@ export const profile: Profile = {
     'can degrade gracefully across five render layers while honouring',
     'consent and locale.',
   ].join(' '),
-  email: 'danial.samiei@example.edu',
+  email: 'danial.samiei@gmail.com',
+  contactEmail?: 'danial.samiei@iau.ac.ir',
   githubUrl: 'https://github.com/danialsamiei',
   scholarUrl: 'https://scholar.google.com/',
   orcid: '0000-0000-0000-0000',

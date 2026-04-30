@@ -89,6 +89,12 @@ export function Contact({ profile }: { readonly profile: Profile }): JSX.Element
           <strong>Email:</strong>{' '}
           <a href={`mailto:${profile.email}`}>{profile.email}</a>
         </li>
+        {profile.contactEmail !== undefined ? (
+          <li>
+            <strong>Email:</strong>{' '}
+            <a href={`mailto:${profile.contactEmail}`}>{profile.contactEmail}</a>
+          </li>
+        ) : null}
         {profile.office !== undefined ? (
           <li>
             <strong>Office:</strong> {profile.office}
