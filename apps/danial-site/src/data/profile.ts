@@ -36,6 +36,7 @@ export interface Profile {
   readonly tagline: string;
   readonly bio: string;
   readonly email: string;
+  readonly contactEmail?: string;
   readonly githubUrl: string;
   readonly scholarUrl?: string;
   readonly orcid?: string;
@@ -53,9 +54,9 @@ export interface Profile {
 export const profile: Profile = {
   name: 'Danial Samiei',
   title: 'Assistant Professor & Researcher',
-  affiliation: 'Department of Computer Science',
+  affiliation: 'Department of Human Science',
   tagline:
-    'Building context-aware, privacy-respecting systems at the intersection of human-computer interaction, applied AI, and the open web.',
+    'Ph.D. in Public Administration and Human Resource Managment. Building context-aware, privacy-respecting systems at the intersection of human-computer interaction, applied AI, and the open web.',
   bio: [
     'I am an assistant professor and researcher working on adaptive,',
     'context-aware software systems. My work focuses on how the web',
@@ -67,7 +68,8 @@ export const profile: Profile = {
     'can degrade gracefully across five render layers while honouring',
     'consent and locale.',
   ].join(' '),
-  email: 'danial.samiei@example.edu',
+  email: 'danial.samiei@gmail.com',
+  contactEmail: 'danial.samiei@iau.ac.ir',
   githubUrl: 'https://github.com/danialsamiei',
   scholarUrl: 'https://scholar.google.com/',
   orcid: '0000-0000-0000-0000',
