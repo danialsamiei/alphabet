@@ -84,7 +84,7 @@ jobs:
 
       - name: Upload coverage reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: |
@@ -94,7 +94,7 @@ jobs:
 
       - name: Upload bundle size report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bundle-size-report
           path: size-report.json
@@ -103,7 +103,7 @@ jobs:
 
       - name: Upload bundle visualizer report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bundle-visualizer
           path: bundle-report/
@@ -112,7 +112,7 @@ jobs:
 
       - name: Upload built packages (dist tarballs preview)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-dists
           path: |
