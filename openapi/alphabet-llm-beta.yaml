@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info:
+  title: Alphabet Beta LLM Gateway
+  version: 0.1.0-beta
+  description: >
+    Bounded public inference gateway used by Alphabet's default free access.
+    Premium entitlement and billing are outside this beta contract.
+servers:
+  - url: https://alef.ba
+paths:
+  /api/alphabet/chat:
+    options:
+      operationId: alphabetChatPreflight
+      responses:
+        "204":
+          description: CORS preflight accepted.
+    post:
+      operationId: createAlphabetExperienceCandidate
+      summary: Generate a bounded adaptive-experience candidate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+      responses:
+        "200":
+          description: Candidate generated.
+          headers:
+            X-Alphabet-Request-Id:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+        "400":
+          description: Invalid or oversized request.
+        "413":
+          description: Request body is too large.
+        "429":
+          description: Beta visitor quota exhausted.
+        "503":
+          description: Managed allocation is unavailable.
+components:
+  schemas:
+    ChatMessage:
+      type: object
+      additionalProperties: false
+      required: [role, content]
+      properties:
+        role:
+          type: string
+          enum: [system, user, assistant]
+        content:
+          type: string
+          minLength: 1
+          maxLength: 8000
+    ChatRequest:
+      type: object
+      additionalProperties: false
+      required: [messages]
+      properties:
+        messages:
+          type: array
+          minItems: 1
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+        maxTokens:
+          type: integer
+          minimum: 64
+          maximum: 1000
+          default: 700
+    AccessReceipt:
+      type: object
+      additionalProperties: false
+      required:
+        [requestId, access, providerClass, beta, storage, latencyMs]
+      properties:
+        requestId:
+          type: string
+        access:
+          type: string
+          enum: [free, sponsored-premium]
+        providerClass:
+          type: string
+          const: managed
+        beta:
+          type: boolean
+          const: true
+        storage:
+          type: string
+          const: none
+        latencyMs:
+          type: integer
+          minimum: 0
+    ChatResponse:
+      type: object
+      additionalProperties: false
+      required: [text, receipt]
+      properties:
+        text:
+          type: string
+        receipt:
+          $ref: "#/components/schemas/AccessReceipt"

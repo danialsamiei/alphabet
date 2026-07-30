@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> **PUBLIC BETA ACCESS**
+> Alphabet now defines managed FreeGPT access by default, application-owned BYOK, and a fail-closed Premium mode. Paid plans, checkout, and premium entitlements are not active. Source presence does not prove that the managed gateway is deployed or funded. See [`docs/BETA_LLM_ACCESS.md`](docs/BETA_LLM_ACCESS.md).
+
 <div align="center">
 
 <img src="./logo.png" alt="Alphabet — The Alphabet of Your Web" width="220" />
@@ -715,3 +719,21 @@ Alphabet نیز زبان، جهت نوشتار، دستگاه، و رضایت ک
 <div align="center">
   <sub>Made with ❤️ inside the <strong>الفبا (Alefba)</strong> program — where the web becomes aware.</sub>
 </div>
+## Public Beta LLM access
+
+```ts
+import { AlphabetLlmClient } from '@alphabet/api';
+
+const llm = new AlphabetLlmClient();
+const candidate = await llm.complete([
+  { role: 'user', content: 'Design an accessible adaptive experience.' },
+]);
+```
+
+The zero-config path targets `https://alef.ba/api/alphabet/chat` and is bounded by managed availability and visitor quotas. BYOK accepts an application-owned OpenAI-compatible endpoint. `mode: 'premium'` returns `PREMIUM_DISABLED` throughout Beta. No provider key is bundled with the SDK.
+
+Architecture, security boundaries, availability semantics, and agent handoff:
+
+- [`docs/BETA_LLM_ACCESS.md`](docs/BETA_LLM_ACCESS.md)
+- [`docs/AGENT_HANDOFF_BETA.md`](docs/AGENT_HANDOFF_BETA.md)
+- [`openapi/alphabet-llm-beta.yaml`](openapi/alphabet-llm-beta.yaml)

@@ -1,3 +1,4 @@
+> **Beta LLM access update:** `@alphabet/api` now contains a source-level candidate for managed FreeGPT access and BYOK. Premium remains disabled. Tests, package publication, managed credentials, and live gateway availability are not established by this document. See `BETA_LLM_ACCESS.md` and `AGENT_HANDOFF_BETA.md`.
 # Alphabet — Implementation Status
 
 > **Purpose.** This document is the single source of truth about what is **actually

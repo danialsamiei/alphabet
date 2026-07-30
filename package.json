@@ -17,7 +17,7 @@
     "size:check-r3f-free": "node scripts/check-ui-r3f-free.mjs",
     "bundle:visualize": "node scripts/bundle-visualizer.mjs",
     "changelog:aggregate": "node scripts/aggregate-changelog.mjs",
-    "openapi:lint": "redocly lint openapi/alphabet.v1.yaml openapi/alphabet-protocol.v2.yaml",
+    "openapi:lint": "redocly lint openapi/alphabet.v1.yaml openapi/alphabet-protocol.v2.yaml openapi/alphabet-llm-beta.yaml",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish",
