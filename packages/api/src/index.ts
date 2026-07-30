@@ -35,6 +35,23 @@ export type { HandshakeClientOptions } from './handshake-client.js';
 export { AlphabetClient } from './alphabet-client.js';
 export type { AlphabetClientOptions } from './alphabet-client.js';
 
+// ─── Public-beta LLM access ──────────────────────────────────────────────────
+export {
+  ALPHABET_FREE_LLM_ENDPOINT,
+  AlphabetLlmClient,
+  AlphabetLlmError,
+} from './llm-client.js';
+export type {
+  AlphabetLlmAccessMode,
+  AlphabetLlmClientOptions,
+  AlphabetLlmCompleteOptions,
+  AlphabetLlmErrorCode,
+  AlphabetLlmMessage,
+  AlphabetLlmReceipt,
+  AlphabetLlmResponse,
+  AlphabetLlmRole,
+} from './llm-client.js';
+
 // ─── Request / Response Types ─────────────────────────────────────────────────
 export type {
   // Group 1: Context Handshake
